@@ -1,0 +1,1036 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"to",
+				"trigFormComplex"
+			],
+			[
+				"trig",
+				"trigInCurrentExpression"
+			],
+			[
+				"lab",
+				"left-label"
+			],
+			[
+				"REPL",
+				"REPLOptionsPane"
+			],
+			[
+				"___",
+				"____constructors"
+			],
+			[
+				"____",
+				"____construct"
+			],
+			[
+				"__",
+				"____constructor"
+			],
+			[
+				"first",
+				"firstBrace"
+			],
+			[
+				"num",
+				"numRows"
+			],
+			[
+				"proto",
+				"prototype"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "js/c/Application.js",
+			"settings":
+			{
+				"buffer_size": 2323,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "index.html",
+			"settings":
+			{
+				"buffer_size": 2069,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "css/style.css",
+			"settings":
+			{
+				"buffer_size": 9262,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/KeyInput.js",
+			"settings":
+			{
+				"buffer_size": 208,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/Storage.js",
+			"settings":
+			{
+				"buffer_size": 3585,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Applications/MAMP/htdocs/Nydell/functions.js",
+			"settings":
+			{
+				"buffer_size": 18382,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Applications/MAMP/htdocs/Nydell/nydell.js",
+			"settings":
+			{
+				"buffer_size": 19625,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/m/Parser.js",
+			"settings":
+			{
+				"buffer_size": 10318,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Button.elm",
+			"settings":
+			{
+				"buffer_size": 2842,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/variables.xml",
+			"settings":
+			{
+				"buffer_size": 3014,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Keyboard.elm",
+			"settings":
+			{
+				"buffer_size": 6377,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/MathInput.elm",
+			"settings":
+			{
+				"buffer_size": 1015,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/m/Evaluator.js",
+			"settings":
+			{
+				"buffer_size": 12611,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/m/Functions.js",
+			"settings":
+			{
+				"buffer_size": 2008,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/main.xml",
+			"settings":
+			{
+				"buffer_size": 4575,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/REPL.elm",
+			"settings":
+			{
+				"buffer_size": 4929,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Notification.elm",
+			"settings":
+			{
+				"buffer_size": 264,
+				"line_ending": "Unix",
+				"name": "def Notification(text) {"
+			}
+		},
+		{
+			"file": "js/v/Toolbar.elm",
+			"settings":
+			{
+				"buffer_size": 2912,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/lib/elemental.js",
+			"settings":
+			{
+				"buffer_size": 29759,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"console":
+	{
+		"height": 0.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Applications/MAMP/htdocs/Sigmabox/js/lib/elemental.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Switch.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Utils.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/REPL.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboard.xml",
+		"/Applications/MAMP/htdocs/Nydell/nydell.js",
+		"/Applications/MAMP/htdocs/Nydell/functions.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Evaluator.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Button.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/MathInput.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboards/main.xml",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Touch.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/lib/mathquill/mathquill.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Functions.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Parser.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/lib/mathquill/font/stixgeneral-bundle/stixgeneralitalic-webfont.svg",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Application.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Storage.js",
+		"/Users/Ian/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/Users/Ian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Applications/MAMP/htdocs/Sigmabox/index.html",
+		"/Applications/MAMP/htdocs/Sigmabox/Sigmabox.sublime-workspace",
+		"/Applications/MAMP/htdocs/Sigmabox/css/lib/jquery.mobile.custom.structure.css",
+		"/Applications/MAMP/htdocs/Sigmabox/Sigmabox.sublime-project",
+		"/Applications/MAMP/htdocs/Sigmabox/css/lib/jquery.mobile.custom.theme.css"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"",
+			"Sigmabox"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"console",
+			"console.log",
+			"options",
+			"function",
+			"daction=",
+			"-313",
+			"action=",
+			"\\\\mathbb",
+			"multiply",
+			"subtract",
+			"add",
+			"<primary",
+			"StringUtil",
+			"'tan'",
+			"_div",
+			"app.parser.pa",
+			"new Parser",
+			".parse",
+			"phoen",
+			"text"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"//console.log",
+			"toolbar",
+			"options",
+			"action=",
+			"daction=",
+			"*",
+			"-",
+			"+",
+			"<primary action='app: keyboard main'"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 16,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "js/c/Application.js",
+					"settings":
+					{
+						"buffer_size": 2323,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1523,
+								1523
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 539.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "index.html",
+					"settings":
+					{
+						"buffer_size": 2069,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								945,
+								945
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "css/style.css",
+					"settings":
+					{
+						"buffer_size": 9262,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								590,
+								590
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "js/c/KeyInput.js",
+					"settings":
+					{
+						"buffer_size": 208,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								160,
+								160
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "js/c/Storage.js",
+					"settings":
+					{
+						"buffer_size": 3585,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2185,
+								2185
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 525.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/Applications/MAMP/htdocs/Nydell/functions.js",
+					"settings":
+					{
+						"buffer_size": 18382,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								5525,
+								5528
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3857.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/Applications/MAMP/htdocs/Nydell/nydell.js",
+					"settings":
+					{
+						"buffer_size": 19625,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14234,
+								14234
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 9717.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "js/m/Parser.js",
+					"settings":
+					{
+						"buffer_size": 10318,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3439,
+								3443
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "js/v/Button.elm",
+					"settings":
+					{
+						"buffer_size": 2842,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								366,
+								366
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "res/xml/keyboards/variables.xml",
+					"settings":
+					{
+						"buffer_size": 3014,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								431,
+								431
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "js/v/Keyboard.elm",
+					"settings":
+					{
+						"buffer_size": 6377,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3852,
+								3852
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3944.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "js/v/MathInput.elm",
+					"settings":
+					{
+						"buffer_size": 1015,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								490,
+								490
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 134.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "js/m/Evaluator.js",
+					"settings":
+					{
+						"buffer_size": 12611,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								12068,
+								12068
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 6597.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "js/m/Functions.js",
+					"settings":
+					{
+						"buffer_size": 2008,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1696,
+								1696
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 839.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "res/xml/keyboards/main.xml",
+					"settings":
+					{
+						"buffer_size": 4575,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4507,
+								4507
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1304.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 15,
+					"file": "js/v/REPL.elm",
+					"settings":
+					{
+						"buffer_size": 4929,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3019,
+								3019
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2115.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "js/v/Notification.elm",
+					"settings":
+					{
+						"buffer_size": 264,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								264,
+								264
+							]
+						],
+						"settings":
+						{
+							"auto_name": "def Notification(text) {",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "js/v/Toolbar.elm",
+					"settings":
+					{
+						"buffer_size": 2912,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2838,
+								2841
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 2159.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "js/lib/elemental.js",
+					"settings":
+					{
+						"buffer_size": 29759,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21689,
+								21689
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8226.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 34.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"noti",
+				"js/v/Notification.elm"
+			],
+			[
+				"",
+				"js/v/Notification.elm"
+			],
+			[
+				"ele",
+				"js/lib/elemental.js"
+			],
+			[
+				"app",
+				"js/c/Application.js"
+			],
+			[
+				"eva",
+				"js/m/Evaluator.js"
+			],
+			[
+				"key",
+				"js/v/Keyboard.elm"
+			],
+			[
+				"repl",
+				"js/v/REPL.elm"
+			],
+			[
+				"ap",
+				"js/c/Application.js"
+			],
+			[
+				"rep",
+				"js/v/REPL.elm"
+			],
+			[
+				"varia",
+				"res/xml/keyboards/variables.xml"
+			],
+			[
+				"stor",
+				"js/c/Storage.js"
+			],
+			[
+				"elemen",
+				"js/lib/elemental.js"
+			],
+			[
+				"eval",
+				"js/m/Evaluator.js"
+			],
+			[
+				"evalu",
+				"js/m/Evaluator.js"
+			],
+			[
+				"main",
+				"res/xml/keyboards/main.xml"
+			],
+			[
+				"func",
+				"js/m/Functions.js"
+			],
+			[
+				"r",
+				"js/v/REPL.elm"
+			],
+			[
+				"swi",
+				"js/v/Switch.elm"
+			],
+			[
+				"swit",
+				"js/v/Switch.elm"
+			],
+			[
+				"element",
+				"js/lib/elemental.js"
+			],
+			[
+				"eleme",
+				"js/lib/elemental.js"
+			],
+			[
+				"elem",
+				"js/lib/elemental.js"
+			],
+			[
+				"el",
+				"js/lib/elemental.js"
+			],
+			[
+				"touch",
+				"js/v/Touch.elm"
+			],
+			[
+				"sty",
+				"css/style.css"
+			],
+			[
+				"main.",
+				"res/xml/keyboards/main.xml"
+			],
+			[
+				"sto",
+				"js/c/Storage.js"
+			],
+			[
+				"cons",
+				"res/xml/keyboards/constants.xml"
+			],
+			[
+				"mathin",
+				"js/v/MathInput.elm"
+			],
+			[
+				"cosn",
+				"res/xml/keyboards/constants.xml"
+			],
+			[
+				"appl",
+				"js/c/Application.js"
+			],
+			[
+				"pars",
+				"js/m/Parser.js"
+			],
+			[
+				"mathinp",
+				"js/v/MathInput.elm"
+			],
+			[
+				"keyboa",
+				"res/xml/keyboard.xml"
+			],
+			[
+				"utils",
+				"js/c/Utils.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 150.0,
+	"status_bar_visible": true
+}

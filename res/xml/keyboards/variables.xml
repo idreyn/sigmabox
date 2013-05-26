@@ -1,0 +1,122 @@
+<keyboard>
+	
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary action='app: keyboard main' text-label='close'/>
+	</key>
+
+	<key row='2' col='1'>
+		<primary action='app: keyboard main' text-label='a' variable='a' />
+		<alternate action='app: keyboard main' text-label='A' variable='A' />
+	</key>
+
+	<key row='3' col='1'>
+		<primary action='app: keyboard main' text-label='b' variable='b' />
+		<alternate action='app: keyboard main' text-label='B' variable='B' />
+	</key>
+
+	<key row='4' col='1'>
+		<primary action='app: keyboard main' text-label='c' variable='c' />
+		<alternate action='app: keyboard main' text-label='C' variable='C' />
+	</key>
+
+	<key row='5' col='1'>
+		<primary action='app: keyboard main' text-label='d' variable='d' />
+		<alternate action='app: keyboard main' text-label='D' variable='D' />
+	</key>
+
+
+
+	<key row='1' col='2'>
+		<primary action='app: keyboard main' text-label='f' variable='f' />
+		<alternate action='app: keyboard main' text-label='F' variable='F' />
+	</key>
+
+	<key row='2' col='2'>
+		<primary action='app: keyboard main' text-label='h' variable='h' />
+		<alternate action='app: keyboard main' text-label='H' variable='H' />
+	</key>
+	
+	<key row='3' col='2'>
+		<primary action='app: keyboard main' text-label='j' variable='j' />
+		<alternate action='app: keyboard main' text-label='J' variable='J' />
+	</key>
+
+	<key row='4' col='2'>
+		<primary action='app: keyboard main' text-label='k' variable='k' />
+		<alternate action='app: keyboard main' text-label='K' variable='K' />
+	</key>
+
+	<key row='5' col='2'>
+		<primary action='app: keyboard main' text-label='l' variable='l' />
+		<alternate action='app: keyboard main' text-label='L' variable='L' />
+	</key>
+
+
+	<key row='1' col='3'>
+		<primary action='app: keyboard main' text-label='m' variable='m' />
+		<alternate action='app: keyboard main' text-label='M' variable='M' />
+	</key>
+
+	<key row='2' col='3'>
+		<primary action='app: keyboard main' text-label='n' variable='n' />
+		<alternate action='app: keyboard main' text-label='N' variable='N' />
+	</key>
+
+	<key row='3' col='3'>
+		<primary action='app: keyboard main' text-label='o' variable='o' />
+		<alternate action='app: keyboard main' text-label='O' variable='O' />
+	</key>
+
+	<key row='4' col='3'>
+		<primary action='app: keyboard main' text-label='p' variable='p' />
+		<alternate action='app: keyboard main' text-label='P' variable='P' />
+	</key>
+
+	<key row='5' col='3'>
+		<primary action='app: keyboard main' text-label='q' variable='q' />
+		<alternate action='app: keyboard main' text-label='Q' variable='Q' />
+	</key>
+
+
+	<key row='1' col='4'>
+		<primary action='app: keyboard main' text-label='r' variable='r' />
+		<alternate action='app: keyboard main' text-label='R' variable='R' />
+	</key>
+
+	<key row='2' col='4'>
+		<primary action='app: keyboard main' text-label='s' variable='s' />
+		<alternate action='app: keyboard main' text-label='S' variable='S' />
+	</key>
+
+	<key row='3' col='4'>
+		<primary action='app: keyboard main' text-label='t' variable='t' />
+		<alternate action='app: keyboard main' text-label='T' variable='T' />
+	</key>
+
+	<key row='4' col='4'>
+		<primary action='app: keyboard main' text-label='u' variable='u' />
+		<alternate action='app: keyboard main' text-label='U' variable='U' />
+	</key>
+
+	<key row='5' col='4'>
+		<primary action='app: keyboard main' text-label='v' variable='v' />
+		<alternate action='app: keyboard main' text-label='V' variable='V' />
+	</key>
+
+
+	<key row='1' col='5'>
+		<primary action='app: keyboard main' text-label='w' variable='w' />
+		<alternate action='app: keyboard main' text-label='W' variable='W' />
+	</key>
+
+	<key row='2' col='5'>
+		<primary action='app: keyboard main' text-label='y' variable='y' />
+		<alternate action='app: keyboard main' text-label='Z' variable='y' />
+	</key>
+
+	<key row='3' col='5'>
+		<primary action='app: keyboard main' text-label='z' variable='z' />
+		<alternate action='app: keyboard main' text-label='Z' variable='Z' />
+	</key>
+
+</keyboard>

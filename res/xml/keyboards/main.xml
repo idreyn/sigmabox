@@ -1,0 +1,139 @@
+<keyboard>
+	<!-- Numbers, point, E -->
+	<key name='7' row='2' col='1' default-color='#595959'>
+		<primary text-label='7'>7</primary>
+	</key>
+	<key name='8' row='2' col='2' default-color='#595959'>
+		<primary text-label='8'>8</primary>
+	</key>
+	<key name='9' row='2' col='3' default-color='#595959'>
+		<primary text-label='9'>9</primary>
+	</key>
+	<key name='4' row='3' col='1' default-color='#595959'>
+		<primary text-label='4'>4</primary>
+	</key>
+	<key name='5' row='3' col='2' default-color='#595959'>
+		<primary text-label='5'>5</primary>
+	</key>
+	<key name='6' row='3' col='3' default-color='#595959'>
+		<primary text-label='6'>6</primary>
+	</key>
+	<key name='1' row='4' col='1' default-color='#595959'>
+		<primary text-label='1'>1</primary>
+	</key>
+	<key name='2' row='4' col='2' default-color='#595959'>
+		<primary text-label='2'>2</primary>
+	</key>
+	<key name='3' row='4' col='3' default-color='#595959'>
+		<primary text-label='3'>3</primary>
+	</key>
+	<key name='point' row='5' col='1' default-color='#595959'>
+		<primary text-label='.'>.</primary>
+		<alternate text-label=','>,</alternate>
+	</key>
+	<key name='0' row='5' col='2' default-color='#595959'>
+		<primary text-label='0'>0</primary>
+	</key>
+	<key name='tenthpower' row='5' col='3' default-color='#595959'>
+		<primary text-label='E' action='input:left'>\times 10^{}</primary>
+	</key>
+	
+	<!-- delete, larr, rarr -->
+	
+	<key name='delete' row='1' col='1' active-color='#ff5f5f'>
+		<primary image-label='delete' action='input:backspace' />
+	</key>
+	<key name='left-arrow' image-label='left' row='1' col='2' action='input:left'>
+		<primary image-label='left' action='input:left' />
+	</key>
+	
+	<key name='right-arrow' image-label='right' row='1' col='3' action='input:right'>
+		<primary image-label='right' action='input:right' />
+	</key>
+	
+	
+	<!-- + - * / = -->
+	<key name='plus' row='1' col='4'>
+		<primary text-label='+'>+</primary>
+		<alternate text-label='AC' action='input:clear' />
+	</key>
+	<key name='minus' row='2' col='4'>
+		<primary text-label='-'>-</primary>
+	</key>
+	<key name='times' row='3' col='4'>
+		<primary text-label='×'>\times</primary>
+		<alternate text-label='•'>\cdot</alternate>
+	</key>
+	<key name='divide' row='4' col='4'>
+		<primary text-label='÷' action='input:left,left'>\frac{}{}</primary>
+		<alternate text-label='/'>/</alternate>
+	</key>
+	<key name='equals' row='5' col='4' default-color='#0a4766'>
+		<primary text-label='='>=</primary>
+	</key>
+
+	
+	<!-- power, paren, i, ans, new -->
+	
+	<key name='power' row='1' col='5'>
+		<primary text-label='^' action='input:left'>^{}</primary>
+		<alternate text-label="x&lt;sup&gt;2&lt;/sup&gt;">^{2}</alternate>
+	</key>
+	<key name='parentheses' row='2' col='5'>
+		<primary text-label='( )' action='input:left'>()</primary>
+		<alternate text-label='&lt; &gt;' action='input:left'>&lt;&gt;</alternate>
+	</key>
+	<key name='i' row='3' col='5'>
+		<primary text-label='i'>i</primary>
+	</key>
+	<key name='x' row='4' col='5'>
+		<primary text-label='x'>x</primary>
+	</key>
+	<key name='more' row='5' col='5' default-color='#333'>
+		<primary text-label='&#931;&#8747;' action='app: keyboard advanced'/>
+	</key>
+	
+	
+	<!-- sqrt, log, ln, e, i -->
+	
+	<key name='sqrt' row='1' col='6'>
+		<primary text-label='√' action='input:left'>\sqrt{}</primary>
+	</key>
+	<key name='log' row='2' col='6'>
+		<primary text-label='log' action='input:left'>\log()</primary>
+	</key>
+	<key name='ln' row='3' col='6'>
+		<primary text-label='ln' action='input:left'>\ln()</primary>
+	</key>
+	<key name='e' row='4' col='6'>
+		<primary text-label='e'>e</primary>
+	</key>
+	<key name='constants' row='5' col='6' default-color='#333'>
+		<primary text-label='K&#954;' action='app: keyboard constants'></primary>
+	</key>
+
+
+	<!-- rad, sin, cos, tan, pi -->
+	
+	
+	<key name='sin' row='1' col='7'>
+		<primary text-label='sin' action='input:left'>\sin()</primary>
+		<alternate text-label='asin' action='input:left'>\asin()</alternate>
+	</key>
+	<key name='cos' row='2' col='7'>
+		<primary text-label='cos' action='input:left'>\cos()</primary>
+		<alternate text-label='acos' action='input:left'>\acos()</alternate>
+	</key>
+	<key name='tan' row='3' col='7'>
+		<primary text-label='tan' action='input:left'>\tan()</primary>
+		<alternate text-label='atan' action='input:left'>\atan()</alternate>
+	</key>
+	<key name='pi' row='4' col='7'>
+		<primary text-label='π'>\pi</primary>
+	</key>
+	<key name='variables' row='5' col='7' default-color='#333'>
+		<primary text-label='Aa' action='app: keyboard variables'></primary>
+	</key>
+
+</keyboard>
+	

@@ -1,0 +1,107 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary action='app: keyboard main' text-label='close'/>
+	</key>
+
+	<key row='2' col='1'>
+		<primary action='app: keyboard main' text-label='G'>G</primary>
+	</key>
+
+	<key row='3' col='1'>
+		<primary action='app: keyboard main' text-label='g'>g</primary>
+	</key>
+
+	<key row='4' col='1'>
+		<primary action='app: keyboard main' text-label='c'>c_{light}</primary>
+	</key>
+
+	<key row='5' col='1'>
+		<primary action='app: keyboard main' text-label='&#966;'>\phi</primary>
+	</key>
+
+
+
+	<key row='1' col='2'>
+		<primary action='app: keyboard main' text-label='&#949;_0'>\varepsilon_{0}</primary>
+	</key>
+
+	<key row='2' col='2'>
+		<primary action='app: keyboard main' text-label='&#956;_0'>\mu_{0}</primary>
+	</key>
+
+	<key row='3' col='2'>
+		<primary action='app: keyboard main' text-label='k_E'>k_E</primary>
+	</key>
+
+	<key row='4' col='2'>
+		<primary action='app: keyboard main' text-label='&#945;_B'>\alpha_{B}</primary>
+	</key>
+
+	<key row='5' col='2'>
+		<primary action='app: keyboard main' text-label='Z_0'>Z_{0}</primary>
+	</key>
+
+
+
+	<key row='1' col='3'>
+		<primary action='app: keyboard main' text-label='m_p'>m_{p}</primary>
+	</key>
+
+	<key row='2' col='3'>
+		<primary action='app: keyboard main' text-label='m_n'>m_{n}</primary>
+	</key>
+
+	<key row='3' col='3'>
+		<primary action='app: keyboard main' text-label='m_e'>m_{e}</primary>
+	</key>
+
+	<key row='4' col='3'>
+		<primary action='app: keyboard main' text-label='q_e'>q_{e}</primary>
+	</key>
+
+	<key row='5' col='3'>
+		<primary action='app: keyboard main' text-label='&#295;'>\hbar</primary>
+	</key>
+
+
+	<key row='1' col='4'>
+		<primary action='app: keyboard main' text-label='&#956;_N'>\mu_{N}</primary>
+	</key>
+
+	<key row='2' col='4'>
+		<primary action='app: keyboard main' text-label='&#956;_B'>\mu_{B}</primary>
+	</key>
+
+	<key row='3' col='4'>
+		<primary action='app: keyboard main' text-label='G_F'>G_{F}</primary>
+	</key>
+
+	<key row='4' col='4'>
+		<primary action='app: keyboard main' text-label='&#945;_fs'>\alpha_{fs}</primary>
+	</key>
+
+	<key row='5' col='4'>
+		<primary action='app: keyboard main' text-label='G_0'>G_{0}</primary>
+	</key>
+
+	<key row='1' col='5'>
+		<primary action='app: keyboard main' text-label='n_A'>n_{A}</primary>
+	</key>
+
+	<key row='2' col='5'>
+		<primary action='app: keyboard main' text-label='k_B'>k_{B}</primary>
+	</key>
+
+	<key row='3' col='5'>
+		<primary action='app: keyboard main' text-label='m_u'>m_{u}</primary>
+	</key>
+
+	<key row='4' col='5'>
+		<primary action='app: keyboard main' text-label='R_gas'> R_{gas}</primary>
+	</key>
+
+	<key row='5' col='5'>
+		<primary action='app: keyboard main' text-label='&#963;_sb'> \sigma_{sb}</primary>
+	</key>
+
+</keyboard>
