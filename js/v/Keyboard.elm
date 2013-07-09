@@ -37,11 +37,16 @@ def Keyboard(keyboardSource) {
 	}
 	
 	css {
-		position: fixed;
+		position: absolute;
 		bottom: 0px;
 		width: 100%;
 		background: #1b1b1b;
 		-webkit-overflow-scrolling: touch;
+		z-index: 1000;
+	}
+
+	on touchmove(e) {
+		e.preventDefault();
 	}
 	
 	constructor {
@@ -51,9 +56,9 @@ def Keyboard(keyboardSource) {
 	method slideUp(n,e) {
 		$this.show().css(
 			'bottom',
-			0 - parseInt($this.css('height'))
+			0-parseInt($this.css('height'))
 		).delay(100).animate({
-			bottom: 0,
+			'bottom': 0,
 		}, {
 			duration: n || 300,
 			easing: e || 'easeOutQuart'
@@ -65,7 +70,7 @@ def Keyboard(keyboardSource) {
 			'bottom',
 			0
 		).delay(100).animate({
-			bottom: 0 - parseInt($this.css('height')),
+			'bottom': 0-parseInt($this.css('height')),
 		}, {
 			duration: n || 300,
 			easing: e || 'easeInQuart'
@@ -91,11 +96,11 @@ def Keyboard(keyboardSource) {
 	
 	method positionKeys() {
 		var minKeyWidth = 80,
-			padding = 6,
+			padding = 4,
 			keysX = this.totalColumns,
 			keysY = 5,
-			kw = ($this.width() - padding * (keysX + 1)) / keysX,
-			kh = ($this.height() - padding * (keysY + 1)) / keysY,
+			kw = ($this.width() - padding * (keysX - 1)) / keysX,
+			kh = ($this.height() - padding * (keysY)) / keysY,
 			self = this,
 			last;
 		$this.find('.inner').find('.Key').each(function(i,key) {
@@ -156,8 +161,10 @@ def Keyboard(keyboardSource) {
 }
 
 def Key(_keyData,keyboard) {
+
 	html {
 		<div class='shadow'> 
+			<div class='bar'></div>
 			<div class='label'> </div>
 		</div>
 	}
@@ -183,18 +190,22 @@ def Key(_keyData,keyboard) {
 			app.mode.currentInput().acceptLatexInput(this.activeSubkey().get(0).childNodes[0].nodeValue);
 			app.mode.currentInput().takeFocus();
 		}
+		if(this.activeSubkey().attr('close')) {
+			app.useKeyboard('main');
+		}
 		if(this.activeSubkey().attr('action')) {
-			var attr = this.activeSubkey().attr('action'),
+			this.activeSubkey().attr('action').split('|').forEach(function(attr) {
 				split = attr.split(':'),
 				target = StringUtil.trim(split[0]),
 				action = StringUtil.trim(split[1]);
 				//console.log(target,action);
-			if(target == 'input') {
-				app.mode.currentInput().acceptActionInput(action);
-			}
-			if(target == 'app') {
-				app.acceptActionInput(action);
-			}
+				if(target == 'input') {
+					app.mode.currentInput().acceptActionInput(action);
+				}
+				if(target == 'app') {
+					app.acceptActionInput(action);
+				}
+			});
 		}
 		this.setPrimary();
 	}
@@ -221,6 +232,11 @@ def Key(_keyData,keyboard) {
 	
 	method init() {
 		var kd = this.keyData();
+		if(kd.attr('disabled')) {
+			this.disable();
+		} else {
+			this.enable();
+		}
 		this.col = kd.attr('col');
 		this.row = kd.attr('row');
 		this.name = kd.attr('name');
@@ -250,10 +266,17 @@ def Key(_keyData,keyboard) {
 			var img = app.r.url(app.r.keyboardImage(skd.attr('image-label')));
 			$this.find('.label').css('background-image',img);
 		}
+		if(this.hasAlt()) {
+			this.$my('bar').show();
+		}
+	}
+
+	method hasAlt {
+		return !!this.keyData().find('alternate').length;
 	}
 	
 	method setAlt() {
-		if(!!this.keyData().find('alternate').length) {
+		if(this.hasAlt()) {
 			this.altMode = true;
 			this.label();
 			this.position();
@@ -269,15 +292,15 @@ def Key(_keyData,keyboard) {
 	}
 	
 	method position(width,height,padding) {
-		this.width = width;
-		this.height = height;
+		this.width = Math.floor(width);
+		this.height = Math.floor(height - (this.labelType == 'image'? 0 : 0));
 		$this.css('width', this.width);
 		$this.css('height', this.height);
-		$this.css('top', padding + (padding + height) * (this.row - 1));
-		$this.css('left', padding + (padding + width) * (this.col - 1));
+		$this.css('top', Math.floor(padding + (padding + height) * (this.row - 1)));
+		$this.css('left', Math.floor((padding + width) * (this.col - 1)));
 		$this.css('line-height',$this.css('height'));
 		if(this.labelType == 'text') {
-			$this.css('font-size', ($this.height() / 2.5).toString() + 'px');
+			$this.css('font-size', ($this.height() / 3).toString() + 'px');
 		} else if(this.labelType == 'image') {
 	
 		}
@@ -309,6 +332,10 @@ def Key(_keyData,keyboard) {
 	style active {
 		background: #76acce;
 	}
+
+	style disabled {
+		opacity: 0.5;
+	}
 	
 	css {
 		display: table-cell;
@@ -319,8 +346,9 @@ def Key(_keyData,keyboard) {
 		color: #FFF;
 		padding: 0;
 		outline: none;
-		-webkit-border-radius: 2px;
-		border-radius: 2px;
+		-webkit-border-radius: 0px;
+		border-radius: 0px;
+		overflow: hidden;
 	}
 	
 	my label {
@@ -330,6 +358,18 @@ def Key(_keyData,keyboard) {
 			background-repeat: no-repeat;
 			background-size: auto 60%;
 			background-position: center;
+		}
+	}
+
+	my bar {
+		css {
+			display: none;
+			bottom: 0;
+			position: absolute;
+			width: 100%;
+			height: 10%;
+			background: #FFF;
+			opacity: 0.05;
 		}
 	}
 	

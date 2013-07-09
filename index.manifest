@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 1.0 5-26-2013
+#version 0.0.12 6-10-2013
 
 CACHE:
 
@@ -8,40 +8,55 @@ CACHE:
 
 
 #internal HTML documents
+index.php
 
 
 #style sheets
-http://192.168.0.3:8888/Sigmabox/css/style.css
-http://192.168.0.3:8888/Sigmabox/js/lib/mathquill/mathquill.css
+css/style.css
+js/lib/mathquill/mathquill.css
 
 #style sheet images
 
 
 #javascript files
-chrome-extension://kajfghlhfkcocafkcjlajldicbikpgnp/catcher.js
-http://192.168.0.3:8888/Sigmabox/js/lib/jquery.js
-http://192.168.0.3:8888/Sigmabox/js/lib/jquery.easing.js
-http://192.168.0.3:8888/Sigmabox/js/lib/mathquill/mathquill.js
-http://192.168.0.3:8888/Sigmabox/js/m/Parser.js
-http://192.168.0.3:8888/Sigmabox/js/m/Evaluator.js
-http://192.168.0.3:8888/Sigmabox/js/m/Functions.js
-http://192.168.0.3:8888/Sigmabox/js/m/Solver.js
-http://192.168.0.3:8888/Sigmabox/js/v/Touch.elm
-http://192.168.0.3:8888/Sigmabox/js/v/Button.elm
-http://192.168.0.3:8888/Sigmabox/js/v/Keyboard.elm
-http://192.168.0.3:8888/Sigmabox/js/v/MathInput.elm
-http://192.168.0.3:8888/Sigmabox/js/v/REPL.elm
-http://192.168.0.3:8888/Sigmabox/js/v/Toolbar.elm
-http://192.168.0.3:8888/Sigmabox/js/v/Notification.elm
-http://192.168.0.3:8888/Sigmabox/js/c/Application.js
-http://192.168.0.3:8888/Sigmabox/js/c/Resource.js
-http://192.168.0.3:8888/Sigmabox/js/c/Storage.js
-http://192.168.0.3:8888/Sigmabox/js/c/Utils.js
-http://192.168.0.3:8888/Sigmabox/js/c/KeyInput.js
-http://192.168.0.3:8888/Sigmabox/js/c/Sound.js
-http://192.168.0.3:8888/Sigmabox/js/lib/elemental.js
-http://192.168.0.3:8888/Sigmabox/js/interaction.js
-chrome-extension://homgcnaoacgigpkkljjjekpignblkeae/detector.js
+js/lib/jquery.js
+js/lib/jquery.easing.js
+js/lib/mathquill/mathquill.js
+js/m/Parser.js
+js/m/Evaluator.js
+js/m/Functions.js
+js/m/Solver.js
+js/v/UI.elm
+js/v/Keyboard.elm
+js/v/MathInput.elm
+js/v/REPL.elm
+js/v/Components.elm
+js/v/Notification.elm
+js/c/Application.js
+js/c/Resource.js
+js/c/Storage.js
+js/c/Utils.js
+js/c/KeyInput.js
+js/c/Sound.js
+js/lib/elemental.js
+js/interaction.js
+
+res/xml/keyboards/main.xml
+res/xml/keyboards/constants.xml
+res/xml/keyboards/variables.xml
+res/xml/keyboards/advanced.xml
+
+res/img/keys/left.png
+res/img/keys/right.png
+res/img/keys/delete.png
+res/img/background.png
+
+res/sounds/KeypressDelete.mp3
+res/sounds/KeypressStandard.mp3
+
+res/fonts/Roboto-Regular-webfont.ttf
+js/lib/mathquill/font/Symbola.ttf
+
 
 NETWORK:
 *

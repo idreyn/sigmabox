@@ -238,18 +238,7 @@ var elm;
             if (elm.def(type)) {
                 return elm.def(type).call(null, rest, null);
             } else {
-                throw new Error("[Elemental] Can't find type " + type + ".");
-            }
-        },
-        elmify: function(el) {
-            for(var def in elm._definitions) {
-                $(el).find('.' + def).toArray().map(function(child) {
-                    if(!$(child).hasClass('elm-init')) {
-                        console.log('go',$(child).attr('class'));
-                        elm.apply(child,def);
-                    }
-                });
-                if($(el).hasClass(def) && !$(el).hasClass('elm-init')) elm.apply(el,def);
+                throw new Error("Elm: Can't find type " + type + ".");
             }
         },
         apply: function () {
@@ -260,11 +249,11 @@ var elm;
             if (elm.def(type)) {
                 return elm.def(type).call(null, rest, el);
             } else {
-                throw new Error("[Elemental] Can't find type " + type + ".");
+                throw new Error("Elm: Can't find type " + type + ".");
             }
         },
-        extend: function(el,type,frame) {
-        	return elm.def(type).call(null,frame || [],el,false);
+        extend: function(el,type) {
+        	return elm.def(type).call(null,[],el,false);
         },
         using: function () {
             var files = elm._argarr(arguments),
@@ -275,8 +264,10 @@ var elm;
             if(files.length == 0) cb();
             var i = 0;
             files.forEach(function (file) {
-                $.get(file, {}, function (data) {
-                    elm.parse(data,file);
+                $.get(file, {
+                    rand: Math.random()
+                }, function (data) {
+                    elm.parse(data);
                     i++;
                     if (i == files.length) {
                         if (cb) cb.call();
@@ -284,9 +275,7 @@ var elm;
                 });
             });
         },
-        parse: function(file,filename,lineOffset,depthOffset,add) {
-
-            if(add !== false) add = true;
+        parse: function(file,filename,lineOffset,depthOffset) {
 
             var str = {};
 
@@ -359,7 +348,7 @@ var elm;
                 lineNumber = 0;
                 expectable = {
                     'DEFINITION': 'def',
-                    'BLOCK': ['html','contents','css','method','on','extends','find','my','style','hover','focus','constructor'],
+                    'BLOCK': ['html','css','method','on','extends','find','my','style','hover','focus','constructor'],
                     'CONTENTS': ''
                 };
 
@@ -384,7 +373,6 @@ var elm;
                 var map = {
                     'extends': 'extensor',
                     'html': 'html',
-                    'contents': 'contents',
                     'css': 'css',
                     'style': 'style',
                     'hover': 'hover',
@@ -406,14 +394,6 @@ var elm;
                 throw '[' + filename + ', line ' + (lineNumber + lineOffset) + '] ' + description;
             }
 
-            function warn(description) {
-                console.warn('[' + filename + ', line ' + (lineNumber + lineOffset) + '] ' + description);   
-            }
-
-            function warn_about_braces() {
-               // warn('Braces are deprecated in favor of whitespace demarcation');
-            }
-
             function error_unexpected_block_argument(str,kw) {
                 error(str + ' is invalid after ' + kw);
             }
@@ -429,7 +409,6 @@ var elm;
             }
 
             function add_block(currentBlockBody) {
-                currentBlockBody.definition = currentDefinition;
                 parse_body(currentBlockBody,currentBlock,collect);
                 currentDefinition.body.push(currentBlockBody);
             }
@@ -439,11 +418,7 @@ var elm;
             }
 
             function parse_definition_signature(def,signature) {
-                if (signature.charAt(signature.length - 1) == '{') {
-                    warn('Braces are deprecated in favor of whitespace demarcation');
-                    signature = signature.slice(0,-1);
-                }
-                var reg = /^([A-Za-z0-9_\-]*)(\([A-Za-z0-9_=\"\'\.\,\s]*\))?$/;
+                var reg = /^([A-Za-z0-9_]*)(\([A-Za-z0-9_,]*\))?$/;
                 var res = signature.match(reg);
                 if(!res || !res[1]) {
                     error('"' + signature + '" is not a valid definition signature');
@@ -451,22 +426,10 @@ var elm;
                     def.name = res[1];
                     if(res[2]) {
                         def.parameters = res[2].slice(1,res[2].length - 1).split(',').map(function(k) {
-                            var s = k.split('=').map(StringUtil.trim);
-                            if(s.length > 1) {
-                                var val = s[1];
-                                if(val.charAt(0) == '"' || val.charAt(0) == "'") {
-                                    val = val.slice(1,-1);
-                                }
-                                return {
-                                    name: s[0],
-                                    value: val
-                                };
-                            } else {
-                                return {
-                                    name: k,
-                                    value: null
-                                };
-                            }
+                            return {
+                                name: k,
+                                value: null
+                            };
                         })
                     } else {
                         def.parameters = [];
@@ -492,7 +455,7 @@ var elm;
                         }
                         break;
                     case 'on':
-                        var reg = /^([A-Za-z0-9_\-\s]*)(\([A-Za-z0-9_,]*\))?$/;
+                        var reg = /^([A-Za-z0-9_]*)(\([A-Za-z0-9_,]*\))?$/;
                         var res = signature.match(reg);
                         if(!res || !res[1]) {
                             error('"' + signature + '" is not a valid event handler signature');
@@ -518,9 +481,6 @@ var elm;
 
             function parse_body(def,kw,body) {
                 var res;
-                if(kw != 'my' && kw != 'find') {
-                    body = body.map(str.trim);
-                }
                 switch(kw) {
                     case 'css':
                     case 'hover':
@@ -531,8 +491,8 @@ var elm;
                             var r = line.split(':'),
                                 prop = str.trim(r[0]),
                                 value = str.trim(r[1]);
-                            if (value.charAt(value.length - 1) == ';') {
-                                value = value.slice(0, -1);
+                            if (prop.charAt(prop.length - 1) == ';') {
+                                prop = prop.slice(0, prop.length - 1);
                             }
                             return {
                                 prop: prop,
@@ -546,25 +506,7 @@ var elm;
                     case 'on':
                         // Javascript
                         res = body.join('\n');
-                        // A little bit of syntactic sugar: @my-element becomes my('my-element')
-                        res = res.replace(/@[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
-                            return "my('" + s.slice(1) + "')"
-                        });
-                        // ...and #my-element becomes $my('my-element') except in a few cases
-                         res = res.replace(/\$[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
-                            if(['parent','this','root','my'].indexOf(s.slice(1)) == -1) {
-                                return "$my('" + s.slice(1) + "')"
-                            } else {
-                                return s;
-                            }
-                        });
-                        // And use # as a 'fat arrow' to bind methods to their owners
-                        // this.#myMethod -> $.proxy(this.myMethod,this)
-                        res = res.replace(/this.#([A-Za-z][A-Za-z0-9_\-]*)/g, function(s) {
-                            return '$.proxy(' + s.split('#').join('') + ',this)';
-                        });
                         break;
-                    case 'contents':
                     case 'html':
                         // HTML
                         res = body.join('\n');
@@ -572,20 +514,14 @@ var elm;
                         break;
                     case 'extends':
                         // List of superclasses
-                        res = body.filter(str.nonEmpty);
-                        def.supers = res;
+                        res = str.split(body,[',','\n']).filter(str.nonEmpty);
                         break;
                     case 'find':
-                        var newBody = 'def ' + def.name + '\n';
-                        newBody +=  strip_depth(body,1).join('\n');
-                        res = elm.parse(newBody,filename,lineNumber,0,false);
-                        res = res[0];
-                        res = res.body;
                     case 'my':
                         // Subdefinition (recursive)
                         var newBody = 'def ' + def.name + '\n';
                         newBody +=  strip_depth(body,1).join('\n');
-                        res = elm.parse(newBody,filename,lineNumber,0,false);
+                        res = parse(newBody,filename,lineNumber);
                         res = res[0];
                         def.name = res.name;
                         def.parameters = res.parameters;
@@ -593,109 +529,86 @@ var elm;
                 }
                 def.body = res;
             }
-            try {
-                while(lines.length > 0) {
-                    line = lines.shift();
-                    lineNumber++;
-                    var depth = getDepth(line);
-                    var split = line.split(' ').map(str.trim);
-                    var first = split[0]
-                    var rest = split[1];
-                    if(first.length == 0) {
-                        // Line is whitespace
-                        continue;
-                    }
-                    if(first.slice(0,2) == '//') {
-                        continue;
-                    }
-                    if(depth < 2 && first == '}') {
-                        warn_about_braces();
-                        continue;
-                    }
-                    if(depth == 0) {
-                        expect = 'DEFINITION';
-                    }
-                    if(depth == 1) {
-                        expect = 'BLOCK';
-                    }
-                    if(depth > 1) {
-                        expect = 'CONTENTS';
-                        if(!currentBlock) {
-                            error('Saw ' + first + ' where a BLOCK was expected');
-                        }
-                    }
-                    if(expect != 'CONTENTS' && expectable[expect].indexOf(first) == -1) {
-                        error('Expected a ' + expect + ' but got ' + first + ' which is a ' + keyword_category(first) + ' instead');
-                    }
-                    // Okay, now we can assume that we got a valid keyword for this depth
-                    if(depth == 0) {
-                        // Clean up from the last definition
-                        if(currentBlock) {
-                            add_block(currentBlockBody);
-                        }
-                        if(currentDefinition) {
-                            add_definition(currentDefinition);
-                        }
-                        currentBlockBody = null;
-                        currentBlock = null;
-                        currentDefinition = {
-                            body: []
-                        };
-                        if (rest.charAt(rest.length - 1) == '{') {
-                            warn_about_braces();
-                            rest = rest.slice(0,-1);
-                        }
-                        parse_definition_signature(currentDefinition,rest);
-                    }
-                    if(depth == 1) {
-                        if(currentBlock) {
-                            add_block(currentBlockBody);
-                        }
-                        collect = [];
-                        currentBlock = first;
-                        currentBlockBody = {
-                            body: ''
-                        }
-                        if (rest.charAt(rest.length - 1) == '{') {
-                            warn_about_braces();
-                            rest = rest.slice(0,-1);
-                        }
-                        switch(first) {
-                            case 'html':
-                            case 'contents':
-                            case 'css':
-                            case 'hover':
-                            case 'focus':
-                            case 'constructor':
-                            case 'extends':
-                                expect_empty(rest) || error_unexpected_block_argument(rest,first);
-                                break;
-                            default:
-                                !expect_empty(rest) || error_expected_block_argument(first);
-                        }
-                        parse_block_signature(currentBlockBody,first,rest);
-                    }
-                    if(depth > 1) {
-                        collect.push(line);
+
+            while(lines.length > 0) {
+                line = lines.shift();
+                lineNumber++;
+                var depth = getDepth(line);
+                var split = line.split(' ').map(str.trim);
+                var first = split[0]
+                var rest = split[1];
+                if(first.length == 0) {
+                    // Line is whitespace
+                    continue;
+                }
+                if(depth == 0) {
+                    expect = 'DEFINITION';
+                }
+                if(depth == 1) {
+                    expect = 'BLOCK';
+                }
+                if(depth > 1) {
+                    expect = 'CONTENTS';
+                    if(!currentBlock) {
+                        error('Saw ' + first + ' where a BLOCK was expected');
                     }
                 }
-            } catch(e) {
-                error(e);
+                if(expect != 'CONTENTS' && expectable[expect].indexOf(first) == -1) {
+                    error('Expected a ' + expect + ' but got ' + first + ' which is a ' + keyword_category(first) + ' instead');
+                }
+                // Okay, now we can assume that we got a valid keyword for this depth
+                if(depth == 0) {
+                    // Clean up from the last definition
+                    if(currentBlock) {
+                        add_block(currentBlockBody);
+                    }
+                    if(currentDefinition) {
+                        add_definition(currentDefinition);
+                    }
+                    currentBlockBody = null;
+                    currentBlock = null;
+                    currentDefinition = {
+                        body: []
+                    };
+                    parse_definition_signature(currentDefinition,rest);
+                }
+                if(depth == 1) {
+                    if(currentBlock) {
+                        add_block(currentBlockBody);
+                    }
+                    collect = [];
+                    currentBlock = first;
+                    currentBlockBody = {
+                        body: ''
+                    }
+                    switch(first) {
+                        case 'html':
+                        case 'css':
+                        case 'hover':
+                        case 'focus':
+                        case 'constructor':
+                        case 'extends':
+                            expect_empty(rest) || error_unexpected_block_argument(rest,first);
+                            break;
+                        default:
+                            !expect_empty(rest) || error_expected_block_argument(first);
+                    }
+                    parse_block_signature(currentBlockBody,first,rest);
+                }
+                if(depth > 1) {
+                    collect.push(line);
+                }
             }
 
             if(currentBlockBody) add_block(currentBlockBody);
             if(currentDefinition) add_definition(currentDefinition);
 
-            if(add) {
-                definitions.map(function(def) {
-                    elm._definitions[def.name] = elm.createConstructor(def);
-                        $('.' + def.name).each(function () {
-                            elm.apply(this, def.name);
-                    });
+            return definitions.map(function(def) {
+                elm._definitions[def.name] = elm.createConstructor(def);
+                    $('.' + def.name).each(function () {
+                        elm.apply(this, def.name);
                 });
-            }
-
-            return definitions;
+            })
         },       
         createConstructor: function (definition, root) {
             if (root === undefined) root = true;
@@ -703,23 +616,17 @@ var elm;
                 var frame = {},
                 i;
                 if (fireReady === undefined) fireReady = true;
-                if(args instanceof Array) {
-                    for (i = 0; i < definition.parameters.length; i++) {
-                        if (args[i] !== undefined) {
-                            frame[definition.parameters[i].name] = args[i];
-                        } else {
-                            if(!self || self[definition.parameters[i].name] === undefined) {
-                                frame[definition.parameters[i].name] = definition.parameters[i].value;
-                            }
-                        }
+                for (i = 0; i < definition.parameters.length; i++) {
+                    if (args[i] !== undefined) {
+                        frame[definition.parameters[i].name] = args[i];
+                    } else {
+                        frame[definition.parameters[i].name] = definition.parameters[i].value
                     }
-                } else {
-                    frame = args || {};
                 }
-                if(self) self.__elemental = true;
+
                 definition.body.forEach(function (selector) {
                 	//try {
-                    	self = elm.applyBlockTo(self, selector, frame, null, root);
+                    	self = elm.applySelectorTo(self, selector, frame, null, root);
                     //} catch(e) {
                    // 	throw new Error('To create an element with elm.create(), its definition must begin with an html block.');
                   //  }
@@ -765,10 +672,6 @@ var elm;
                 self.$my = function(type) {
                     return $(self).find('.' + type);
                 };
-                self.named = function(name) {
-                    $(self).addClass(name);
-                    return self;
-                }
                 self.____construct();
                 $(self).find('*').each(function() {
                     if(this.____construct) {
@@ -781,7 +684,7 @@ var elm;
                 return self;
             };
         },
-        applyBlockTo: function (__el__, __selector__, __frame__, parent, root) {
+        applySelectorTo: function (__el__, __selector__, __frame__, parent, root) {
             // All of these underscores are to avoid namespace pollution...
             // These local variables will be closed under eval(), so we need
             // to make them as hard to access as possible.
@@ -795,8 +698,6 @@ var elm;
                     if (!__el__) {
                         __el__ = $(markup).get(0);
                     }
-                    __el__.__elemental = true;
-                    elm.log(__frame__);
                     for (var prop in __frame__) {
                         __el__[prop] = __frame__[prop];
                     }
@@ -814,16 +715,9 @@ var elm;
                         }
                     }
                     break;
-                case 'contents':
-                    var markup = __selector__.html;
-                    for (var prop in __frame__) {
-                        markup = markup.split('$' + prop).join(__frame__[prop]);
-                    }
-                    $(__el__).html(markup);
-                    break;
                 case 'extensor':
                     __selector__.supers.forEach(function (s) {
-                        __el__ = elm.extend(__el__, s, __frame__);
+                        elm.extend(__el__, s);
                     });
                     break;
                 case 'css':
@@ -921,11 +815,7 @@ var elm;
                     $(__el__).bind(__selector__.event, function () {
                         var __args__ = elm._argarr(arguments);
                         var ____func = 'var __func__ = function(' + __selector__.parameters.join(',') + ') { ';
-                        ____func += 'try {';
                         ____func += __selector__.body;
-                        ____func += '} catch(e) {';
-                        ____func += 'throw "Elemental.' + __selector__.definition.name + '#on:' + __selector__.event + ' <- " + e.valueOf();'; 
-                        ____func += '}';
                         ____func += '}';
                         eval(____func);
                         __func__.apply(__el__, __args__);
@@ -936,11 +826,7 @@ var elm;
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __constructor__ = function() { ';
-                    ____func += 'try {';
                     ____func += (__selector__.body && __selector__.body.length > 0) ? __selector__.body : '';
-                    ____func += '} catch(e) {';
-                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#(constructor) <- " + e.valueOf();'; 
-                    ____func += '}';
                     ____func += '}';
                     try {
                         eval(____func);
@@ -953,11 +839,7 @@ var elm;
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __method__ = function(' + __selector__.parameters.join(',') + ') {';
-                    ____func += 'try {';
                     ____func += __selector__.body;
-                    ____func += '} catch(e) {';
-                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#' + __selector__.name + '<- " + e.valueOf();'; 
-                    ____func += '}';
                     ____func += '}';
                     eval(____func);
                     __el__[__selector__.name] = __method__;
@@ -965,7 +847,7 @@ var elm;
                 case 'subselector':
                     $(__el__).find(__selector__.cssSelector).each(function (i, e) {
                         __selector__.body.forEach(function (block) {
-                            elm.applyBlockTo(e, block, __frame__, __el__, root);
+                            elm.applySelectorTo(e, block, __frame__, __el__, root);
                         });
                     });
                     break;
@@ -973,7 +855,7 @@ var elm;
                     __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);
                     $(__el__).find('.' + __selector__.name).each(function (i, e) {
                         __selector__.body.forEach(function (block) {
-                            elm.applyBlockTo(e, block, __frame__, __el__, root);
+                            elm.applySelectorTo(e, block, __frame__, __el__, root);
                         });
                         e.$ = $(e);
                         e.____construct = function() {
@@ -988,10 +870,6 @@ var elm;
                     break;
             };
             return __el__;
-        },
-        log: function() {
-            var args = elm._argarr(arguments);
-            if(elm.verbose) console.log.apply(console,arguments);
         }
     };
 

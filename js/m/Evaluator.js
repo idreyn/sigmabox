@@ -1,11 +1,21 @@
-function Frame(src) {
+function Frame(src,parent) {
 	this.src = src || {};
+	this.parent = parent;
 }
 
 Frame.prototype.lookup = function(symbol) {
 	var res = this.src[symbol.name || symbol];
 	if(!isNaN(res)) res = new Value(res);
+	if(res === undefined) {
+		if(this.parent) {
+			res = this.parent.lookup(symbol);
+		}
+	}
 	return res;
+}
+
+Frame.prototype.set = function(k,v) {
+	this.src[k] = v;
 }
 
 function Value(real,complex,unit) {
@@ -61,6 +71,8 @@ Value.prototype.toFloat = function() {
 	return this.real;
 }
 
+Value.prototype.decimalize = Value.prototype.toFloat;
+
 Value.prototype.round = function(p) {
 	return new Value(
 		Functions.round(this.real,p),
@@ -81,6 +93,14 @@ Value.prototype.toComplexTrigForm = function() {
 		argument: argument
 	};
 
+}
+
+Value.prototype.serialize = function() {
+	return {
+		type: 'Value',
+		real: this.real,
+		complex: this.complex
+	};
 }
 
 Value.prototype.complexConjugate = function() {
@@ -104,7 +124,7 @@ Value.prototype.inverse = function() {
 
 Value.prototype.reduce = function() {
 	return this;
-}
+} 
 
 Value.prototype.add = function(other) {
 	if(!isNaN(other)) {
@@ -240,7 +260,7 @@ Mult.prototype.valueOf = function(frame) {
 		if(a.val instanceof Vector || b.val instanceof Vector) {
 			if(a.val instanceof Vector && b.val instanceof Vector) {
 				var op = b.productType;
-				//console.log(a,b);
+				//// // console.log(a,b);
 				if(op == 'cross') {
 					return a.val.cross(b.val);
 				} else if(op == 'dot') {
@@ -275,7 +295,7 @@ Factor.prototype.valueOf = function(frame) {
 	if(this.inv) {
 		return this.val.valueOf(frame).inverse();
 	} else {
-		//console.log(this.val,this.val.valueOf());
+		//// // console.log(this.val,this.val.valueOf());
 		return this.val.valueOf(frame);
 	}
 }
@@ -374,7 +394,7 @@ Frac.prototype.valueOf = function(frame) {
 }
 
 Frac.prototype.add = function(other) {
-	//console.log(this,other);
+	//// // console.log(this,other);
 	return new Frac(
 		this.top.mult(other.bottom || new Value(1)).add(this.bottom.mult(other.top || other)),
 		this.bottom.mult(other.bottom || new Value(1))
@@ -434,6 +454,14 @@ Frac.prototype.toFloat = function() {
 	return this.decimalize().toFloat();
 }
 
+Frac.prototype.serialize = function() {
+	return {
+		type: 'Frac',
+		top: this.top.serialize(),
+		bottom: this.bottom.serialize()
+	};
+}
+
 function Pow(base,power) {
 	this.base = base;
 	this.power = power;
@@ -446,7 +474,7 @@ Pow.prototype.valueOf = function(frame) {
 		p = p.decimalize();
 	}
 	if(b instanceof Value) {
-		if(!b.complex && !p.complex) {
+		if(!b.complex && !p.complex && b.real > 0) {
 			return new Value(Math.pow(b.real,p.real));
 		} else {
 			var c = Functions.complexRaise(b,p);
@@ -637,7 +665,7 @@ Vector.prototype.toString = function() {
 Vector.prototype.toStringPolar = function(rads) {
 	var v = this.valueOf();
 	if(v.args.length != 2) {
-		throw "Cannot express this vector as polar"
+		throw 'Dimension error';
 	}
 	if(v.args[0] instanceof Frac) v.args[0] = v.args[0].decimalize();
 	if(v.args[1] instanceof Frac) v.args[1] = v.args[1].decimalize();
@@ -650,20 +678,136 @@ Vector.prototype.toStringPolar = function(rads) {
 	return magnitude.toString(3) + '\u2220' + angle.toString(3) + (rads? '' : '\u00B0');
 }
 
-function Derivative(e) {
-	this.expression = e;
+Vector.prototype.serialize = function() {
+	return {
+		type: 'Vector',
+		args: this.args.map(function(arg) {
+			return arg.serialize();
+		})
+	};
 }
 
-Derivative.prototype.at = function(x) {
+function Derivative(e,wrt,at) {
+	this.expression = e;
+	this.wrt = wrt;
+	this.x = at;
+}
+
+Derivative.prototype.at = function(x,wrt,frame) {
+	x = x.valueOf(frame);
+	if(x.toFloat) x = x.toFloat();
+	wrt  == this.wrt || 'x'
+	var f = new Frame({},frame);
 	var dx = 0.00000001;
-	var y2 = this.expression.valueOf(new Frame({
-		x: x + dx
-	}));
-	var y1 = this.expression.valueOf(new Frame({
-		x: x
-	}));
-	return new Frac(
-		y2.subtract(y1),
-		dx
-	).decimalize().round(4);
+	f.set(wrt,x + dx);
+	var y2 = this.expression.valueOf(f).toFloat();
+	f.set(wrt,x);
+	var y1 = this.expression.valueOf(f).toFloat();
+	// // console.log(y2,y1);
+	return new Value((y2-y1)/dx).round(3);
+}
+
+Derivative.prototype.valueOf = function(frame) {
+	app.storage.calcInCurrentExpression = true;
+	app.storage.realTrigMode = app.storage.trigUseRadians;
+	app.storage.trigUseRadians = true;
+	return this.at(this.x,this.wrt || 'x',frame);
+}
+
+function Integral(a,b,f,x) {
+	this.lower = a;
+	this.upper = b;
+	this.integrand = f;
+	this.wrt = x;
+}
+
+Integral.prototype.valueOf = function(frame) {
+	app.storage.calcInCurrentExpression = true;
+	app.storage.realTrigMode = app.storage.trigUseRadians;
+	app.storage.trigUseRadians = true;
+	var	a = this.lower.valueOf(frame).toFloat(),
+		b = this.upper.valueOf(frame).toFloat(),
+		n = 2000,
+		dx = Math.abs((a - b) / n),
+		f = new Frame({},frame),
+		sum = 0,
+		heights = [],
+		flip,
+		inter;
+	if(a > b) {
+		inter = a;
+		a = b;
+		b = inter;
+		flip = true;
+	}
+	if(dx == 0 || isNaN(dx)) return 0;
+	for(var i = a; i <= b; i += dx) {
+		i = Functions.round(i,5);
+		f.set(this.wrt,i);
+		var r = this.integrand.valueOf(f).toFloat();
+		heights.push(r);
+	}
+	sum = heights[0];
+	for(var i = 1; i < n; i++) {
+		sum += 2 * heights[i];
+	}
+	sum += heights[heights.length - 1];
+	// // console.log(heights[heights.length - 1]);
+	sum *= dx * 0.5;
+	if(flip) sum *= -1;
+	return new Value(sum).round(1);
+}
+
+Integral.prototype.toString = function() {
+	return 'int ' + this.lower.toString() + ', ' + this.upper.toString() + ': ' + this.integrand.toString() + ' d' + this.wrt;
+}
+
+function Sum(index,lower,upper,f) {
+	this.index = index;
+	this.lower = lower;
+	this.upper = upper;
+	this.f = f;
+}
+
+Sum.prototype.valueOf = function(frame) {
+	var a = this.lower.valueOf(frame),
+		b = this.upper.valueOf(frame),
+		sum = new Value(0);
+		fr = new Frame({},frame);
+	if(a.toFloat() > b.toFloat()) {
+		throw "Invalid bounds";
+	}
+	for(var i=a;i<=b;i++) {
+		fr.set(this.index,i);
+		sum = new Add([
+			sum,
+			this.f.valueOf(fr)
+		]).valueOf(frame);
+	}
+	return sum;
+}
+
+function Product(index,lower,upper,f) {
+	this.index = index;
+	this.lower = lower;
+	this.upper = upper;
+	this.f = f;
+}
+
+Product.prototype.valueOf = function(frame) {
+	var a = this.lower.valueOf(frame),
+		b = this.upper.valueOf(frame),
+		prod = new Value(1);
+		fr = new Frame({},frame);
+	if(a.toFloat() > b.toFloat()) {
+		throw "Invalid bounds";
+	}
+	for(var i=a;i<=b;i++) {
+		fr.set(this.index,i);
+		prod = new Mult([
+			prod,
+			this.f.valueOf(fr)
+		]).valueOf(frame);
+	}
+	return prod;
 }

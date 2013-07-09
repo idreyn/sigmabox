@@ -50,7 +50,6 @@ KeyInput.prototype.bind = function(src) {
 }
 
 KeyInput.prototype.keyDown = function(e) {
-	console.log(e.keyCode);
 	this.bindings.forEach(function(k) {
 		if(e.keyCode == k.keyCode && !!e.shiftKey == !!k.shiftKey) {
 			try {

@@ -1,10 +1,21 @@
 function Storage() {
-	this.initConstants();
-	this.trigMode = 'degrees';
-	this.vectorDisplayMode = 'components';
+	// this.init();
 }
 
-Storage.prototype.initConstants = function() {
+Storage.prototype.toSerialize = [
+	'trigUseRadians',
+	'displayPolarVectors',
+	'displayDecimalizedFractions',
+	'currentInput',
+];
+
+Storage.prototype.init = function() {
+	this.hasDeserialized = false;
+	this.lsNamespace = 'sigmabox';
+	this.trigUseRadians = false;
+	this.displayPolarVectors = false;
+	this.displayDecimalizedFractions = false;
+
 	this.constants = {
 		'i': new Value(0,1),
 		'\\pi': new Value(Math.PI),
@@ -45,34 +56,66 @@ Storage.prototype.initConstants = function() {
 		'tan': this.wrap(Math.tan,true),
 		'ln': this.wrap(Math.log,false),
 		'log': this.wrap(function(n) {
-			return Math.log(n) / Math.LN10;
+			return Functions.round(Math.log(n) / Math.LN10,10);
 		},false)
 	}
+
+	this.deserialize();
+}
+
+
+Storage.prototype.deserialize = function() {
+	var s = JSON.parse(window.localStorage[this.lsNamespace] || '{}'),
+		self = this;
+	this.toSerialize.forEach(function(item) {
+		if(s[item] !== undefined) {
+			self[item] = s[item];
+		}
+	});
+	this.variables = this.deserializeVariables(s.variables || {});
+	this.hasDeserialized = true;
 }
 
 Storage.prototype.serialize = function() {
+	if(!this.hasDeserialized) return;
+	var s = {},
+		self = this;
+	this.toSerialize.forEach(function(item) {
+		s[item] = self[item];
+	});
+	s.variables = this.serializeVariables(this.variables);
+	window.localStorage[this.lsNamespace] = JSON.stringify(s);
+}
 
+Storage.prototype.serializeVariables = function(obj) {
+	var res = {};
+	for(var k in obj) {
+		res[k] = obj[k].toString();
+	}
+	return res;
+}
+
+Storage.prototype.deserializeVariables = function(obj) {
+	var p = new Parser(),
+		res = {};
+	for(var k in obj) {
+		res[k] = p.parse(obj[k]).valueOf(new Frame({}));
+	}
+	return res;
+}
+
+Storage.prototype.startSyncing = function() {
+	var self = this;
+	setTimeout(function() {
+		setInterval(function() {
+			self.uiSync();
+		},500);
+	},0);
 }
 
 Storage.prototype.lookup = function(symbol) {
 	symbol = symbol.name || symbol;
 	return this.constants[symbol] || this.variables[symbol] || new Value(0);
-}
-
-Storage.prototype.setTrigMode = function(b) {
-	if(b) {
-		this.trigMode = 'radians';
-	} else {
-		this.trigMode = 'degrees';
-	}
-}
-
-Storage.prototype.setVectorDisplayMode = function(b) {
-	if(b) {
-		this.vectorDisplayMode = 'polar';
-	} else {
-		this.vectorDisplayMode = 'components';
-	}
 }
 
 Storage.prototype.initVariableSave = function() {
@@ -102,7 +145,7 @@ Storage.prototype.wrap = function(lambda,isTrig,useNumber) {
 		if(isTrig) {
 			self.trigInCurrentExpression = true;
 		}
-		if(isTrig && app.storage.trigMode == 'degrees') {
+		if(isTrig && !app.storage.trigUseRadians) {
 			 // Convert given degrees to required radians
 			args = args.map(Functions.d2r);
 		}
@@ -120,4 +163,17 @@ Storage.prototype.callFunction = function(name,args) {
  		throw 'No function called ' + name;
  	}
  	return func.apply(null,args);
+ }
+
+ Storage.prototype.uiSyncSubscribe = function(el) {
+ 	$(el).addClass('sync-subscriber');
+ }
+
+ Storage.prototype.uiSyncReady = function() {
+ 	$('.sync-subscriber').trigger('syncReady');
+	this.startSyncing();
+ }
+
+ Storage.prototype.uiSync = function() {
+ 	$('.sync-subscriber').trigger('sync');
  }

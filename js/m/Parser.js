@@ -25,16 +25,21 @@ Parser.prototype.parse = function(s,topLevel) {
 	// We can leverage this by just replacing all spaces with multiplication signs.
 	// Eat it, LaTeX.
 	s = ParseUtil.replace(s,' ','\\times');
-	//console.log(s);
+	s = ParseUtil.replace(s,'..','.');
+	//// // console.log(s);
 	var p = this,
 		res = s,
 		check = [
 			p.number,
 			p.addition,
 			p.multiplication,
-			p.pow,
-			p.func,
 			p.leadingNumber,
+			p.sum,
+			p.product,
+			p.integral,
+			p.derivative,
+			p.func,
+			p.pow,
 			p.symbol,
 			p.parentheses,
 			p.brackets,
@@ -45,6 +50,7 @@ Parser.prototype.parse = function(s,topLevel) {
 	}
 	if(!ParseUtil.isClear(s,s.length)) {
 		// Mismatched braces, somewhere
+		// // console.log(s);
 		throw 'Mismatched parentheses';
 	}
 	if(ParseUtil.nextIndexOf('=',s) != -1) {
@@ -151,6 +157,107 @@ Parser.prototype.pow = function(s) {
 	}
 }
 
+Parser.prototype.integral = function(s) {
+	if(s.indexOf('\\int') === 0) {
+		s = s.slice(4);
+		var underscore = ParseUtil.nextIndexOf('_',s);
+		var caret = ParseUtil.nextIndexOf('^',s);
+		var lowerBound = s.slice(underscore + 2,caret - 1);
+		s = s.slice(caret);
+		var bracket = ParseUtil.nextIndexOf('}',s);
+		var upperBound = s.slice(2,bracket);
+		s = s.slice(bracket + 1);
+		var integrand = s.slice(0,-2).slice(1,-1);
+		var variable = s.slice(-1);
+		return new Integral(
+			this.parse(lowerBound),
+			this.parse(upperBound),
+			this.parse(integrand),
+			variable
+		);
+	} else {
+		return Parser.NO_MATCH;
+	}
+	
+}
+
+Parser.prototype.sum = function(s) {
+	if(s.indexOf('\\sum') === 0) {
+		s = s.slice(4);
+		var underscore = ParseUtil.nextIndexOf('_',s);
+		var caret = ParseUtil.nextIndexOf('^',s);
+		var lowerBound = s.slice(underscore + 2,caret - 1);
+		lowerBound = lowerBound.split('=');
+		var index = lowerBound[0];
+		lowerBound = lowerBound[1];
+		s = s.slice(caret);
+		var bracket = ParseUtil.nextIndexOf('}',s);
+		var upperBound = s.slice(2,bracket);
+		s = s.slice(bracket + 1);
+		var func = s.slice(1,-1);
+		return new Sum(
+			index,
+			this.parse(lowerBound),
+			this.parse(upperBound),
+			this.parse(func)
+		);
+	} else {
+		return Parser.NO_MATCH;
+	}
+	
+};
+
+Parser.prototype.product = function(s) {
+	if(s.indexOf('\\prod') === 0) {
+		s = s.slice(5);
+		var underscore = ParseUtil.nextIndexOf('_',s);
+		var caret = ParseUtil.nextIndexOf('^',s);
+		var lowerBound = s.slice(underscore + 2,caret - 1);
+		lowerBound = lowerBound.split('=');
+		var index = lowerBound[0];
+		lowerBound = lowerBound[1];
+		s = s.slice(caret);
+		var bracket = ParseUtil.nextIndexOf('}',s);
+		var upperBound = s.slice(2,bracket);
+		s = s.slice(bracket + 1);
+		var func = s.slice(1,-1);
+		return new Product(
+			index,
+			this.parse(lowerBound),
+			this.parse(upperBound),
+			this.parse(func)
+		);
+	} else {
+		return Parser.NO_MATCH;
+	}
+	
+};
+
+Parser.prototype.derivative = function(s) {
+	if(s.indexOf('\\frac{d}{d') == 0) {
+		var rest = s.slice(10),
+			wrt = rest.charAt(0);
+		var endParen = ParseUtil.nextIndexOf(')',s),
+			inner = this.parse(s.slice(13,endParen)),
+			eq = s.slice(endParen+3,s.length-1),
+			eqS = eq.split('='),
+			wrt2 = eqS[0],
+			at = this.parse(eqS[1]);
+		if(wrt != wrt2) {
+			throw 'Derivative error';
+		}
+		// // console.log(inner,wrt,at);
+		return new Derivative(
+			inner,
+			wrt,
+			at
+		);
+
+	}
+	return Parser.NO_MATCH;
+}
+
+
 Parser.prototype.func = function(s) {
 	var self = this;
 	if(s.charAt(0) == "\\") {
@@ -175,11 +282,11 @@ Parser.prototype.func = function(s) {
 			var func = s.slice(1,firstBrace);
 			if(func.indexOf('\\') != -1) {
 				// We've caught a situation like \pi\epsilon_{0}.
-				//console.log('FUNC',func);
+				//// // console.log('FUNC',func);
 				var ind = func.indexOf('\\');
 				var first = func.slice(0,ind);
 				var rest = func.slice(ind + 1);
-				//console.log('BWA',first,rest,s.slice(firstBrace));
+				//// // console.log('BWA',first,rest,s.slice(firstBrace));
 				return new Mult([
 					this.parse('\\' + first),
 					this.parse('\\' + rest + s.slice(firstBrace))
@@ -194,7 +301,7 @@ Parser.prototype.func = function(s) {
 				firstCharNextSet = rest.charAt(0);
 			}
 			var res;
-			//console.log(func,args);
+			//// // console.log(func,args);
 			if(func == 'frac') {
 				// Create a fraction object
 				res = new Frac(

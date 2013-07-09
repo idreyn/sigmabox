@@ -1,5 +1,12 @@
 function Resource() {
-	this.disableCache = true;
+	this.disableCache = false;
+	this.sounds = {};
+	this.images = {};
+	this.init();
+}
+
+Resource.prototype.init = function() {
+	this.sounds.keyPress = new SoundBank('res/sounds/KeypressStandard.mp3');
 }
 
 Resource.prototype.loadXML = function(path,callback) {

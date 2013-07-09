@@ -1931,7 +1931,7 @@ var Bracket = P(MathCommand, function(_, _super) {
 var Matrix =
 LatexCmds.matrix = P(MathCommand, function(_, _super) {
   _.ctrlSeq = '\\matrix';
-  _.htmlTemplate = '<table class="mtable"><tr class="mtr"><td class="mtd"></td></tr></table>';
+  _.htmlTemplate = '<table class="mtable">&0</table>';
   _.latex = function() {
     return '\\begin{matrix}' + this.foldChildren([], function(latex, child) {
       latex.push(child.latex());
@@ -2031,94 +2031,6 @@ LatexCmds.matrix = P(MathCommand, function(_, _super) {
   };
 });
 
-var Matrixz = LatexCmds.matrixz = function (replacedFragment) {
-  return MathCommand.call(this, '\\matrix', undefined, undefined, replacedFragment);
-}
-_ = Matrixz.prototype = new MathCommand;
-_.htmlTemplate = 
-
-_.initBlocks = function(replacedFragment) {
-  var self = this;
-
-  var newBlock, prev;
-  this.firstChild = newBlock = prev =
-    (replacedFragment && replacedFragment.blockify()) || new MathBlock;
-
-  newBlock.jQ = $("&lt;span>&lt;/span>")
-    .data(jQueryDataKey, {block: newBlock})
-    .append(newBlock.jQ)
-    .appendTo(self.jQ.find("td"));
-
-  newBlock.blur();
-  self.lastChild = newBlock;
-  newBlock.parent = self;
-};
-
-_.placeCursor = function(cursor) {
-  this.cursor = cursor.appendTo(this.firstChild);
-};
-
-_.latex = function() {
-  return '\\begin{matrix}' + this.foldChildren([], function(latex, child) {
-    latex.push(child.latex());
-    return latex;
-  }).join('\\\\') + '\\end{matrix}';
-};
-_.text = function() {
-  return '[' + this.foldChildren([], function(text, child) {
-    text.push(child.text());
-    return text;
-  }).join() + ']';
-}     
-
-_.keydown = function(e) {
-  var currentBlock = this.cursor.parent;
-  var self = this;
-  if (currentBlock.parent === this) {
-    if (e.which === 13) { //enter
-      var tr = $('tr:last', this.jQ).clone(true);
-      var cb;
-      tr.find("td").html('').each(function(){
-        $(this).addClass("mtd");  
-        var newBlock = new MathBlock;
-        cb = cb || newBlock;
-        newBlock.parent = self;
-        newBlock.jQ = $('&lt;span>&lt;/span>').data(jQueryDataKey, {block: newBlock}).appendTo(this);
-        newBlock.prev = self.lastChild;
-        self.lastChild.next = newBlock; 
-        self.lastChild = newBlock;
-        self.cursor.appendTo(newBlock);
-      });
-      self.cursor.appendTo(cb).redraw();
-      tr.appendTo(this.jQ);
-      return false;
-    }
-    else if (e.which === 9 && !e.shiftKey && !currentBlock.next && self.jQ.find("tr").length == 1) { //tab
-        var newBlock = new MathBlock;
-        newBlock.parent = this;
-        var td =  $('&lt;td class="mtd">&lt;/td>').appendTo(currentBlock.jQ.parent().parent());
-        newBlock.jQ = $('&lt;span>&lt;/span>').data(jQueryDataKey, {block: newBlock}).appendTo(td);
-        this.lastChild = newBlock;
-        currentBlock.next = newBlock;
-        newBlock.prev = currentBlock;
-        this.cursor.appendTo(newBlock).redraw();
-      return false;
-    } else if (e.which === 8) { //backspace
-      if (currentBlock.isEmpty()) {
-        if (currentBlock.prev) {
-          this.cursor.appendTo(currentBlock.prev);
-
-        } else {
-          this.cursor.insertBefore(this);
-        }
-        return false;
-      }
-      else if (!this.cursor.prev)
-        return false;
-    }
-  }
-  return this.parent.keydown(e);
-};
 
 LatexCmds.left = P(MathCommand, function(_) {
   _.parser = function() {

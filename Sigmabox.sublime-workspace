@@ -4,12 +4,84 @@
 		"selected_items":
 		[
 			[
-				"to",
-				"trigFormComplex"
+				"va",
+				"valueOf"
+			],
+			[
+				"lo",
+				"lowerBound"
+			],
+			[
+				"disa",
+				"disabled"
+			],
+			[
+				"tri",
+				"trigUseRadians"
+			],
+			[
+				"tr",
+				"trigUseRadians"
+			],
+			[
+				"norm",
+				"normalized_guess"
+			],
+			[
+				"ddx",
+				"ddxSteadyCount"
+			],
+			[
+				"act",
+				"activeSubkey"
+			],
+			[
+				"seri",
+				"serializeValues"
+			],
+			[
+				"accep",
+				"acceptActionInput"
+			],
+			[
+				"uiS",
+				"uiSyncReady"
+			],
+			[
+				"vec",
+				"vectorDisplayMode"
 			],
 			[
 				"trig",
-				"trigInCurrentExpression"
+				"trigMode"
+			],
+			[
+				"sync",
+				"syncProperty"
+			],
+			[
+				"curren",
+				"currentInput"
+			],
+			[
+				"fractio",
+				"fractionDisplayMode"
+			],
+			[
+				"defi",
+				"definitions"
+			],
+			[
+				"currentBlock",
+				"currentBlockBody"
+			],
+			[
+				"current",
+				"currentDefinition"
+			],
+			[
+				"to",
+				"trigFormComplex"
 			],
 			[
 				"lab",
@@ -48,147 +120,37 @@
 	"buffers":
 	[
 		{
-			"file": "js/c/Application.js",
+			"file": "index.php",
 			"settings":
 			{
-				"buffer_size": 2323,
+				"buffer_size": 3309,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "index.html",
+			"file": "js/v/Grapher.elm",
 			"settings":
 			{
-				"buffer_size": 2069,
+				"buffer_size": 368,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "css/style.css",
+			"file": "index.manifest",
 			"settings":
 			{
-				"buffer_size": 9262,
+				"buffer_size": 939,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "js/c/KeyInput.js",
+			"contents": "<!DOCTYPE html>\n	<head>\n		<title>New Parser Tests</title>\n		<script type='text/javascript' src='js/lib/jquery.js'></script>\n		<script type='text/javascript' src='js/sb-parse-whitespace.js'></script>\n		<script type='text/javascript' src='js/elemental-whitespace.js'></script>\n	</head>\n	<body>\n\n	</body>\n</html>",
+			"file": "newparser.html",
+			"file_size": 309,
+			"file_write_time": 1370579755000000,
 			"settings":
 			{
-				"buffer_size": 208,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/c/Storage.js",
-			"settings":
-			{
-				"buffer_size": 3585,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Applications/MAMP/htdocs/Nydell/functions.js",
-			"settings":
-			{
-				"buffer_size": 18382,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Applications/MAMP/htdocs/Nydell/nydell.js",
-			"settings":
-			{
-				"buffer_size": 19625,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/m/Parser.js",
-			"settings":
-			{
-				"buffer_size": 10318,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/v/Button.elm",
-			"settings":
-			{
-				"buffer_size": 2842,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "res/xml/keyboards/variables.xml",
-			"settings":
-			{
-				"buffer_size": 3014,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/v/Keyboard.elm",
-			"settings":
-			{
-				"buffer_size": 6377,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/v/MathInput.elm",
-			"settings":
-			{
-				"buffer_size": 1015,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/m/Evaluator.js",
-			"settings":
-			{
-				"buffer_size": 12611,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/m/Functions.js",
-			"settings":
-			{
-				"buffer_size": 2008,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "res/xml/keyboards/main.xml",
-			"settings":
-			{
-				"buffer_size": 4575,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/v/REPL.elm",
-			"settings":
-			{
-				"buffer_size": 4929,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "js/v/Notification.elm",
-			"settings":
-			{
-				"buffer_size": 264,
-				"line_ending": "Unix",
-				"name": "def Notification(text) {"
-			}
-		},
-		{
-			"file": "js/v/Toolbar.elm",
-			"settings":
-			{
-				"buffer_size": 2912,
+				"buffer_size": 309,
 				"line_ending": "Unix"
 			}
 		},
@@ -196,7 +158,214 @@
 			"file": "js/lib/elemental.js",
 			"settings":
 			{
-				"buffer_size": 29759,
+				"buffer_size": 36429,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var elm;\n\n(function () {\n\n    $.holdReady(true);\n\n    var StringUtil = {};\n    var ParseUtil = {};\n\n    StringUtil.stringsAreEqual = function (s1, s2, caseSensitive) {\n        if (caseSensitive) {\n            return (s1 == s2);\n        } else {\n            return (s1.toUpperCase() == s2.toUpperCase());\n        }\n    }\n\n    StringUtil.trim = function (input) {\n        return StringUtil.ltrim(StringUtil.rtrim(input));\n    };\n\n\n    StringUtil.ltrim = function (input) {\n        var size = input.length;\n        for (var i = 0; i < size; i++) {\n            if (input.charCodeAt(i) > 32) {\n                return input.substring(i);\n            }\n        }\n        return \"\";\n    }\n\n    StringUtil.rtrim = function (input) {\n        if (!input) return '';\n        var size = input.length;\n        for (var i = size; i > 0; i--) {\n            if (input.charCodeAt(i - 1) > 32) {\n                return input.substring(0, i);\n            }\n        }\n\n        return \"\";\n    }\n\n    StringUtil.beginsWith = function (input, prefix) {\n        return (prefix == input.substring(0, prefix.length));\n    }\n\n    StringUtil.endsWith = function (input, suffix) {\n        return (suffix == input.substring(input.length - suffix.length));\n    }\n\n    StringUtil.remove = function (input, remove) {\n        return StringUtil.replace(input, remove, \"\");\n    }\n\n    StringUtil.replace = function (input, replace, replaceWith) {\n        return input.split(replace).join(replaceWith);\n    }\n\n    StringUtil.stringHasValue = function (s) {\n        //todo: this needs a unit test\n        return (s != null && s.length > 0);\n    }\n\n    StringUtil.trimslashes = function (raw) {\n        var str = new String(raw)\n        var myPattern = new RegExp(\"\\\\'\", 'g')\n        str = str.replace(myPattern, \"'\")\n        myPattern = /\\\\\\\\/g;\n        str = str.replace(myPattern, \"\\\\\")\n        return str;\n    }\n\n    ParseUtil.split = function (src, c) {\n        var r = []\n        var t = ParseUtil.findEach(src, c)\n        var index = 0\n        for (var i = 0; i < t.length; i++) {\n            if (ParseUtil.isClear(src, t[i])) {\n                r.push(src.slice(index, t[i]))\n                index = t[i] + 1\n            }\n        }\n        r.push(src.slice(index));\n        r = [r[0]].concat(r.slice(1).map(function (i) {\n            return i.slice(c.length - 1)\n        }));\n        return r\n    }\n\n\n    ParseUtil.isClear = function (src, ind) {\n        var paren = 0\n        var quote = \"\"\n        var cbracket = 0\n        var sbracket = 0\n        var bar = false\n        var t = src.charAt(ind)\n        for (var i = 0; i < ind + 1; i++) {\n            var c = src.charAt(i)\n            if ((c == \"'\" || c == '\"') && src.charAt(i - 1) != \"\\\\\") {\n                if (quote == \"\") {\n                    quote = c\n                } else if (quote == c) {\n                    quote = \"\"\n                }\n            }\n            if (quote != \"\") continue\n            if (c == \"{\") cbracket++\n            if (c == \"}\") cbracket = Math.max(cbracket - 1, 0)\n            if (c == \"[\") sbracket++\n            if (c == \"]\") sbracket--\n            if (c == \"(\") paren++\n            if (c == \")\") paren--\n            if (c == \"|\") bar = !bar;\n        }\n        if (t == \"(\") {\n            return cbracket == 0 && sbracket == 0 && paren == 1 && quote == \"\"\n\n        }\n        if (t == \"[\") {\n            return cbracket == 0 && sbracket == 1 && paren == 0 && quote == \"\"\n\n        }\n        if (t == \"{\") {\n            return cbracket == 1 && sbracket == 0 && paren == 0 && quote == \"\"\n        }\n        return cbracket == 0 && sbracket == 0 && paren == 0 && quote == \"\" && !bar;\n    }\n\n    ParseUtil.nextIndexOf = function (a, src) {\n        if (!(a instanceof Array)) {\n            a = [a];\n        };\n        for (var j = 0; j < a.length; j++) {\n            var test = a[j]\n            var arr = ParseUtil.findEach(src, test)\n            for (var k = 0; k < arr.length; k++) {\n                var i = arr[k]\n                if (ParseUtil.isClear(src, i)) {\n                    return i\n                }\n            }\n        }\n        return -1\n    }\n\n    ParseUtil.findEachClear = function (src, search) {\n        var res = ParseUtil.findEach(src, search);\n        return res.filter(function (n) {\n            return ParseUtil.isClear(src, n);\n        });\n    };\n\n    ParseUtil.findEach = function (src, search) {\n        var arr = [];\n        if (typeof search == \"string\") search = [search];\n        search.forEach(function (s) {\n            var index = -1\n            var substring = src\n            var i\n            do {\n                i = substring.indexOf(s)\n                if (i == -1) break\n                index += i + 1;\n                arr.push(index)\n                substring = substring.slice(i + 1)\n            } while (i != -1);\n        });\n\n        arr = arr.sort(function (a, b) {\n            return a - b;\n        });\n        return arr;\n    }\n\n\n    ParseUtil.completeStatement = function (src) {\n        var paren = 0\n        var quote = \"\"\n        var cbracket = 0\n        var sbracket = 0\n        var bar = false\n        var trySub = false\n        var sub = false\n        var subIndex = 0\n        var substring\n        var j = 0\n\n        for (var i = 0; i < src.length; i++) {\n            var c = src.charAt(i)\n            if ((c == \"'\" || c == '\"') && src.charAt(i - 1) != \"\\\\\") {\n                if (quote == \"\") {\n                    quote = c\n                } else if (quote == c) {\n                    quote = \"\"\n                }\n            }\n            if (quote != \"\") continue\n            if (c == \"(\") paren++\n            if (c == \")\") paren--\n            if (c == \"{\") cbracket++\n            if (c == \"}\") cbracket--\n            if (c == \"[\") sbracket++\n            if (c == \"]\") sbracket--\n            if (c == \"|\") bar = !bar\n\n        }\n        return quote == \"\" && paren == 0 && cbracket == 0 && sbracket == 0 && bar\n    }\n\n    ParseUtil.replace = function (src, from, to) {\n        return ParseUtil.split(src, from).join(to)\n    }\n\n    ParseUtil.handleEscapeChars = function (s) {\n        return s.replace(/\\\\n/g, \"\\n\").replace(/\\\\t/g, \"\\t\")\n    }\n\n    elm = {\n        _argarr: function (a) {\n            var n = [],\n                i;\n            for (i = 0; i < a.length; i++) {\n                n.push(a[i]);\n            }\n            return n;\n        },\n        _definitions: {},\n        def: function (n) {\n            return elm._definitions[n];\n        },\n        create: function () {\n            var args = elm._argarr(arguments),\n                type = args[0],\n                rest = args.slice(1);\n            if (elm.def(type)) {\n                return elm.def(type).call(null, rest, null);\n            } else {\n                throw new Error(\"Elm: Can't find type \" + type + \".\");\n            }\n        },\n        apply: function () {\n            var args = elm._argarr(arguments),\n                el = args[0],\n                type = args[1],\n                rest = args.slice(2);\n            if (elm.def(type)) {\n                return elm.def(type).call(null, rest, el);\n            } else {\n                throw new Error(\"Elm: Can't find type \" + type + \".\");\n            }\n        },\n        extend: function(el,type) {\n        	return elm.def(type).call(null,[],el,false);\n        },\n        using: function () {\n            var files = elm._argarr(arguments),\n                cb;\n            if (files[files.length - 1] instanceof Function) {\n                cb = files.pop();\n            }\n            if(files.length == 0) cb();\n            var i = 0;\n            files.forEach(function (file) {\n                $.get(file, {\n                    rand: Math.random()\n                }, function (data) {\n                    elm.parse(data);\n                    i++;\n                    if (i == files.length) {\n                        if (cb) cb.call();\n                    }\n                });\n            });\n        },\n        parse: function(file,filename,lineOffset,depthOffset) {\n\n            var str = {};\n\n            str.trim = function (input) {\n                return str.ltrim(str.rtrim(input));\n            };\n\n\n            str.ltrim = function (input) {\n                var size = input.length;\n                for (var i = 0; i < size; i++) {\n                    if (input.charCodeAt(i) > 32) {\n                        return input.substring(i);\n                    }\n                }\n                return \"\";\n            }\n\n            str.rtrim = function (input) {\n                if (!input) return '';\n                var size = input.length;\n                for (var i = size; i > 0; i--) {\n                    if (input.charCodeAt(i - 1) > 32) {\n                        return input.substring(0, i);\n                    }\n                }\n\n                return \"\";\n            }\n\n            str.split = function(src,by,keepDelimiter) {\n                var res = [],\n                    delim = '',\n                    build = '',\n                    next = '',\n                    chars = src.split('');\n                if(typeof by == 'string') by = [by];\n                while(next = chars.shift()) {\n                    if(by.indexOf(next) != -1) {\n                        // next is a delimeter\n                        res.push(\n                            (keepDelimiter? delim : '') + build\n                        );\n                        build = '';\n                        delim = next;\n                    } else {\n                        build += next;\n                    }\n                }\n                res.push(\n                    (keepDelimiter? delim : '') + build\n                );\n                return res;\n            }\n\n            str.nonEmpty = function(s) {\n                return s && s.length > 0;\n            }\n\n            lineOffset |= 0;\n            depthOffset |= 0;\n            var lines = file.split('\\n'),\n                definitions = [],\n                currentDefinition,\n                currentBlockBody,\n                currentBlock,\n                collect = [],\n                depth = 0,\n                line,\n                lineNumber = 0;\n                expectable = {\n                    'DEFINITION': 'def',\n                    'BLOCK': ['html','css','method','on','extends','find','my','style','hover','focus','constructor'],\n                    'CONTENTS': ''\n                };\n\n            function getDepth(line) {\n                var i = 0;\n                while(line.charAt(i) == '\\t') {\n                    i++;\n                }\n                return i + depthOffset;\n            }\n\n            function keyword_category(kw) {\n                for(var k in expectable) {\n                    if(expectable[k].indexOf(kw) != -1) {\n                        return k;\n                    }\n                }\n                return 'NOT_A_KEYWORD';\n            }\n\n            function keyword_to_block_type(kw) {\n                var map = {\n                    'extends': 'extensor',\n                    'html': 'html',\n                    'css': 'css',\n                    'style': 'style',\n                    'hover': 'hover',\n                    'focus': 'focus',\n                    'method': 'method',\n                    'on': 'event',\n                    'constructor': 'constructor',\n                    'find': 'subselector',\n                    'my': 'subdef'\n                };\n                return map[kw];\n            }\n\n            function expect_empty(str) {\n                return !str || str.length == 0;\n            }\n\n            function error(description) {\n                throw '[' + filename + ', line ' + (lineNumber + lineOffset) + '] ' + description;\n            }\n\n            function error_unexpected_block_argument(str,kw) {\n                error(str + ' is invalid after ' + kw);\n            }\n\n            function error_expected_block_argument(kw) {\n                error(kw + ' should be followed by an argument');\n            }\n\n            function strip_depth(arr) {\n                return arr.map(function(str) {\n                    return str.slice(1);\n                });\n            }\n\n            function add_block(currentBlockBody) {\n                parse_body(currentBlockBody,currentBlock,collect);\n                currentDefinition.body.push(currentBlockBody);\n            }\n\n            function add_definition(currentDefinition) {\n                definitions.push(currentDefinition);\n            }\n\n            function parse_definition_signature(def,signature) {\n                var reg = /^([A-Za-z0-9_]*)(\\([A-Za-z0-9_,]*\\))?$/;\n                var res = signature.match(reg);\n                if(!res || !res[1]) {\n                    error('\"' + signature + '\" is not a valid definition signature');\n                } else {\n                    def.name = res[1];\n                    if(res[2]) {\n                        def.parameters = res[2].slice(1,res[2].length - 1).split(',').map(function(k) {\n                            return {\n                                name: k,\n                                value: null\n                            };\n                        })\n                    } else {\n                        def.parameters = [];\n                    }\n                }\n            }\n\n            function parse_block_signature(def,kw,signature) {\n                def.type = keyword_to_block_type(kw);\n                switch(kw) {\n                    case 'method':\n                        var reg = /^([A-Za-z0-9_]*)(\\([A-Za-z0-9_,]*\\))?$/;\n                        var res = signature.match(reg);\n                        if(!res || !res[1]) {\n                            error('\"' + signature + '\" is not a valid method signature');\n                        } else {\n                            def.name = res[1];\n                            if(res[2]) {\n                                def.parameters = res[2].slice(1,res[2].length - 1).split(',')\n                            } else {\n                                def.parameters = [];\n                            }\n                        }\n                        break;\n                    case 'on':\n                        var reg = /^([A-Za-z0-9_]*)(\\([A-Za-z0-9_,]*\\))?$/;\n                        var res = signature.match(reg);\n                        if(!res || !res[1]) {\n                            error('\"' + signature + '\" is not a valid event handler signature');\n                        } else {\n                            def.event = res[1];\n                            if(res[2]) {\n                                def.parameters = res[2].slice(1,res[2].length - 1).split(',')\n                            } else {\n                                def.parameters = [];\n                            }\n                        }\n                        break;\n                    case 'my':\n                        def.name = signature;\n                        break;\n                    case 'find':\n                        def.cssSelector = signature;\n                        break;\n                    case 'style':\n                        def.name = signature;\n                }\n            }\n\n            function parse_body(def,kw,body) {\n                var res;\n                switch(kw) {\n                    case 'css':\n                    case 'hover':\n                    case 'focus':\n                    case 'style':\n                        // Style\n                        res = body.map(function(line) {\n                            var r = line.split(':'),\n                                prop = str.trim(r[0]),\n                                value = str.trim(r[1]);\n                            if (prop.charAt(prop.length - 1) == ';') {\n                                prop = prop.slice(0, prop.length - 1);\n                            }\n                            return {\n                                prop: prop,\n                                value: value\n                            };\n                        });\n                        def.properties = res;\n                        break;\n                    case 'method':\n                    case 'constructor':\n                    case 'on':\n                        // Javascript\n                        res = body.join('\\n');\n                        break;\n                    case 'html':\n                        // HTML\n                        res = body.join('\\n');\n                        def.html = str.trim(res);\n                        break;\n                    case 'extends':\n                        // List of superclasses\n                        res = str.split(body,[',','\\n']).filter(str.nonEmpty);\n                        break;\n                    case 'find':\n                    case 'my':\n                        // Subdefinition (recursive)\n                        var newBody = 'def ' + def.name + '\\n';\n                        newBody +=  strip_depth(body,1).join('\\n');\n                        res = parse(newBody,filename,lineNumber);\n                        res = res[0];\n                        def.name = res.name;\n                        def.parameters = res.parameters;\n                        res = res.body;\n                }\n                def.body = res;\n            }\n\n            while(lines.length > 0) {\n                line = lines.shift();\n                lineNumber++;\n                var depth = getDepth(line);\n                var split = line.split(' ').map(str.trim);\n                var first = split[0]\n                var rest = split[1];\n                if(first.length == 0) {\n                    // Line is whitespace\n                    continue;\n                }\n                if(depth == 0) {\n                    expect = 'DEFINITION';\n                }\n                if(depth == 1) {\n                    expect = 'BLOCK';\n                }\n                if(depth > 1) {\n                    expect = 'CONTENTS';\n                    if(!currentBlock) {\n                        error('Saw ' + first + ' where a BLOCK was expected');\n                    }\n                }\n                if(expect != 'CONTENTS' && expectable[expect].indexOf(first) == -1) {\n                    error('Expected a ' + expect + ' but got ' + first + ' which is a ' + keyword_category(first) + ' instead');\n                }\n                // Okay, now we can assume that we got a valid keyword for this depth\n                if(depth == 0) {\n                    // Clean up from the last definition\n                    if(currentBlock) {\n                        add_block(currentBlockBody);\n                    }\n                    if(currentDefinition) {\n                        add_definition(currentDefinition);\n                    }\n                    currentBlockBody = null;\n                    currentBlock = null;\n                    currentDefinition = {\n                        body: []\n                    };\n                    parse_definition_signature(currentDefinition,rest);\n                }\n                if(depth == 1) {\n                    if(currentBlock) {\n                        add_block(currentBlockBody);\n                    }\n                    collect = [];\n                    currentBlock = first;\n                    currentBlockBody = {\n                        body: ''\n                    }\n                    switch(first) {\n                        case 'html':\n                        case 'css':\n                        case 'hover':\n                        case 'focus':\n                        case 'constructor':\n                        case 'extends':\n                            expect_empty(rest) || error_unexpected_block_argument(rest,first);\n                            break;\n                        default:\n                            !expect_empty(rest) || error_expected_block_argument(first);\n                    }\n                    parse_block_signature(currentBlockBody,first,rest);\n                }\n                if(depth > 1) {\n                    collect.push(line);\n                }\n            }\n\n            if(currentBlockBody) add_block(currentBlockBody);\n            if(currentDefinition) add_definition(currentDefinition);\n\n            return definitions.map(function(def) {\n                elm._definitions[def.name] = elm.createConstructor(def);\n                    $('.' + def.name).each(function () {\n                        elm.apply(this, def.name);\n                });\n            })\n        },       \n        createConstructor: function (definition, root) {\n            if (root === undefined) root = true;\n            return function (args, self, fireReady) {\n                var frame = {},\n                i;\n                if (fireReady === undefined) fireReady = true;\n                for (i = 0; i < definition.parameters.length; i++) {\n                    if (args[i] !== undefined) {\n                        frame[definition.parameters[i].name] = args[i];\n                    } else {\n                        frame[definition.parameters[i].name] = definition.parameters[i].value\n                    }\n                }\n\n                definition.body.forEach(function (selector) {\n                	//try {\n                    	self = elm.applyBlockTo(self, selector, frame, null, root);\n                    //} catch(e) {\n                   // 	throw new Error('To create an element with elm.create(), its definition must begin with an html block.');\n                  //  }\n                });\n                self.____construct = function() {\n                    self.____constructors = self.____constructors || [];\n                    self.____constructors.reverse().forEach(function(constructor) {\n                        if(!constructor.called) constructor.call(self);\n                        constructor.called = true;\n                    });\n                 }\n                // Add getStyle, setStyle, applyStyle function\n                self.getStyle = function(name,prop) {\n                	var style = self.__styles__[name];\n                	style.forEach(function(s) {\n                		if(s.prop == prop) {\n                			return s.value;\n                		}\n                	});\n                };\n                self.setStyle = function(name,prop,val) {\n                	var style = self.__styles__[name];\n                	style.forEach(function(s) {\n                		if(s.prop == prop) {\n                			s.value = val;\n                		}\n                	});\n                };\n				self.applyStyle = function(name) {\n					var style = self.__styles__[name];\n					if(!style) return;\n					style.forEach(function (p) {\n						var val = p.value;\n						for (var prop in frame) {\n							val = val.split('$' + prop).join(frame[prop]);\n						}\n						$(self).css(p.prop, val);\n					});\n				};\n                self.my = function(type) {\n                    return $(self).find('.' + type).get(0);\n                };\n                self.$my = function(type) {\n                    return $(self).find('.' + type);\n                };\n                self.____construct();\n                $(self).find('*').each(function() {\n                    if(this.____construct) {\n                        this.____construct();\n                    }\n                })\n                $(self).addClass(definition.name);\n                if(fireReady) $(self).trigger('ready');\n                self.$ = $(self);\n                return self;\n            };\n        },\n        applyBlockTo: function (__el__, __selector__, __frame__, parent, root) {\n            // All of these underscores are to avoid namespace pollution...\n            // These local variables will be closed under eval(), so we need\n            // to make them as hard to access as possible.\n            if (root === true) root = __el__;\n            switch (__selector__.type) {\n                case 'html':\n                    var markup = __selector__.html;\n                    for (var prop in __frame__) {\n                        markup = markup.split('$' + prop).join(__frame__[prop]);\n                    }\n                    if (!__el__) {\n                        __el__ = $(markup).get(0);\n                    }\n                    for (var prop in __frame__) {\n                        __el__[prop] = __frame__[prop];\n                    }\n                    __el__.__definitions = {};\n                    __el__.create = function () {\n                        var args = elm._argarr(arguments),\n                            type = args[0],\n                            rest = args.slice(1);\n                        if (__el__.__definitions[type]) {\n                            return __el__.__definitions[type].call(null, rest, null);\n                        } else {\n                            if (elm.def(type)) {\n                                return elm._definitions[type].call(null, rest, null);\n                            }\n                        }\n                    }\n                    break;\n                case 'extensor':\n                    __selector__.supers.forEach(function (s) {\n                        elm.extend(__el__, s);\n                    });\n                    break;\n                case 'css':\n                    __selector__.properties.forEach(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        $(__el__).css(p.prop, val);\n                    });\n                    break;\n                case 'style': \n                	if(!__el__.__styles__) __el__.__styles__ = {};\n                	__el__.__styles__[__selector__.name] = __selector__.properties.map(function(p) {\n                		// We're mapping to create a new list of CSS properties for each element, instead of modifying the definition\n                		return {\n                			prop: p.prop,\n                			value: p.value\n                		};\n                	});\n                	break;\n                case 'hover':\n                    var changes = __selector__.properties.map(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        return {\n                            prop: p.prop,\n                            value: val\n                        }\n                    });\n                    var prev = [];\n                    $(__el__).hover(function () {\n                        changes.forEach(function (change) {\n                            var res = {\n                                prop: change.prop,\n                                value: $(__el__).css(change.prop)\n                            };\n                            // Firefox fix\n                            if (!StringUtil.stringHasValue(res.value)) {\n                                res.value = $(__el__).css(\n                                change.prop.split('-').reduce(function (a, b) {\n                                    return a + b.charAt(0).toUpperCase + b.slice(1);\n                                }));\n                            }\n                            prev.push(res);\n                            $(__el__).css(change.prop, change.value);\n                        });\n                    }, function () {\n                        prev.forEach(function (pr) {\n                            $(__el__).css(pr.prop, pr.value);\n                        });\n                        prev = [];\n                    });\n                    break;\n                case 'focus':\n                    var changes = __selector__.properties.map(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        return {\n                            prop: p.prop,\n                            value: val\n                        }\n                    });\n                    var prev = [];\n                    $(__el__).focus(function () {\n                        changes.forEach(function (change) {\n                            var res = {\n                                prop: change.prop,\n                                value: $(__el__).css(change.prop)\n                            };\n                            // Firefox fix\n                            if (!StringUtil.stringHasValue(res.value)) {\n                                res.value = $(__el__).css(\n                                change.prop.split('-').reduce(function (a, b) {\n                                    return a + b.charAt(0).toUpperCase + b.slice(1);\n                                }));\n                            }\n                            prev.push(res);\n                            $(__el__).css(change.prop, change.value);\n                        });\n                    }).blur(function () {\n                        prev.forEach(function (pr) {\n                            $(__el__).css(pr.prop, pr.value);\n                        });\n                        prev = [];\n                    });\n                case 'event':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    $(__el__).bind(__selector__.event, function () {\n                        var __args__ = elm._argarr(arguments);\n                        var ____func = 'var __func__ = function(' + __selector__.parameters.join(',') + ') { ';\n                        ____func += __selector__.body;\n                        ____func += '}';\n                        eval(____func);\n                        __func__.apply(__el__, __args__);\n                    });\n                    break;\n                case 'constructor':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    var ____func = 'var __constructor__ = function() { ';\n                    ____func += (__selector__.body && __selector__.body.length > 0) ? __selector__.body : '';\n                    ____func += '}';\n                    try {\n                        eval(____func);\n                        if(!__el__.____constructors) __el__.____constructors = [];\n                        __el__.____constructors.push(__constructor__);\n                    } catch (e) {}\n                    break;\n                case 'method':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    var ____func = 'var __method__ = function(' + __selector__.parameters.join(',') + ') {';\n                    ____func += __selector__.body;\n                    ____func += '}';\n                    eval(____func);\n                    __el__[__selector__.name] = __method__;\n                    break;\n                case 'subselector':\n                    $(__el__).find(__selector__.cssSelector).each(function (i, e) {\n                        __selector__.body.forEach(function (block) {\n                            elm.applyBlockTo(e, block, __frame__, __el__, root);\n                        });\n                    });\n                    break;\n                case 'subdef':\n                    __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);\n                    $(__el__).find('.' + __selector__.name).each(function (i, e) {\n                        __selector__.body.forEach(function (block) {\n                            elm.applyBlockTo(e, block, __frame__, __el__, root);\n                        });\n                        e.$ = $(e);\n                        e.____construct = function() {\n                            e.____constructors = e.____constructors || [];\n                            e.____constructors.reverse().forEach(function(constructor) {\n                                if(!constructor.called) constructor.call(e);\n                                constructor.called = true;\n                            });\n                         }\n                         e.____construct();\n                    });\n                    break;\n            };\n            return __el__;\n        }\n    };\n\n    var seeIfLoaded = function () {\n        if ($('head').length > 0) {\n            elm.using.apply(null, $('script').toArray().map(function (i) {\n                if ($(i).attr('type').indexOf('elemental') != -1) {\n                    return $(i).attr('src') || elm.parse($(i).html());\n                } else {\n                    return false;\n                }\n            }).filter(function (i) {\n                return i;\n            }).concat(function (d) {\n                $.holdReady(false);\n            }));\n        } else {\n            setTimeout(seeIfLoaded, 10);\n        }\n    }\n    seeIfLoaded();\n\n}).call();",
+			"file": "js/elemental-whitespace.js",
+			"file_size": 33046,
+			"file_write_time": 1370613347000000,
+			"settings":
+			{
+				"buffer_size": 33054,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Core.elm",
+			"settings":
+			{
+				"buffer_size": 3736,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/main.xml",
+			"settings":
+			{
+				"buffer_size": 4463,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Components.elm",
+			"settings":
+			{
+				"buffer_size": 5631,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "css/style.css",
+			"settings":
+			{
+				"buffer_size": 9287,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/MathInput.elm",
+			"settings":
+			{
+				"buffer_size": 1758,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/m/Parser.js",
+			"settings":
+			{
+				"buffer_size": 13078,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/Storage.js",
+			"settings":
+			{
+				"buffer_size": 4919,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/Notification.elm",
+			"settings":
+			{
+				"buffer_size": 633,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/Application.js",
+			"settings":
+			{
+				"buffer_size": 3282,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "var elm;\n\n(function () {\n\n    $.holdReady(true);\n\n    var StringUtil = {};\n    var ParseUtil = {};\n\n    StringUtil.stringsAreEqual = function (s1, s2, caseSensitive) {\n        if (caseSensitive) {\n            return (s1 == s2);\n        } else {\n            return (s1.toUpperCase() == s2.toUpperCase());\n        }\n    }\n\n    StringUtil.trim = function (input) {\n        return StringUtil.ltrim(StringUtil.rtrim(input));\n    };\n\n\n    StringUtil.ltrim = function (input) {\n        var size = input.length;\n        for (var i = 0; i < size; i++) {\n            if (input.charCodeAt(i) > 32) {\n                return input.substring(i);\n            }\n        }\n        return \"\";\n    }\n\n    StringUtil.rtrim = function (input) {\n        if (!input) return '';\n        var size = input.length;\n        for (var i = size; i > 0; i--) {\n            if (input.charCodeAt(i - 1) > 32) {\n                return input.substring(0, i);\n            }\n        }\n\n        return \"\";\n    }\n\n    StringUtil.beginsWith = function (input, prefix) {\n        return (prefix == input.substring(0, prefix.length));\n    }\n\n    StringUtil.endsWith = function (input, suffix) {\n        return (suffix == input.substring(input.length - suffix.length));\n    }\n\n    StringUtil.remove = function (input, remove) {\n        return StringUtil.replace(input, remove, \"\");\n    }\n\n    StringUtil.replace = function (input, replace, replaceWith) {\n        return input.split(replace).join(replaceWith);\n    }\n\n    StringUtil.stringHasValue = function (s) {\n        //todo: this needs a unit test\n        return (s != null && s.length > 0);\n    }\n\n    StringUtil.trimslashes = function (raw) {\n        var str = new String(raw)\n        var myPattern = new RegExp(\"\\\\'\", 'g')\n        str = str.replace(myPattern, \"'\")\n        myPattern = /\\\\\\\\/g;\n        str = str.replace(myPattern, \"\\\\\")\n        return str;\n    }\n\n    ParseUtil.split = function (src, c) {\n        var r = []\n        var t = ParseUtil.findEach(src, c)\n        var index = 0\n        for (var i = 0; i < t.length; i++) {\n            if (ParseUtil.isClear(src, t[i])) {\n                r.push(src.slice(index, t[i]))\n                index = t[i] + 1\n            }\n        }\n        r.push(src.slice(index));\n        r = [r[0]].concat(r.slice(1).map(function (i) {\n            return i.slice(c.length - 1)\n        }));\n        return r\n    }\n\n\n    ParseUtil.isClear = function (src, ind) {\n        var paren = 0\n        var quote = \"\"\n        var cbracket = 0\n        var sbracket = 0\n        var bar = false\n        var t = src.charAt(ind)\n        for (var i = 0; i < ind + 1; i++) {\n            var c = src.charAt(i)\n            if ((c == \"'\" || c == '\"') && src.charAt(i - 1) != \"\\\\\") {\n                if (quote == \"\") {\n                    quote = c\n                } else if (quote == c) {\n                    quote = \"\"\n                }\n            }\n            if (quote != \"\") continue\n            if (c == \"{\") cbracket++\n            if (c == \"}\") cbracket = Math.max(cbracket - 1, 0)\n            if (c == \"[\") sbracket++\n            if (c == \"]\") sbracket--\n            if (c == \"(\") paren++\n            if (c == \")\") paren--\n            if (c == \"|\") bar = !bar;\n        }\n        if (t == \"(\") {\n            return cbracket == 0 && sbracket == 0 && paren == 1 && quote == \"\"\n\n        }\n        if (t == \"[\") {\n            return cbracket == 0 && sbracket == 1 && paren == 0 && quote == \"\"\n\n        }\n        if (t == \"{\") {\n            return cbracket == 1 && sbracket == 0 && paren == 0 && quote == \"\"\n        }\n        return cbracket == 0 && sbracket == 0 && paren == 0 && quote == \"\" && !bar;\n    }\n\n    ParseUtil.nextIndexOf = function (a, src) {\n        if (!(a instanceof Array)) {\n            a = [a];\n        };\n        for (var j = 0; j < a.length; j++) {\n            var test = a[j]\n            var arr = ParseUtil.findEach(src, test)\n            for (var k = 0; k < arr.length; k++) {\n                var i = arr[k]\n                if (ParseUtil.isClear(src, i)) {\n                    return i\n                }\n            }\n        }\n        return -1\n    }\n\n    ParseUtil.findEachClear = function (src, search) {\n        var res = ParseUtil.findEach(src, search);\n        return res.filter(function (n) {\n            return ParseUtil.isClear(src, n);\n        });\n    };\n\n    ParseUtil.findEach = function (src, search) {\n        var arr = [];\n        if (typeof search == \"string\") search = [search];\n        search.forEach(function (s) {\n            var index = -1\n            var substring = src\n            var i\n            do {\n                i = substring.indexOf(s)\n                if (i == -1) break\n                index += i + 1;\n                arr.push(index)\n                substring = substring.slice(i + 1)\n            } while (i != -1);\n        });\n\n        arr = arr.sort(function (a, b) {\n            return a - b;\n        });\n        return arr;\n    }\n\n\n    ParseUtil.completeStatement = function (src) {\n        var paren = 0\n        var quote = \"\"\n        var cbracket = 0\n        var sbracket = 0\n        var bar = false\n        var trySub = false\n        var sub = false\n        var subIndex = 0\n        var substring\n        var j = 0\n\n        for (var i = 0; i < src.length; i++) {\n            var c = src.charAt(i)\n            if ((c == \"'\" || c == '\"') && src.charAt(i - 1) != \"\\\\\") {\n                if (quote == \"\") {\n                    quote = c\n                } else if (quote == c) {\n                    quote = \"\"\n                }\n            }\n            if (quote != \"\") continue\n            if (c == \"(\") paren++\n            if (c == \")\") paren--\n            if (c == \"{\") cbracket++\n            if (c == \"}\") cbracket--\n            if (c == \"[\") sbracket++\n            if (c == \"]\") sbracket--\n            if (c == \"|\") bar = !bar\n\n        }\n        return quote == \"\" && paren == 0 && cbracket == 0 && sbracket == 0 && bar\n    }\n\n    ParseUtil.replace = function (src, from, to) {\n        return ParseUtil.split(src, from).join(to)\n    }\n\n    ParseUtil.handleEscapeChars = function (s) {\n        return s.replace(/\\\\n/g, \"\\n\").replace(/\\\\t/g, \"\\t\")\n    }\n\n    elm = {\n        _argarr: function (a) {\n            var n = [],\n                i;\n            for (i = 0; i < a.length; i++) {\n                n.push(a[i]);\n            }\n            return n;\n        },\n        _definitions: {},\n        def: function (n) {\n            return elm._definitions[n];\n        },\n        create: function () {\n            var args = elm._argarr(arguments),\n                type = args[0],\n                rest = args.slice(1);\n            if (elm.def(type)) {\n                return elm.def(type).call(null, rest, null);\n            } else {\n                throw new Error(\"Elm: Can't find type \" + type + \".\");\n            }\n        },\n        apply: function () {\n            var args = elm._argarr(arguments),\n                el = args[0],\n                type = args[1],\n                rest = args.slice(2);\n            if (elm.def(type)) {\n                return elm.def(type).call(null, rest, el);\n            } else {\n                throw new Error(\"Elm: Can't find type \" + type + \".\");\n            }\n        },\n        extend: function(el,type) {\n        	return elm.def(type).call(null,[],el,false);\n        },\n        using: function () {\n            var files = elm._argarr(arguments),\n                cb;\n            if (files[files.length - 1] instanceof Function) {\n                cb = files.pop();\n            }\n            var i = 0;\n            files.forEach(function (file) {\n                $.get(file, {\n                    rand: Math.random()\n                }, function (data) {\n                    elm.parse(data);\n                    i++;\n                    if (i == files.length) {\n                        if (cb) cb.call();\n                    }\n                });\n            });\n        },\n        parse: function (str) {\n            return ParseUtil.split(str, '\\n').filter(function (line) {\n                return StringUtil.trim(line).length > 0;\n            }).map(function (line) {\n                var kw = line.slice(0, line.indexOf(' '));\n                if (kw == 'def') {\n                    // kw should always equal 'def'\n                    var def = elm.parseDefinition(line);\n                    elm._definitions[def.name] = elm.createConstructor(def);\n                    $('.' + def.name).each(function () {\n                        elm.apply(this, def.name);\n                    });\n                }\n            });\n        },\n        parseDefinition: function (str) {\n            var ind = -1,\n                sig,\n                name,\n                params = [],\n                body;\n            // Should start with 'def' so we'll get rid of that right off the bat\n            str = StringUtil.trim(str.slice(4));\n            // Get the definition signature -- we'll parse that next\n            // Also get the body from inside the brackets\n            sig = StringUtil.trim(str.slice(0, ParseUtil.nextIndexOf('{', str)));\n            body = StringUtil.trim(str.slice(ParseUtil.nextIndexOf('{', str) + 1, str.length - 1));\n            // Sig might have parameters\n            if (sig.indexOf('(') != -1) {\n                name = sig.slice(0, sig.indexOf('('));\n                params = ParseUtil.split(\n                sig.slice(sig.indexOf('(') + 1, sig.length - 1),\n                ',').map(function (param) {\n                    var name, value = null;\n                    //Check for a default value\n                    if (param.indexOf('=') != -1) {\n                        name = StringUtil.trim(param.slice(0, param.indexOf('=')));\n                        value = StringUtil.trim(param.slice(param.indexOf('=') + 1));\n                        if (value.charAt(0) == '\"' || value.charAt(0) == \"'\") {\n                            value = value.slice(1, value.length - 1);\n                        }\n                    } else {\n                        name = param;\n                    }\n                    return {\n                        name: name,\n                        value: value\n                    }\n                });\n            } else {\n                name = sig;\n            }\n            return {\n                name: name,\n                parameters: params,\n                body: elm.parseSelectors(body)\n            }\n        },\n        parseSelectors: function (body, topLevel) {\n            var sels;\n            if (topLevel === undefined) topLevel = true;\n            return ParseUtil.split(body, '\\n').filter(function (selector) {\n                return StringUtil.trim(selector).length > 0;\n            }).map(function (selector) {\n                var sig, body, name, ind;\n                selector = StringUtil.trim(selector);\n                ind = ParseUtil.nextIndexOf('{', selector);\n                sig = StringUtil.trim(selector.slice(0, ind));\n                body = StringUtil.trim(selector.slice(ind + 1, StringUtil.trim(selector).length - 1));\n                name = sig.split(' ')[0];\n                switch (name) {\n                    case 'html':\n                        return {\n                            type: name,\n                            html: body\n                        }\n                    case 'extends':\n                        return {\n                            type: 'extensor',\n                            supers: ParseUtil.split(body, [',', '\\n']).map(StringUtil.trim)\n                        }\n                    case 'hover':\n                    case 'focus':\n                    case 'css':\n                        return {\n                            type: name,\n                            properties: ParseUtil.split(body, '\\n').map(function (prop) {\n                                prop = StringUtil.trim(prop);\n                                if (prop.charAt(prop.length - 1) == ';') {\n                                    prop = prop.slice(0, prop.length - 1);\n                                }\n                                prop = prop.split(':');\n                                return {\n                                    prop: StringUtil.trim(prop[0]),\n                                    value: StringUtil.trim(prop[1])\n                                }\n                            })\n                        };\n                    case 'style':\n                    	return {\n                            type: name,\n                            name: StringUtil.trim(sig.split(' ').slice(1).join(' ')),\n                            properties: ParseUtil.split(body, '\\n').map(function (prop) {\n                                prop = StringUtil.trim(prop);\n                                if (prop.charAt(prop.length - 1) == ';') {\n                                    prop = prop.slice(0, prop.length - 1);\n                                }\n                                prop = prop.split(':');\n                                return {\n                                    prop: StringUtil.trim(prop[0]),\n                                    value: StringUtil.trim(prop[1])\n                                }\n                            })\n                        };\n                    case 'on':\n                        var evt = sig.split(' ').filter(function (l) {\n                            return l.length;\n                        }).slice(1).join(' '),\n                            params = [];\n                        if (evt.indexOf('(') != -1) {\n                            // Handler has parameters\n                            params = evt.slice(evt.indexOf('(') + 1, evt.length - 1).split(',').map(StringUtil.trim);\n                            evt = evt.slice(0, evt.indexOf('('));\n                        }\n                        return {\n                            type: 'event',\n                            event: evt,\n                            parameters: params,\n                            body: body\n                        };\n                    case 'method':\n                        var name = sig.split(' ').filter(function (l) {\n                            return l.length;\n                        })[1],\n                            params = [];\n                        if (name.indexOf('(') != -1) {\n                            // Method has parameters\n                            params = name.slice(name.indexOf('(') + 1, name.length - 1).split(',').map(StringUtil.trim);\n                            name = name.slice(0, name.indexOf('('));\n                        }\n                        return {\n                            type: 'method',\n                            name: name,\n                            parameters: params,\n                            body: body\n                        };\n                    case 'constructor':\n                        return {\n                            type: 'constructor',\n                            body: body\n                        };\n                    case 'find':\n                        var cssSelector = sig.split(' ').filter(function (l) {\n                            return l.length;\n                        })[1];\n                        return {\n                            type: 'subselector',\n                            cssSelector: cssSelector,\n                            body: elm.parseSelectors(body, false)\n                        };\n                    case 'my':\n                        var name,\n                        params = [];\n                        sig = StringUtil.trim(sig.split(' ').slice(1).join(''));\n                        if (sig.indexOf('(') != -1) {\n                            name = sig.slice(0, sig.indexOf('('));\n                            params = ParseUtil.split(\n                            sig.slice(sig.indexOf('(') + 1, sig.length - 1),\n                                ',').map(function (param) {\n                                var name, value = null;\n                                //Check for a default value\n                                if (param.indexOf('=') != -1) {\n                                    name = StringUtil.trim(param.slice(0, param.indexOf('=')));\n                                    value = StringUtil.trim(param.slice(param.indexOf('=') + 1));\n                                    if (value.charAt(0) == '\"' || value.charAt(0) == \"'\") {\n                                        value = value.slice(1, value.length - 1);\n                                    }\n                                } else {\n                                    name = param;\n                                }\n                                return {\n                                    name: name,\n                                    value: value\n                                }\n                            });\n                        } else {\n                            name = sig;\n                        }\n                        return {\n                            type: 'subdef',\n                            name: name,\n                            parameters: params,\n                            body: elm.parseSelectors(body)\n                        };\n                }\n                return name;\n            });\n        },\n        createConstructor: function (definition, root) {\n            if (root === undefined) root = true;\n            return function (args, self, fireReady) {\n                var frame = {},\n                i;\n                if (fireReady === undefined) fireReady = true;\n                for (i = 0; i < definition.parameters.length; i++) {\n                    if (args[i] !== undefined) {\n                        frame[definition.parameters[i].name] = args[i];\n                    } else {\n                        frame[definition.parameters[i].name] = definition.parameters[i].value\n                    }\n                }\n\n                definition.body.forEach(function (selector) {\n                	//try {\n                    	self = elm.applyBlockTo(self, selector, frame, null, root);\n                    //} catch(e) {\n                   // 	throw new Error('To create an element with elm.create(), its definition must begin with an html block.');\n                  //  }\n                });\n                self.____construct = function() {\n                    self.____constructors = self.____constructors || [];\n                    self.____constructors.reverse().forEach(function(constructor) {\n                        if(!constructor.called) constructor.call(self);\n                        constructor.called = true;\n                    });\n                 }\n                // Add getStyle, setStyle, applyStyle function\n                self.getStyle = function(name,prop) {\n                	var style = self.__styles__[name];\n                	style.forEach(function(s) {\n                		if(s.prop == prop) {\n                			return s.value;\n                		}\n                	});\n                };\n                self.setStyle = function(name,prop,val) {\n                	var style = self.__styles__[name];\n                	style.forEach(function(s) {\n                		if(s.prop == prop) {\n                			s.value = val;\n                		}\n                	});\n                };\n				self.applyStyle = function(name) {\n					var style = self.__styles__[name];\n					if(!style) return;\n					style.forEach(function (p) {\n						var val = p.value;\n						for (var prop in frame) {\n							val = val.split('$' + prop).join(frame[prop]);\n						}\n						$(self).css(p.prop, val);\n					});\n				};\n                self.my = function(type) {\n                    return $(self).find('.' + type).get(0);\n                };\n                self.$my = function(type) {\n                    return $(self).find('.' + type);\n                };\n                self.____construct();\n                $(self).find('*').each(function() {\n                    if(this.____construct) {\n                        this.____construct();\n                    }\n                })\n                $(self).addClass(definition.name);\n                if(fireReady) $(self).trigger('ready');\n                self.$ = $(self);\n                return self;\n            };\n        },\n        applyBlockTo: function (__el__, __selector__, __frame__, parent, root) {\n            // All of these underscores are to avoid namespace pollution...\n            // These local variables will be closed under eval(), so we need\n            // to make them as hard to access as possible.\n            if (root === true) root = __el__;\n            switch (__selector__.type) {\n                case 'html':\n                    var markup = __selector__.html;\n                    for (var prop in __frame__) {\n                        markup = markup.split('$' + prop).join(__frame__[prop]);\n                    }\n                    if (!__el__) {\n                        __el__ = $(markup).get(0);\n                    }\n                    for (var prop in __frame__) {\n                        __el__[prop] = __frame__[prop];\n                    }\n                    __el__.__definitions = {};\n                    __el__.create = function () {\n                        var args = elm._argarr(arguments),\n                            type = args[0],\n                            rest = args.slice(1);\n                        if (__el__.__definitions[type]) {\n                            return __el__.__definitions[type].call(null, rest, null);\n                        } else {\n                            if (elm.def(type)) {\n                                return elm._definitions[type].call(null, rest, null);\n                            }\n                        }\n                    }\n                    break;\n                case 'extensor':\n                    __selector__.supers.forEach(function (s) {\n                        elm.extend(__el__, s);\n                    });\n                    break;\n                case 'css':\n                    __selector__.properties.forEach(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        $(__el__).css(p.prop, val);\n                    });\n                    break;\n                case 'style': \n                	if(!__el__.__styles__) __el__.__styles__ = {};\n                	__el__.__styles__[__selector__.name] = __selector__.properties.map(function(p) {\n                		// We're mapping to create a new list of CSS properties for each element, instead of modifying the definition\n                		return {\n                			prop: p.prop,\n                			value: p.value\n                		};\n                	});\n                	break;\n                case 'hover':\n                    var changes = __selector__.properties.map(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        return {\n                            prop: p.prop,\n                            value: val\n                        }\n                    });\n                    var prev = [];\n                    $(__el__).hover(function () {\n                        changes.forEach(function (change) {\n                            var res = {\n                                prop: change.prop,\n                                value: $(__el__).css(change.prop)\n                            };\n                            // Firefox fix\n                            if (!StringUtil.stringHasValue(res.value)) {\n                                res.value = $(__el__).css(\n                                change.prop.split('-').reduce(function (a, b) {\n                                    return a + b.charAt(0).toUpperCase + b.slice(1);\n                                }));\n                            }\n                            prev.push(res);\n                            $(__el__).css(change.prop, change.value);\n                        });\n                    }, function () {\n                        prev.forEach(function (pr) {\n                            $(__el__).css(pr.prop, pr.value);\n                        });\n                        prev = [];\n                    });\n                    break;\n                case 'focus':\n                    var changes = __selector__.properties.map(function (p) {\n                        var val = p.value;\n                        for (var prop in __frame__) {\n                            val = val.split('$' + prop).join(__frame__[prop]);\n                        }\n                        return {\n                            prop: p.prop,\n                            value: val\n                        }\n                    });\n                    var prev = [];\n                    $(__el__).focus(function () {\n                        changes.forEach(function (change) {\n                            var res = {\n                                prop: change.prop,\n                                value: $(__el__).css(change.prop)\n                            };\n                            // Firefox fix\n                            if (!StringUtil.stringHasValue(res.value)) {\n                                res.value = $(__el__).css(\n                                change.prop.split('-').reduce(function (a, b) {\n                                    return a + b.charAt(0).toUpperCase + b.slice(1);\n                                }));\n                            }\n                            prev.push(res);\n                            $(__el__).css(change.prop, change.value);\n                        });\n                    }).blur(function () {\n                        prev.forEach(function (pr) {\n                            $(__el__).css(pr.prop, pr.value);\n                        });\n                        prev = [];\n                    });\n                case 'event':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    $(__el__).bind(__selector__.event, function () {\n                        var __args__ = elm._argarr(arguments);\n                        var ____func = 'var __func__ = function(' + __selector__.parameters.join(',') + ') { ';\n                        ____func += __selector__.body;\n                        ____func += '}';\n                        eval(____func);\n                        __func__.apply(__el__, __args__);\n                    });\n                    break;\n                case 'constructor':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    var ____func = 'var __constructor__ = function() { ';\n                    ____func += (__selector__.body && __selector__.body.length > 0) ? __selector__.body : '';\n                    ____func += '}';\n                    try {\n                        eval(____func);\n                        if(!__el__.____constructors) __el__.____constructors = [];\n                        __el__.____constructors.push(__constructor__);\n                    } catch (e) {}\n                    break;\n                case 'method':\n                    var $this = $(__el__);\n                    var $parent = $(parent);\n                    var $root = $(root);\n                    var ____func = 'var __method__ = function(' + __selector__.parameters.join(',') + ') {';\n                    ____func += __selector__.body;\n                    ____func += '}';\n                    eval(____func);\n                    __el__[__selector__.name] = __method__;\n                    break;\n                case 'subselector':\n                    $(__el__).find(__selector__.cssSelector).each(function (i, e) {\n                        __selector__.body.forEach(function (block) {\n                            elm.applyBlockTo(e, block, __frame__, __el__, root);\n                        });\n                    });\n                    break;\n                case 'subdef':\n                    __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);\n                    $(__el__).find('.' + __selector__.name).each(function (i, e) {\n                        __selector__.body.forEach(function (block) {\n                            elm.applyBlockTo(e, block, __frame__, __el__, root);\n                        });\n                        e.$ = $(e);\n                        e.____construct = function() {\n                            e.____constructors = e.____constructors || [];\n                            e.____constructors.reverse().forEach(function(constructor) {\n                                if(!constructor.called) constructor.call(e);\n                                constructor.called = true;\n                            });\n                         }\n                         e.____construct();\n                    });\n                    break;\n            };\n            return __el__;\n        }\n    };\n\n    var seeIfLoaded = function () {\n        // // console.log('seeIfLoaded');\n        if ($('head').length > 0) {\n            elm.using.apply(null, $('script').toArray().map(function (i) {\n                if ($(i).attr('type').indexOf('elemental') != -1) {\n                    return $(i).attr('src') || elm.parse($(i).html());\n                } else {\n                    return false;\n                }\n            }).filter(function (i) {\n                return i;\n            }).concat(function (d) {\n                $.holdReady(false);\n            }));\n        } else {\n            setTimeout(seeIfLoaded, 10);\n        }\n    }\n    seeIfLoaded();\n\n}).call();",
+			"file": "js/lib/elemental-old.js",
+			"file_size": 29797,
+			"file_write_time": 1370613462000000,
+			"settings":
+			{
+				"buffer_size": 29811,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/m/Evaluator.js",
+			"settings":
+			{
+				"buffer_size": 16986,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "function Resource() {\n	this.disableCache = false;\n	this.sounds = {};\n	this.images = {};\n	this.init();\n}\n\nResource.prototype.init = function() {\n	this.sounds.keyPress = new SoundBank('res/sounds/KeypressStandard.mp3');\n}\n\nResource.prototype.loadXML = function(path,callback) {\n	var data = {};\n	if(this.disableCache) data[Math.random()] = Math.random();\n	$.get(\n		path,\n		data,\n		function(res) {\n			if(callback) callback(res);\n		}\n	);\n}\n\nResource.prototype.keyboardImage = function(imageName) {\n	return 'res/img/keys/' + imageName + '.png';\n}\n\nResource.prototype.x = function(str)  {\n	return 'url(' + str + ')';\n}",
+			"file": "js/c/Resource.js",
+			"file_size": 613,
+			"file_write_time": 1370814426000000,
+			"settings":
+			{
+				"buffer_size": 611,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/advanced.xml",
+			"settings":
+			{
+				"buffer_size": 766,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "def Keyboard(keyboardSource) {\n	html {\n		<div class='sb-keyboard'> \n			<div class='middle'>\n				<div class='inner'>\n					<div class='spacer'> </div>\n				</div>\n			</div>\n		</div>\n	}\n	\n	find .inner {\n		css {\n			width: 100%;\n			height: 100%;\n			position: relative;\n			overflow: hidden;\n		}\n	}\n	\n	find .middle {\n		css {\n			width: 100%;\n			height: 100%;\n			position: relative;\n			overflow: hidden;\n		}\n	}\n	\n	find .spacer {\n		css {\n			width: 400px;\n			height: 100px;\n			right: 0px;\n			position: absolute;\n		}\n	}\n	\n	css {\n		position: fixed;\n		bottom: 0px;\n		width: 100%;\n		background: #1b1b1b;\n		-webkit-overflow-scrolling: touch;\n	}\n\n	on touchmove(e) {\n		e.preventDefault();\n	}\n	\n	constructor {\n		this.size();\n	}\n	\n	method slideUp(n,e) {\n		$this.show().css(\n			'bottom',\n			0 - parseInt($this.css('height'))\n		).delay(100).animate({\n			bottom: 0,\n		}, {\n			duration: n || 300,\n			easing: e || 'easeOutQuart'\n		});\n	}\n\n	method slideDown(n,e) {\n		$this.show().css(\n			'bottom',\n			0\n		).delay(100).animate({\n			bottom: 0 - parseInt($this.css('height')),\n		}, {\n			duration: n || 300,\n			easing: e || 'easeInQuart'\n		});\n	}\n	\n	method init() {\n		this.createKeys();\n	}\n	\n	method size(i) {\n	 	i = i || this.screenFraction || 0.5;\n		$this.css(\n			'height',\n			app.utils.viewport().y * i\n		).css(\n			'bottom',\n			0\n		);\n		this.screenFraction = i;\n		if(this.hasKeys) this.positionKeys();\n	}\n	\n	method positionKeys() {\n		var minKeyWidth = 80,\n			padding = 4,\n			keysX = this.totalColumns,\n			keysY = 5,\n			kw = ($this.width() - padding * (keysX - 1)) / keysX,\n			kh = ($this.height() - padding * (keysY)) / keysY,\n			self = this,\n			last;\n		$this.find('.inner').find('.Key').each(function(i,key) {\n			key.position(kw,kh,padding);\n			last = key;\n		});\n		$this.find('.spacer').css('left',last.$.offset().left + last.$.width()).css(\n			'width',\n			padding\n		);\n		this.keyWidth = kw;\n		this.keyHeight = kh;\n		this.padding = padding;\n	}\n		\n	method createKeys() {\n		var inner = $this.find('.inner'),\n			self = this;\n		this.keys = [];\n		app.r.loadXML(this.keyboardSource, function(d) {\n			var maxCol = 0;\n			$(d).find('key').each(function(i,key) {\n				var k = elm.create('Key',key,this);\n				if(parseInt($(key).attr('col')) > maxCol) maxCol = parseInt($(key).attr('col'));\n				$(inner).append(k);\n				self.keys.push(k);\n			});\n			self.totalColumns = maxCol;\n			self.hasKeys = true;\n			self.positionKeys();\n		});\n	}\n\n	method getKeyByName(name) {\n		return this.keys.filter(function(k) {\n			return k.name == name;\n		})[0];\n	}\n	\n	method getKeys() {\n		return $this.find('.sb-keyboard-key');\n	}\n	\n	method keyPressed(key) {\n		if(key != this.currentKey) {\n			if(this.currentKey) $(this.currentKey).mouseup();\n			this.currentKey = key;\n		}\n	}\n	\n	method jakeStark(peen) {\n		return peen;\n	}\n	\n	method snapBack {\n		var interval = (this.padding + this.keyWidth);\n	}\n}\n\ndef Key(_keyData,keyboard) {\n\n	html {\n		<div class='shadow'> \n			<div class='bar'></div>\n			<div class='label'> </div>\n		</div>\n	}\n	\n	on invoke {\n		if(this.activeSubkey().attr('variable')) {\n			if(app.storage.varSaveMode) {\n				app.storage.setVariable(\n					this.activeSubkey().attr('variable'),\n					app.mode.result()\n				);\n				app.popNotification(\n					'Set ' + this.activeSubkey().attr('variable') + ' to ' + app.mode.result().toString()\n				);\n				app.storage.cancelVariableSave();\n			} else {\n				app.mode.currentInput().acceptLatexInput(\n					this.activeSubkey().attr('variable')\n				);\n			}\n		}\n		if(this.activeSubkey().get(0).childNodes[0]) {\n			app.mode.currentInput().acceptLatexInput(this.activeSubkey().get(0).childNodes[0].nodeValue);\n			app.mode.currentInput().takeFocus();\n		}\n		if(this.activeSubkey().attr('close')) {\n			app.useKeyboard('main');\n		}\n		if(this.activeSubkey().attr('action')) {\n			this.activeSubkey().attr('action').split('|').forEach(function(attr) {\n				split = attr.split(':'),\n				target = StringUtil.trim(split[0]),\n				action = StringUtil.trim(split[1]);\n				//// // console.log(target,action);\n				if(target == 'input') {\n					app.mode.currentInput().acceptActionInput(action);\n				}\n				if(target == 'app') {\n					app.acceptActionInput(action);\n				}\n			});\n		}\n		this.setPrimary();\n	}\n	\n	on active(e) {\n		var self = this;\n		this.altTimeout = setTimeout(function() {\n			self.setAlt();\n		},250);\n	}\n	\n	on ready {\n		this.sub = $this.find('.submenu').get(0);\n		this.init();\n	}\n	\n	on endactive {\n		var self = this;\n		clearTimeout(this.altTimeout);\n		setTimeout(function() {\n			self.setPrimary();\n		});\n	}\n	\n	method init() {\n		var kd = this.keyData();\n		if(kd.attr('disabled')) {\n			this.disable();\n		} else {\n			this.enable();\n		}\n		this.col = kd.attr('col');\n		this.row = kd.attr('row');\n		this.name = kd.attr('name');\n		if(kd.attr('default-color')) {\n			this.setStyle('default','background',kd.attr('default-color'));\n		}\n		if(kd.attr('active-color')) {\n			this.setStyle('active','background',kd.attr('active-color'));\n		}\n		this.label();\n	}\n	\n	method label() {\n		var skd = this.activeSubkey();\n		$this.find('.label').html('').css('background-image','none');\n		if(skd.attr('text-label')) {\n			this.labelType = 'text';\n			var l = skd.attr('text-label');\n			var s;\n			if(l.indexOf('_') != -1) {\n				s = l.split('_');\n				l = s[0] + '<sub>' + s[1] + '</sub>';\n			}\n			$this.find('.label').html(l);\n		} else if(skd.attr('image-label')) {\n			this.labelType = 'image';\n			var img = app.r.url(app.r.keyboardImage(skd.attr('image-label')));\n			$this.find('.label').css('background-image',img);\n		}\n		if(this.hasAlt()) {\n			this.$my('bar').show();\n		}\n	}\n\n	method hasAlt {\n		return !!this.keyData().find('alternate').length;\n	}\n	\n	method setAlt() {\n		if(this.hasAlt()) {\n			this.altMode = true;\n			this.label();\n			this.position();\n		}\n	}\n	\n	method setPrimary() {\n		if(!!this.keyData().find('primary').length) {\n			this.altMode = false;\n			this.label();\n			this.position();\n		}\n	}\n	\n	method position(width,height,padding) {\n		this.width = Math.floor(width);\n		this.height = Math.floor(height - (this.labelType == 'image'? 0 : 0));\n		$this.css('width', this.width);\n		$this.css('height', this.height);\n		$this.css('top', Math.floor(padding + (padding + height) * (this.row - 1)));\n		$this.css('left', Math.floor((padding + width) * (this.col - 1)));\n		$this.css('line-height',$this.css('height'));\n		if(this.labelType == 'text') {\n			$this.css('font-size', ($this.height() / 3).toString() + 'px');\n		} else if(this.labelType == 'image') {\n	\n		}\n	}\n\n	method doInvoke(alt) {\n		var self = this;\n		$this.trigger('mousedown');\n		if(alt) {\n			this.setAlt();\n		}\n		setTimeout(function() {\n			$this.trigger('mouseup');\n		},10);\n	}\n	\n	method keyData() {\n		return $(this._keyData);\n	}\n	\n	method activeSubkey() {\n		return this.keyData().find(this.altMode? 'alternate' : 'primary');\n	}\n	\n	style default {\n		background: #222;\n	}\n\n	style active {\n		background: #76acce;\n	}\n\n	style disabled {\n		opacity: 0.5;\n	}\n	\n	css {\n		display: table-cell;\n		position: absolute;\n		cursor: pointer;\n		font-size: 40px;\n		text-align: center;\n		color: #FFF;\n		padding: 0;\n		outline: none;\n		-webkit-border-radius: 0px;\n		border-radius: 0px;\n		overflow: hidden;\n	}\n	\n	my label {\n		css {\n			width: 100%;\n			height: 100%;\n			background-repeat: no-repeat;\n			background-size: auto 60%;\n			background-position: center;\n		}\n	}\n\n	my bar {\n		css {\n			display: none;\n			bottom: 0;\n			position: absolute;\n			width: 100%;\n			height: 10%;\n			background: #FFF;\n			opacity: 0.05;\n		}\n	}\n	\n	extends {\n		Button\n	}\n}\n	",
+			"file": "js/v/Keyboard.elm",
+			"file_size": 7425,
+			"file_write_time": 1370818138000000,
+			"settings":
+			{
+				"buffer_size": 7431,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/lib/mathquill/mathquill.css",
+			"settings":
+			{
+				"buffer_size": 9231,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/Sound.js",
+			"settings":
+			{
+				"buffer_size": 511,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/KeyInput.js",
+			"settings":
+			{
+				"buffer_size": 1546,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/constants.xml",
+			"settings":
+			{
+				"buffer_size": 2368,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "res/xml/keyboards/variables.xml",
+			"settings":
+			{
+				"buffer_size": 3354,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "function Solver(left,right) {\n	this.frame = new Frame();\n	var self = this;\n	this.left = left;\n	this.right = right;\n	if(this.left instanceof Solver || this.right instanceof Solver) {\n		throw 'Cannot solve nested equations';\n	}\n}\n\nSolver.prototype.leftAt = function(x) {\n	this.frame.set('x',x);\n	return this.left.valueOf(this.frame).toFloat();\n}\n\nSolver.prototype.rightAt = function(x) {\n	this.frame.set('x',x);\n	return this.right.valueOf(this.frame).toFloat();\n}\n\nSolver.prototype.f = function(x) {\n	return this.leftAt(x) - this.rightAt(x);\n}\n\nSolver.prototype.fPrime = function(x) {\n	var dx = .00001;\n	return (this.f(x + dx ) - this.f(x)) / dx;\n}\n\nSolver.prototype.guess = function(guess) {\n	var betterGuess,\n		precision = .0001,\n		iteration = 0,\n		x = undefined,\n		ddx = undefined,\n		last_ddx = undefined,\n		epsilon = 1e-20,\n		ddx_steadyCount = 0,\n		repeat = 100;\n	// Some asshole is going to try and solve N/x = 0 and we just don't like to see that...\n	try {\n		var left0 = this.leftAt(0);\n	} catch(e) {\n		var right0 = this.rightAt(0);\n		if(right0 == 0) {\n			this.cannotSolve();\n		}\n	}\n	try {\n		var right0 = this.rightAt(0);\n	} catch(e) {\n		var left0 = this.leftAt(0);\n		if(right0 == 0) {\n			this.cannotSolve();\n		}\n	}\n	while(iteration < repeat) {\n		iteration++;\n		x = this.f(guess);\n		ddx = this.fPrime(guess);\n		// // console.log(x,ddx);\n		if(Math.abs(ddx) < epsilon) {\n			// this.cannotSolve();\n		}\n		if(last_ddx === ddx) {\n			ddx_steadyCount++;\n		}\n		last_ddx = ddx;\n		if(ddx == 0) {\n			guess++;\n			continue;\n		}\n		betterGuess = guess - x / ddx;\n		if(Math.abs(betterGuess - guess) < precision) {\n			break;\n		}\n		guess = betterGuess;\n	}\n	if(ddx_steadyCount == repeat - 1) {\n		// If the derivative never changed, that's probably because both sides are constant\n		if(this.leftAt(guess) == this.rightAt(guess)) {\n			// Yep, left == right.\n			this.result = true;\n		} else {\n			// No, left != right.\n			this.result = false;\n		}\n	} else {\n		// A few more things we can try\n		var abs_guess = Math.abs(guess);\n		if(this.f(guess) == this.f(abs_guess)) {\n			// If we got a negative root with a corresponding positive root it makes more sense to give the positive one\n			guess = abs_guess;\n		}\n		var normalized_guess = Functions.normalize(guess,app.storage.trigUseRadians);\n		if(this.f(guess) == this.f(normalized_guess)) {\n			// If it's an angle we should try to normalize it\n			guess = normalized_guess;\n		}\n		this.result = new Value(guess).round(3);\n	}\n	return this.result;\n}\n\nSolver.prototype.cannotSolve = function() {\n	throw \"Can't solve\";\n}\n\nSolver.prototype.toString = function() {\n	var s = this.guess(.001);\n	if(s === true || s === false) {\n		if(s) {\n			return 'That is true';\n		} else {\n			return 'That is false'\n		}\n	} else {\n		if(true) {\n			return 'x = ' + s.toString();\n		} else {\n			return 'Failed to solve';\n			// // console.log(this.leftRes,this.rightRes)\n		}\n	}\n}\n\nSolver.parse = function(l,r) {\n	var p = new Parser();\n	l = p.parse(l);\n	r = p.parse(r);\n	return new Solver(l,r);\n}",
+			"file": "js/m/Solver.js",
+			"file_size": 2977,
+			"file_write_time": 1370921905000000,
+			"settings":
+			{
+				"buffer_size": 2989,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/lib/mathquill/mathquill.js",
+			"settings":
+			{
+				"buffer_size": 122239,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/c/Utils.js",
+			"settings":
+			{
+				"buffer_size": 5900,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "js/v/REPL.elm",
+			"settings":
+			{
+				"buffer_size": 6374,
 				"line_ending": "Unix"
 			}
 		}
@@ -225,28 +394,51 @@
 	},
 	"file_history":
 	[
+		"/Users/Ian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/Applications/MAMP/htdocs/Sigmabox/Sigmabox.sublime-workspace",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/REPL.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/res/fonts/Roboto-Black-webfont.svg",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Functions.js",
+		"/Applications/MAMP/htdocs/Sigmabox/.htaccess",
+		"/Applications/MAMP/htdocs/Nydell/functions.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Solver.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Sound.js",
+		"/Applications/MAMP/htdocs/Sigma_Ignore/index.manifest",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v_old/REPL.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/State.js",
+		"/Applications/MAMP/htdocs/Sigmabox/apple-touch-startup-image-640x1096.png",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Notification.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/lib/jquery.easing.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Keyboard.elm",
+		"/Applications/MAMP/htdocs/Sigma_Ignore/js/m/Parser.js",
+		"/Users/Ian/Documents/Hi MaybeOnMars",
+		"/Applications/MAMP/htdocs/Sigmabox/js/lib/elemental-old.js",
+		"/Applications/MAMP/htdocs/Sigma_Ignore/css/style.css",
+		"/Applications/MAMP/htdocs/Sigmabox/js/sb-parse-whitespace.js",
+		"/Applications/MAMP/htdocs/Sigmabox/res/elm-new.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Button.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/Toolbar.elm",
 		"/Applications/MAMP/htdocs/Sigmabox/js/lib/elemental.js",
+		"/Applications/MAMP/htdocs/Sigma_Ignore/js/lib/x.js",
+		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboards/main.xml",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Evaluator.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/v/MathInput.elm",
+		"/Applications/MAMP/htdocs/Sigmabox/js/m/Parser.js",
+		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboards/variables.xml",
+		"/Applications/MAMP/htdocs/Sigmabox/newparser.html",
+		"/Applications/MAMP/htdocs/Nydell/nydell.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Storage.js",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/KeyInput.js",
+		"/Applications/MAMP/htdocs/Sigmabox/css/style.css",
+		"/Applications/MAMP/htdocs/Sigmabox/index.html",
+		"/Applications/MAMP/htdocs/Sigmabox/js/c/Application.js",
 		"/Applications/MAMP/htdocs/Sigmabox/js/v/Switch.elm",
 		"/Applications/MAMP/htdocs/Sigmabox/js/c/Utils.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/v/REPL.elm",
 		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboard.xml",
-		"/Applications/MAMP/htdocs/Nydell/nydell.js",
-		"/Applications/MAMP/htdocs/Nydell/functions.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/m/Evaluator.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/v/Button.elm",
-		"/Applications/MAMP/htdocs/Sigmabox/js/v/MathInput.elm",
-		"/Applications/MAMP/htdocs/Sigmabox/res/xml/keyboards/main.xml",
 		"/Applications/MAMP/htdocs/Sigmabox/js/v/Touch.elm",
 		"/Applications/MAMP/htdocs/Sigmabox/js/lib/mathquill/mathquill.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/m/Functions.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/m/Parser.js",
 		"/Applications/MAMP/htdocs/Sigmabox/js/lib/mathquill/font/stixgeneral-bundle/stixgeneralitalic-webfont.svg",
-		"/Applications/MAMP/htdocs/Sigmabox/js/c/Application.js",
-		"/Applications/MAMP/htdocs/Sigmabox/js/c/Storage.js",
 		"/Users/Ian/Library/Application Support/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
-		"/Users/Ian/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
-		"/Applications/MAMP/htdocs/Sigmabox/index.html",
-		"/Applications/MAMP/htdocs/Sigmabox/Sigmabox.sublime-workspace",
 		"/Applications/MAMP/htdocs/Sigmabox/css/lib/jquery.mobile.custom.structure.css",
 		"/Applications/MAMP/htdocs/Sigmabox/Sigmabox.sublime-project",
 		"/Applications/MAMP/htdocs/Sigmabox/css/lib/jquery.mobile.custom.theme.css"
@@ -260,6 +452,9 @@
 		"height": 93.0,
 		"where_history":
 		[
+			"/Applications/MAMP/htdocs/Sigmabox",
+			"/Applications/MAMP/htdocs/Sigmabo",
+			"/Applications/MAMP/htdocs/Sigmabox",
 			"",
 			"Sigmabox"
 		]
@@ -269,6 +464,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"applySelectorTo",
+			"owner",
+			"console.log",
+			"        {",
+			");\n",
+			".toFloat = ",
+			"action='app: keyboard main'",
+			"Could not solv",
+			"http://192.168.0.3:8888/Sigmabox/",
+			".html('",
+			"vectorDisplayMode",
+			"fractionDisplayMode",
+			"trigMode",
+			"signature",
+			"parse_signature",
+			"add_definition",
+			"currentDef",
+			"x.str",
 			"console",
 			"console.log",
 			"options",
@@ -296,6 +509,18 @@
 		"regex": false,
 		"replace_history":
 		[
+			"applyBlockTo",
+			"// console.log",
+			"close='close'",
+			"",
+			"displayPolarVectors",
+			"displayDecimalizedFractions",
+			"trigUseRadians",
+			"rest",
+			"parse_block_signature",
+			"add_block",
+			"currentBlockBody",
+			"str",
 			"//console.log",
 			"toolbar",
 			"options",
@@ -315,56 +540,55 @@
 	"groups":
 	[
 		{
-			"selected": 16,
+			"selected": 8,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "js/c/Application.js",
+					"file": "index.php",
 					"settings":
 					{
-						"buffer_size": 2323,
+						"buffer_size": 3309,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1523,
-								1523
+								1678,
+								1678
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"syntax": "Packages/PHP/PHP.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 539.0,
+						"translation.y": 159.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "index.html",
+					"file": "js/v/Grapher.elm",
 					"settings":
 					{
-						"buffer_size": 2069,
+						"buffer_size": 368,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								945,
-								945
+								345,
+								345
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -374,18 +598,207 @@
 				},
 				{
 					"buffer": 2,
-					"file": "css/style.css",
+					"file": "index.manifest",
 					"settings":
 					{
-						"buffer_size": 9262,
+						"buffer_size": 939,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								590,
-								590
+								31,
+								31
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "newparser.html",
+					"settings":
+					{
+						"buffer_size": 309,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8,
+								9
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "js/lib/elemental.js",
+					"settings":
+					{
+						"buffer_size": 36429,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6934,
+								6934
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7131.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "js/elemental-whitespace.js",
+					"settings":
+					{
+						"buffer_size": 33054,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "js/v/Core.elm",
+					"settings":
+					{
+						"buffer_size": 3736,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2927,
+								2927
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 783.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "res/xml/keyboards/main.xml",
+					"settings":
+					{
+						"buffer_size": 4463,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3170,
+								3170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1309.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "js/v/Components.elm",
+					"settings":
+					{
+						"buffer_size": 5631,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								990,
+								990
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 653.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "css/style.css",
+					"settings":
+					{
+						"buffer_size": 9287,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9285,
+								9285
 							]
 						],
 						"settings":
@@ -401,280 +814,11 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "js/c/KeyInput.js",
-					"settings":
-					{
-						"buffer_size": 208,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								160,
-								160
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "js/c/Storage.js",
-					"settings":
-					{
-						"buffer_size": 3585,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2185,
-								2185
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 525.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/Applications/MAMP/htdocs/Nydell/functions.js",
-					"settings":
-					{
-						"buffer_size": 18382,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5525,
-								5528
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3857.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/Applications/MAMP/htdocs/Nydell/nydell.js",
-					"settings":
-					{
-						"buffer_size": 19625,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14234,
-								14234
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 9717.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "js/m/Parser.js",
-					"settings":
-					{
-						"buffer_size": 10318,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3439,
-								3443
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "js/v/Button.elm",
-					"settings":
-					{
-						"buffer_size": 2842,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								366,
-								366
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "res/xml/keyboards/variables.xml",
-					"settings":
-					{
-						"buffer_size": 3014,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								431,
-								431
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/XML/XML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 10,
-					"file": "js/v/Keyboard.elm",
-					"settings":
-					{
-						"buffer_size": 6377,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3852,
-								3852
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 3944.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
 					"file": "js/v/MathInput.elm",
 					"settings":
 					{
-						"buffer_size": 1015,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								490,
-								490
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 134.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "js/m/Evaluator.js",
-					"settings":
-					{
-						"buffer_size": 12611,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12068,
-								12068
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 6597.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 13,
-					"file": "js/m/Functions.js",
-					"settings":
-					{
-						"buffer_size": 2008,
+						"buffer_size": 1758,
 						"regions":
 						{
 						},
@@ -691,30 +835,111 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 839.0,
+						"translation.y": 774.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 14,
-					"file": "res/xml/keyboards/main.xml",
+					"buffer": 11,
+					"file": "js/m/Parser.js",
 					"settings":
 					{
-						"buffer_size": 4575,
+						"buffer_size": 13078,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4507,
-								4507
+								5258,
+								5258
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/XML/XML.tmLanguage",
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "js/c/Storage.js",
+					"settings":
+					{
+						"buffer_size": 4919,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4243,
+								4243
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "js/v/Notification.elm",
+					"settings":
+					{
+						"buffer_size": 633,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								33,
+								33
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 14,
+					"file": "js/c/Application.js",
+					"settings":
+					{
+						"buffer_size": 3282,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								719,
+								719
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -725,99 +950,18 @@
 				},
 				{
 					"buffer": 15,
-					"file": "js/v/REPL.elm",
+					"file": "js/lib/elemental-old.js",
 					"settings":
 					{
-						"buffer_size": 4929,
+						"buffer_size": 29811,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3019,
-								3019
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2115.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 16,
-					"file": "js/v/Notification.elm",
-					"settings":
-					{
-						"buffer_size": 264,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								264,
-								264
-							]
-						],
-						"settings":
-						{
-							"auto_name": "def Notification(text) {",
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 17,
-					"file": "js/v/Toolbar.elm",
-					"settings":
-					{
-						"buffer_size": 2912,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2838,
-								2841
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 2159.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 18,
-					"file": "js/lib/elemental.js",
-					"settings":
-					{
-						"buffer_size": 29759,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21689,
-								21689
+								0,
+								0
 							]
 						],
 						"settings":
@@ -827,7 +971,360 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 8226.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 16,
+					"file": "js/m/Evaluator.js",
+					"settings":
+					{
+						"buffer_size": 16986,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								16665,
+								16665
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 11399.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 17,
+					"file": "js/c/Resource.js",
+					"settings":
+					{
+						"buffer_size": 611,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								562,
+								562
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 18,
+					"file": "res/xml/keyboards/advanced.xml",
+					"settings":
+					{
+						"buffer_size": 766,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								766,
+								766
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 19,
+					"file": "js/v/Keyboard.elm",
+					"settings":
+					{
+						"buffer_size": 7431,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2404,
+								2404
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1294.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 20,
+					"file": "js/lib/mathquill/mathquill.css",
+					"settings":
+					{
+						"buffer_size": 9231,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8872,
+								8872
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 4724.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 21,
+					"file": "js/c/Sound.js",
+					"settings":
+					{
+						"buffer_size": 511,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								334,
+								334
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 22,
+					"file": "js/c/KeyInput.js",
+					"settings":
+					{
+						"buffer_size": 1546,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								161,
+								161
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 23,
+					"file": "res/xml/keyboards/constants.xml",
+					"settings":
+					{
+						"buffer_size": 2368,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								580,
+								580
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 24,
+					"file": "res/xml/keyboards/variables.xml",
+					"settings":
+					{
+						"buffer_size": 3354,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								855,
+								855
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/XML/XML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 25,
+					"file": "js/m/Solver.js",
+					"settings":
+					{
+						"buffer_size": 2989,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2398,
+								2398
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 817.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 26,
+					"file": "js/lib/mathquill/mathquill.js",
+					"settings":
+					{
+						"buffer_size": 122239,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9,
+								9
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 27,
+					"file": "js/c/Utils.js",
+					"settings":
+					{
+						"buffer_size": 5900,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								908,
+								908
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 28,
+					"file": "js/v/REPL.elm",
+					"settings":
+					{
+						"buffer_size": 6374,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6042,
+								5811
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -877,35 +1374,51 @@
 		"selected_items":
 		[
 			[
-				"noti",
-				"js/v/Notification.elm"
-			],
-			[
-				"",
-				"js/v/Notification.elm"
-			],
-			[
 				"ele",
 				"js/lib/elemental.js"
 			],
 			[
-				"app",
-				"js/c/Application.js"
+				"math",
+				"js/v/MathInput.elm"
 			],
 			[
-				"eva",
-				"js/m/Evaluator.js"
+				"",
+				"js/v/Grapher.elm"
 			],
 			[
-				"key",
-				"js/v/Keyboard.elm"
+				"co",
+				"js/v/Components.elm"
 			],
 			[
-				"repl",
-				"js/v/REPL.elm"
+				"elem",
+				"js/lib/elemental.js"
+			],
+			[
+				"mathi",
+				"js/v/MathInput.elm"
+			],
+			[
+				"com",
+				"js/v/Components.elm"
 			],
 			[
 				"ap",
+				"js/c/Application.js"
+			],
+			[
+				"e",
+				"js/lib/elemental.js"
+			],
+			[
+				"gr",
+				"js/v/Grapher.elm"
+			],
+			[
+				"a",
+				"js/c/Application.js"
+			],
+			[
+				"app",
 				"js/c/Application.js"
 			],
 			[
@@ -913,36 +1426,304 @@
 				"js/v/REPL.elm"
 			],
 			[
-				"varia",
-				"res/xml/keyboards/variables.xml"
+				"gra",
+				"js/v/Grapher.elm"
 			],
 			[
-				"stor",
-				"js/c/Storage.js"
+				"ma",
+				"js/v/MathInput.elm"
+			],
+			[
+				"g",
+				"js/v/Grapher.elm"
 			],
 			[
 				"elemen",
 				"js/lib/elemental.js"
 			],
 			[
+				"grap",
+				"js/v/Grapher.elm"
+			],
+			[
+				"repl",
+				"js/v/REPL.elm"
+			],
+			[
+				"mathq",
+				"js/lib/mathquill/mathquill.js"
+			],
+			[
+				"mathqu",
+				"js/lib/mathquill/mathquill.css"
+			],
+			[
+				"comp",
+				"js/v/Components.elm"
+			],
+			[
+				"p",
+				"js/m/Parser.js"
+			],
+			[
+				"ev",
+				"js/m/Evaluator.js"
+			],
+			[
+				"adv",
+				"res/xml/keyboards/advanced.xml"
+			],
+			[
+				"par",
+				"js/m/Parser.js"
+			],
+			[
 				"eval",
 				"js/m/Evaluator.js"
 			],
 			[
-				"evalu",
+				"ad",
+				"res/xml/keyboards/advanced.xml"
+			],
+			[
+				"stor",
+				"js/c/Storage.js"
+			],
+			[
+				"pars",
+				"js/m/Parser.js"
+			],
+			[
+				"re",
+				"js/c/Resource.js"
+			],
+			[
+				"r",
+				"js/v/REPL.elm"
+			],
+			[
+				"c",
+				"js/v/Components.elm"
+			],
+			[
+				"eva",
 				"js/m/Evaluator.js"
+			],
+			[
+				"stora",
+				"js/c/Storage.js"
+			],
+			[
+				"s",
+				"js/m/Solver.js"
+			],
+			[
+				"uti",
+				"js/c/Utils.js"
+			],
+			[
+				"core",
+				"js/v/Core.elm"
+			],
+			[
+				"ind",
+				"index.php"
+			],
+			[
+				"ui",
+				"js/v/UI.elm"
+			],
+			[
+				"compo",
+				"js/v/Components.elm"
+			],
+			[
+				"storage",
+				"js/c/Storage.js"
+			],
+			[
+				"sole",
+				"js/m/Solver.js"
+			],
+			[
+				"der",
+				"/Applications/MAMP/htdocs/Sigmabox/newparser.html"
+			],
+			[
+				"unt",
+				"untitled"
+			],
+			[
+				"u",
+				"js/v/UI.elm"
+			],
+			[
+				"pa",
+				"js/m/Parser.js"
+			],
+			[
+				"keyi",
+				"js/c/KeyInput.js"
+			],
+			[
+				"key",
+				"js/v/Keyboard.elm"
+			],
+			[
+				"adva",
+				"res/xml/keyboards/advanced.xml"
 			],
 			[
 				"main",
 				"res/xml/keyboards/main.xml"
 			],
 			[
-				"func",
+				"mat",
+				"js/v/MathInput.elm"
+			],
+			[
+				"i",
+				"index.php"
+			],
+			[
+				"styl",
+				"css/style.css"
+			],
+			[
+				"ef",
+				"res/fonts/Roboto-Black-webfont.svg"
+			],
+			[
+				"so",
+				"js/m/Solver.js"
+			],
+			[
+				"fu",
 				"js/m/Functions.js"
 			],
 			[
-				"r",
-				"js/v/REPL.elm"
+				"sol",
+				"js/m/Solver.js"
+			],
+			[
+				"solver",
+				"js/m/Solver.js"
+			],
+			[
+				"solv",
+				"js/m/Solver.js"
+			],
+			[
+				"parser",
+				"js/m/Parser.js"
+			],
+			[
+				"solve",
+				"js/m/Solver.js"
+			],
+			[
+				"const",
+				"res/xml/keyboards/constants.xml"
+			],
+			[
+				"mai",
+				"res/xml/keyboards/main.xml"
+			],
+			[
+				"appl",
+				"js/c/Application.js"
+			],
+			[
+				"con",
+				"res/xml/keyboards/constants.xml"
+			],
+			[
+				".x",
+				"res/xml/keyboards/main.xml"
+			],
+			[
+				"sound",
+				"js/c/Sound.js"
+			],
+			[
+				"sou",
+				"js/c/Sound.js"
+			],
+			[
+				"reso",
+				"js/c/Resource.js"
+			],
+			[
+				"ke",
+				"js/v/Keyboard.elm"
+			],
+			[
+				".css",
+				"js/lib/mathquill/mathquill.css"
+			],
+			[
+				"st",
+				"css/style.css"
+			],
+			[
+				"sty",
+				"css/style.css"
+			],
+			[
+				"no",
+				"js/v/Notification.elm"
+			],
+			[
+				"jqu",
+				"js/lib/jquery.easing.js"
+			],
+			[
+				"css",
+				"css/style.css"
+			],
+			[
+				"k",
+				"js/v/Keyboard.elm"
+			],
+			[
+				"butt",
+				"js/v/Button.elm"
+			],
+			[
+				"main.",
+				"res/xml/keyboards/main.xml"
+			],
+			[
+				"eleme",
+				"js/lib/elemental.js"
+			],
+			[
+				"elm-",
+				"res/elm-new.elm"
+			],
+			[
+				"new",
+				"newparser.html"
+			],
+			[
+				"sb-",
+				"js/sb-parse-whitespace.js"
+			],
+			[
+				"noti",
+				"js/v/Notification.elm"
+			],
+			[
+				"varia",
+				"res/xml/keyboards/variables.xml"
+			],
+			[
+				"evalu",
+				"js/m/Evaluator.js"
+			],
+			[
+				"func",
+				"js/m/Functions.js"
 			],
 			[
 				"swi",
@@ -957,28 +1738,12 @@
 				"js/lib/elemental.js"
 			],
 			[
-				"eleme",
-				"js/lib/elemental.js"
-			],
-			[
-				"elem",
-				"js/lib/elemental.js"
-			],
-			[
 				"el",
 				"js/lib/elemental.js"
 			],
 			[
 				"touch",
 				"js/v/Touch.elm"
-			],
-			[
-				"sty",
-				"css/style.css"
-			],
-			[
-				"main.",
-				"res/xml/keyboards/main.xml"
 			],
 			[
 				"sto",
@@ -995,14 +1760,6 @@
 			[
 				"cosn",
 				"res/xml/keyboards/constants.xml"
-			],
-			[
-				"appl",
-				"js/c/Application.js"
-			],
-			[
-				"pars",
-				"js/m/Parser.js"
 			],
 			[
 				"mathinp",
@@ -1031,6 +1788,6 @@
 	"show_open_files": false,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 205.0,
 	"status_bar_visible": true
 }

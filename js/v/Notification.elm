@@ -11,6 +11,7 @@ def Notification(text,duration) {
 		height: 20px;
 		color: #999;
 		background: #EEE;
+		box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 		padding: 10px;
 	}
 
@@ -19,11 +20,13 @@ def Notification(text,duration) {
 	}
 
 	method invoke {
-		$this.slideDown(200,function() {
+		app.notificationCount |= 0;
+		app.notificationCount++;
+		$this.css('top',0 - $this.height()).show();
+		$this.animate({top: (app.notificationCount-1)*($this.outerHeight())},500,'easeOutQuart',function() {
 			setTimeout(function() {
-				$this.slideUp(200,function() {
-					$this.trigger('complete');
-				});
+				app.notificationCount--;
+				$this.animate({top:-100},500,'easeInQuart');
 			},this.duration*1000);
 		});
 	}

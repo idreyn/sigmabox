@@ -55,7 +55,6 @@
 	<!-- + - * / = -->
 	<key name='plus' row='1' col='4'>
 		<primary text-label='+'>+</primary>
-		<alternate text-label='AC' action='input:clear' />
 	</key>
 	<key name='minus' row='2' col='4'>
 		<primary text-label='-'>-</primary>

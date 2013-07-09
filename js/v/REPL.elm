@@ -8,6 +8,7 @@ def REPLCard {
 
 			</div>
 			<div class='lower'>
+
 			</div>
 		</div>
 	}
@@ -15,12 +16,20 @@ def REPLCard {
 	css {
 		width: 100%;
 	}
+
+	on touchmove(e) {
+		e.preventDefault();
+	}
 	
 	method init {
-		this.size();
+		var self = this;
 		this.spanInput = elm.create('MathInput',this);
+		this.spanInput.$.on('update', function() {
+			self.refresh();
+		});
 		this.$my('upper').append(this.spanInput);
 		this.refresh();
+		this.size();
 	}
 	
 	method input {
@@ -28,7 +37,6 @@ def REPLCard {
 	}
 		
 	method size {
-		this.my('toolbar').size();
 		$this.css('height',$this.parent().css('height'));
 		this.$my('upper').css('height','80%');
 		this.$my('lower').css('height','20%');
@@ -47,32 +55,54 @@ def REPLCard {
 			parseInt(this.$my('lower').height() / 2) + 'px'
 		).css('line-height',
 			parseInt(this.$my('lower').height() / 1) + 'px'
-		)
+		);
+		this.my('toolbar').size();
 	}
 
-	method refresh() {
-		this.update(this.spanInput.contents() || '');
+	method setContents(str) {
+		this.spanInput.acceptActionInput('clear');
+		this.spanInput.acceptLatexInput(str);
+	}
+
+	method refresh(b) {
+		this.update(this.spanInput.contents() || '',b);
+		app.storage.currentInput = this.spanInput.contents();
+		app.storage.serialize();
 	}
 
 	
-	method update(str) {
-		this.my('toolbar').trigSwitch.$.hide();
-		this.my('toolbar').vectorSwitch.$.hide();
+	method update(str,force) {
+		if(this.last == str && !force) return;
+		this.my('toolbar').trigSwitch.hide();
+		this.my('toolbar').vectorSwitch.hide();
+		this.my('toolbar').fracSwitch.hide();
 		app.storage.trigInCurrentExpression = false;
+		app.storage.calcInCurrentExpression = false;
 		try{
 			var res = app.parser.parse(str,true);
 			if(res instanceof Solver) {
-				res = res.toString();
+				try {
+					res = res.toString();
+				} catch(e) {
+					res = e;
+				}
 			} else {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
 				if(res instanceof Vector) {
-					this.my('toolbar').vectorSwitch.$.show();
-					if(app.storage.vectorDisplayMode == 'components') {
+					this.my('toolbar').vectorSwitch.show();
+					if(!app.storage.displayPolarVectors) {
 						res = res.toString();
 					} else {
-						this.my('toolbar').trigSwitch.$.show();
-						res = res.toStringPolar(app.storage.trigMode == 'radians');
+						this.my('toolbar').trigSwitch.show();
+						res = res.toStringPolar(app.storage.trigUseRadians);
+					}
+				} else if(res instanceof Frac) {
+					this.my('toolbar').fracSwitch.show();
+					if(!app.storage.displayDecimalizedFractions) {
+						res = res.toString();
+					} else {
+						res = res.decimalize().toString();
 					}
 				} else if(res instanceof Value) {
 					res = res.toString(16);
@@ -81,12 +111,19 @@ def REPLCard {
 				}
 			}
 		} catch(e) {
-			var res = (typeof e == 'string')? e : e.toString();
+			// // console.log(e.toString());
+			var res = typeof e == 'string' ? e : 'Error';
 		}
 		if(app.storage.trigInCurrentExpression) {
-			this.my('toolbar').trigSwitch.$.show();
+			this.my('toolbar').trigSwitch.show();
+		}
+		if(app.storage.calcInCurrentExpression) {
+			this.my('toolbar').trigSwitch.forceRadians();
+		} else {
+			this.my('toolbar').trigSwitch.endForceRadians();
 		}
 		this.$my('lower').html(res);
+		this.last = str;
 	}
 
 	method result() {
@@ -98,7 +135,6 @@ def REPLCard {
 		css {
 			height: 80;
 			width: 100%;
-			background: #FFF;
 			overflow-y: scroll;
 			overflow-x: hidden;
 		}
@@ -118,7 +154,7 @@ def REPLCard {
 	
 	find .lower {
 		css {
-			background: #EEE;
+			background: rgba(0,0,0,0.05);
 			text-align: right;
 			padding-right: 2%;
 			font-size: 36pt;
@@ -138,36 +174,41 @@ def REPLCard {
 			position: absolute;
 			top: 67%;
 			padding-top: 5px;
-			padding-bottom: 5px;
+			padding-bottom: 10px;
 			text-align: right;
 			padding-right: 4%;
-			display: block;
 			height: 100%;
 			width: 100%;
 			vertical-align: middle;
-			background: rgba(255,255,255,0.8);
+			opacity: 0.5;
 		}
 
 		constructor {
 
-			// this.convertButton = elm.create('ToolbarButton','A&rarr;B');
+			// this.convertButton = elm.create('REPLButton','A&rarr;B');
 			// this.$.append(this.convertButton);
 
-			this.trigSwitch = elm.create('Switch','RAD','DEG');
-			this.trigSwitch.$.on('flipped',function(e) {
-				app.storage.setTrigMode(e.target.state);
-				root.refresh();
+			this.fracSwitch = elm.create('Switch','DEC','FRC','app.storage.displayDecimalizedFractions');
+			this.fracSwitch.$.on('flipped',function() {
+				root.refresh(true);
+			});
+			this.$.append(this.fracSwitch);
+
+
+			this.trigSwitch = elm.create('TrigSwitch','RAD','DEG','app.storage.trigUseRadians');			
+			this.trigSwitch.$.on('flipped',function() {
+				root.refresh(true);
 			});
 			this.$.append(this.trigSwitch);
 
-			this.vectorSwitch = elm.create('Switch','R\u2220\u03B8','< >');
-			this.vectorSwitch.$.on('flipped',function(e){
-				app.storage.setVectorDisplayMode(e.target.state);
-				root.refresh();
+			this.vectorSwitch = elm.create('Switch','R\u2220\u03B8','< >','app.storage.displayPolarVectors');
+			this.vectorSwitch.$.on('flipped',function() {
+				root.refresh(true);
 			});
 			this.$.append(this.vectorSwitch);
 
-			this.storeButton = elm.create('ToolbarButton','&rarr;Aa');
+
+			this.storeButton = elm.create('REPLButton','STO');
 			this.storeButton.$.on('invoke',function() {
 				if(!app.storage.varSaveMode) {
 					app.storage.initVariableSave();
@@ -175,6 +216,12 @@ def REPLCard {
 				}
 			});
 			this.$.append(this.storeButton);
+
+			this.clearButton = elm.create('REPLButton','CLR');
+			this.clearButton.$.on('invoke',function() {
+				app.mode.currentInput().acceptActionInput('clear');
+			});
+			this.$.append(this.clearButton);
 
 			this.size();
 		}
@@ -205,7 +252,6 @@ def REPLManager {
 		position: fixed;
 		width: 100%;
 		height: 100%;
-		background: #CCC;
 		-webkit-overflow-scrolling: touch;
 		overflow: hidden;
 	}
@@ -229,12 +275,17 @@ def REPLManager {
 	}
 		
 	constructor {
-		this.$inner = $this.find('.inner');
+
 	}
 	
 	method init() {
+		//this.addCard();
 		this.size();
-		this.addCard();
+	}
+
+	on syncReady {
+		this.addCard(app.storage.currentInput || '');
+		this.size();
 	}
 	
 	method size(i) {
@@ -250,10 +301,12 @@ def REPLManager {
 		this.screenFraction = i;
 	}
 	
-	method addCard {
-		var c = elm.create('REPLCard');
+	method addCard(str) {
+		var c = elm.create('REPLCard'),
+			self = this;
 		this.$inner.append(c);
 		c.init();
+		if(str) c.setContents(str);
 		this.currentCard = c;
 	}
 	
@@ -263,6 +316,10 @@ def REPLManager {
 
 	method result() {
 		return this.currentCard.result();
+	}
+
+	extends {
+		SyncSubscriber
 	}
 	
 }

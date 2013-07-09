@@ -36,7 +36,6 @@ Utils.prototype.hitTest = function(touch, elemposition, width, height) {
     return (touchX > left && touchX < right && touchY > top && touchY < bottom);
 };
 
-
 // A set of utilities for manipulating and parsing strings. StringUtil is lifted
 // more or less directly from as3corelib's StringUtil...todo add license?
 

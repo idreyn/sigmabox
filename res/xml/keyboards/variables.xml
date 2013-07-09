@@ -1,122 +1,122 @@
 <keyboard>
 	
 	<key name='close' row='1' col='1' default-color='#333'>
-		<primary action='app: keyboard main' text-label='close'/>
+		<primary close='close' text-label='close'/>
 	</key>
 
 	<key row='2' col='1'>
-		<primary action='app: keyboard main' text-label='a' variable='a' />
-		<alternate action='app: keyboard main' text-label='A' variable='A' />
+		<primary close='close' text-label='a' variable='a' />
+		<alternate close='close' text-label='A' variable='A' />
 	</key>
 
 	<key row='3' col='1'>
-		<primary action='app: keyboard main' text-label='b' variable='b' />
-		<alternate action='app: keyboard main' text-label='B' variable='B' />
+		<primary close='close' text-label='b' variable='b' />
+		<alternate close='close' text-label='B' variable='B' />
 	</key>
 
 	<key row='4' col='1'>
-		<primary action='app: keyboard main' text-label='c' variable='c' />
-		<alternate action='app: keyboard main' text-label='C' variable='C' />
+		<primary close='close' text-label='c' variable='c' />
+		<alternate close='close' text-label='C' variable='C' />
 	</key>
 
 	<key row='5' col='1'>
-		<primary action='app: keyboard main' text-label='d' variable='d' />
-		<alternate action='app: keyboard main' text-label='D' variable='D' />
+		<primary close='close' text-label='d' variable='d' />
+		<alternate close='close' text-label='D' variable='D' />
 	</key>
 
 
 
 	<key row='1' col='2'>
-		<primary action='app: keyboard main' text-label='f' variable='f' />
-		<alternate action='app: keyboard main' text-label='F' variable='F' />
+		<primary close='close' text-label='f' variable='f' />
+		<alternate close='close' text-label='F' variable='F' />
 	</key>
 
 	<key row='2' col='2'>
-		<primary action='app: keyboard main' text-label='h' variable='h' />
-		<alternate action='app: keyboard main' text-label='H' variable='H' />
+		<primary close='close' text-label='h' variable='h' />
+		<alternate close='close' text-label='H' variable='H' />
 	</key>
 	
 	<key row='3' col='2'>
-		<primary action='app: keyboard main' text-label='j' variable='j' />
-		<alternate action='app: keyboard main' text-label='J' variable='J' />
+		<primary close='close' text-label='j' variable='j' />
+		<alternate close='close' text-label='J' variable='J' />
 	</key>
 
 	<key row='4' col='2'>
-		<primary action='app: keyboard main' text-label='k' variable='k' />
-		<alternate action='app: keyboard main' text-label='K' variable='K' />
+		<primary close='close' text-label='k' variable='k' />
+		<alternate close='close' text-label='K' variable='K' />
 	</key>
 
 	<key row='5' col='2'>
-		<primary action='app: keyboard main' text-label='l' variable='l' />
-		<alternate action='app: keyboard main' text-label='L' variable='L' />
+		<primary close='close' text-label='l' variable='l' />
+		<alternate close='close' text-label='L' variable='L' />
 	</key>
 
 
 	<key row='1' col='3'>
-		<primary action='app: keyboard main' text-label='m' variable='m' />
-		<alternate action='app: keyboard main' text-label='M' variable='M' />
+		<primary close='close' text-label='m' variable='m' />
+		<alternate close='close' text-label='M' variable='M' />
 	</key>
 
 	<key row='2' col='3'>
-		<primary action='app: keyboard main' text-label='n' variable='n' />
-		<alternate action='app: keyboard main' text-label='N' variable='N' />
+		<primary close='close' text-label='n' variable='n' />
+		<alternate close='close' text-label='N' variable='N' />
 	</key>
 
 	<key row='3' col='3'>
-		<primary action='app: keyboard main' text-label='o' variable='o' />
-		<alternate action='app: keyboard main' text-label='O' variable='O' />
+		<primary close='close' text-label='o' variable='o' />
+		<alternate close='close' text-label='O' variable='O' />
 	</key>
 
 	<key row='4' col='3'>
-		<primary action='app: keyboard main' text-label='p' variable='p' />
-		<alternate action='app: keyboard main' text-label='P' variable='P' />
+		<primary close='close' text-label='p' variable='p' />
+		<alternate close='close' text-label='P' variable='P' />
 	</key>
 
 	<key row='5' col='3'>
-		<primary action='app: keyboard main' text-label='q' variable='q' />
-		<alternate action='app: keyboard main' text-label='Q' variable='Q' />
+		<primary close='close' text-label='q' variable='q' />
+		<alternate close='close' text-label='Q' variable='Q' />
 	</key>
 
 
 	<key row='1' col='4'>
-		<primary action='app: keyboard main' text-label='r' variable='r' />
-		<alternate action='app: keyboard main' text-label='R' variable='R' />
+		<primary close='close' text-label='r' variable='r' />
+		<alternate close='close' text-label='R' variable='R' />
 	</key>
 
 	<key row='2' col='4'>
-		<primary action='app: keyboard main' text-label='s' variable='s' />
-		<alternate action='app: keyboard main' text-label='S' variable='S' />
+		<primary close='close' text-label='s' variable='s' />
+		<alternate close='close' text-label='S' variable='S' />
 	</key>
 
 	<key row='3' col='4'>
-		<primary action='app: keyboard main' text-label='t' variable='t' />
-		<alternate action='app: keyboard main' text-label='T' variable='T' />
+		<primary close='close' text-label='t' variable='t' />
+		<alternate close='close' text-label='T' variable='T' />
 	</key>
 
 	<key row='4' col='4'>
-		<primary action='app: keyboard main' text-label='u' variable='u' />
-		<alternate action='app: keyboard main' text-label='U' variable='U' />
+		<primary close='close' text-label='u' variable='u' />
+		<alternate close='close' text-label='U' variable='U' />
 	</key>
 
 	<key row='5' col='4'>
-		<primary action='app: keyboard main' text-label='v' variable='v' />
-		<alternate action='app: keyboard main' text-label='V' variable='V' />
+		<primary close='close' text-label='v' variable='v' />
+		<alternate close='close' text-label='V' variable='V' />
 	</key>
 
 
 	<key row='1' col='5'>
-		<primary action='app: keyboard main' text-label='w' variable='w' />
-		<alternate action='app: keyboard main' text-label='W' variable='W' />
+		<primary close='close' text-label='w' variable='w' />
+		<alternate close='close' text-label='W' variable='W' />
 	</key>
 
 	<key row='2' col='5'>
-		<primary action='app: keyboard main' text-label='y' variable='y' />
-		<alternate action='app: keyboard main' text-label='Z' variable='y' />
+		<primary close='close' text-label='y' variable='y' />
+		<alternate close='close' text-label='Z' variable='y' />
 	</key>
 
 	<key row='3' col='5'>
-		<primary action='app: keyboard main' text-label='z' variable='z' />
-		<alternate action='app: keyboard main' text-label='Z' variable='Z' />
+		<primary close='close' text-label='z' variable='z' />
+		<alternate close='close' text-label='Z' variable='Z' />
 	</key>
 
 </keyboard>

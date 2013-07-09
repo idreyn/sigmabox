@@ -1,0 +1,17 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='integral' row='2' col='1'>
+		<primary close='close' text-label='∫' action='input: left,left,left,left,left,left,left'>\int_{}^{}({})dx</primary>
+	</key>
+	<key name='derivative' row='3' col='1'>
+		<primary close='close' text-label='d/dx' action='input: left,left,left,left,left'>\frac{d}{dx}({})_{x={}}</primary>
+	</key>
+	<key name='sum' row='4' col='1'>
+		<primary close='close' action='input: left,left,left,left,left' text-label='∑'>\sum_{x=}^{}()</primary>
+	</key>
+	<key name='product' row='5' col='1'>
+		<primary close='close' action='input: left,left,left,left,left' text-label='∏'>\prod_{x=}^{}()</primary>
+	</key>
+</keyboard>

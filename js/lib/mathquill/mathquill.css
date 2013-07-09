@@ -361,3 +361,7 @@
   display:table-cell !important;
   display:inline-block;
 }
+
+.mtable span {
+  color: #F00;
+}
