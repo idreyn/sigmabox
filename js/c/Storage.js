@@ -3,13 +3,17 @@ function Storage() {
 }
 
 Storage.prototype.toSerialize = [
+	'mode',
 	'trigUseRadians',
 	'displayPolarVectors',
 	'displayDecimalizedFractions',
 	'currentInput',
+	'grapherEquations',
+	'grapherWindow',
 ];
 
 Storage.prototype.init = function() {
+	var self = this;
 	this.hasDeserialized = false;
 	this.lsNamespace = 'sigmabox';
 	this.trigUseRadians = false;
@@ -51,14 +55,114 @@ Storage.prototype.init = function() {
 	};
 	
 	this.functions = {
+		'abs': this.wrap(Math.abs),
+		'mod': this.wrap(Functions.mod),
+		'fact': this.wrap(Functions.factorial),
+		'nCr': this.wrap(Functions.nCr),
+		'nPr': this.wrap(Functions.nPr),
 		'sin': this.wrap(Math.sin,true),
 		'cos': this.wrap(Math.cos,true),
 		'tan': this.wrap(Math.tan,true),
-		'ln': this.wrap(Math.log,false),
+		'csc': this.wrap(Functions.csc,true),
+		'sec': this.wrap(Functions.sec,true),
+		'cot': this.wrap(Functions.cot,true),
+		'asin': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Math.asin(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'acos': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Math.acos(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'atan': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Math.atan(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'acsc': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Functions.acsc(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'asec': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Functions.asec(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'acot': this.wrap(function(n) {
+			self.trigInCurrentExpression = true;
+			n = Functions.acot(n);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		},false),
+		'sinh': this.wrap(Functions.sinh),
+		'cosh': this.wrap(Functions.cosh),
+		'tanh': this.wrap(Functions.tanh),
+		'csch': this.wrap(Functions.csch),
+		'sech': this.wrap(Functions.sech),
+		'coth': this.wrap(Functions.coth),
+		'asinh': this.wrap(Functions.asinh),
+		'acosh': this.wrap(Functions.acosh),
+		'atanh': this.wrap(Functions.atanh),
+		'acsch': this.wrap(Functions.acsch),
+		'asech': this.wrap(Functions.asech),
+		'acoth': this.wrap(Functions.acoth),
+		'ln': this.wrap(function(n) {
+			if(n <= 0) throw "Domain error (ln)";
+			return Math.log(n);
+		}
+		,false),
 		'log': this.wrap(function(n) {
+			if(n <= 0) throw "Domain error (log)";
 			return Functions.round(Math.log(n) / Math.LN10,10);
-		},false)
+		},false),
+		'id': this.wrap(Functions.identityMatrix,false,true,false),
+		'det': this.wrap(function(m) {
+			if(!(m instanceof Matrix)) {
+				throw 'Matrix expected';
+			}
+			return m.det();
+		},false,false),
+		'transpose': this.wrap(function(m) {
+			if(!(m instanceof Matrix)) {
+				throw 'Matrix expected';
+			}
+			return m.transpose();
+		},false,false,false),
+		'inverse': this.wrap(function(m) {
+			if(!(m instanceof Matrix)) {
+				throw 'Matrix expected';
+			}
+			return m.inverse();
+		},false,false,false)
 	}
+
+	for(var k in this.functions) {
+		this.registerFunction(k);
+	}
+
+	this.customFunctions = {
+
+	};
 
 	this.deserialize();
 }
@@ -73,6 +177,7 @@ Storage.prototype.deserialize = function() {
 		}
 	});
 	this.variables = this.deserializeVariables(s.variables || {});
+	this.customFunctions = this.deserializeFunctions(s.functions || {});
 	this.hasDeserialized = true;
 }
 
@@ -81,9 +186,10 @@ Storage.prototype.serialize = function() {
 	var s = {},
 		self = this;
 	this.toSerialize.forEach(function(item) {
-		s[item] = self[item];
+		s[item] = self[item] instanceof Function ? self[item].call() : self[item];
 	});
 	s.variables = this.serializeVariables(this.variables);
+	s.functions = this.serializeFunctions(this.customFunctions);
 	window.localStorage[this.lsNamespace] = JSON.stringify(s);
 }
 
@@ -106,6 +212,7 @@ Storage.prototype.deserializeVariables = function(obj) {
 
 Storage.prototype.startSyncing = function() {
 	var self = this;
+	return;
 	setTimeout(function() {
 		setInterval(function() {
 			self.uiSync();
@@ -128,12 +235,65 @@ Storage.prototype.cancelVariableSave = function() {
 
 Storage.prototype.setVariable = function(k,v) {
 	this.variables[k] = v;
+	app.popNotification(
+		'Set ' + k + ' to ' + v.toString()
+	);
 	this.serialize();
 }
 
-Storage.prototype.wrap = function(lambda,isTrig,useNumber) {
+Storage.prototype.isFunctionNameAvailable = function(name) {
+	if(window.LatexCmds[name]) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+Storage.prototype.registerFunction = function(name) {
+	window.LatexCmds[name] = window.NonItalicizedFunction;
+}
+
+Storage.prototype.unregisterFunction = function(name) {
+	delete window.LatexCmds[name];
+	delete this.customFunctions[name];
+}
+
+Storage.prototype.updateFunction = function(name,parameters,body) {
+	var p = new Parser();
+	this.customFunctions[name] = {
+		name: name,
+		parameters: parameters,
+		body: body,
+		expression: p.parse(body)
+	};
+	this.serialize();
+}
+
+Storage.prototype.serializeFunctions = function(f) {
+	f = f || this.customFunctions;
+	var res = {};
+	for(var k in f) {
+		res[f[k].name] = {
+			name:  f[k].name,
+			parameters: f[k].parameters,
+			body: f[k].body
+		};
+	}
+	return res;
+}
+
+Storage.prototype.deserializeFunctions = function(f) {
+	for(var k in f) {
+		this.registerFunction(f[k].name);
+		this.updateFunction(f[k].name,f[k].parameters,f[k].body);
+	}
+	return this.customFunctions;
+}
+
+Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
 	var self = this;
 	if(useNumber === undefined || useNumber === null) useNumber = true;
+	if(useNumberOut === undefined || useNumberOut === null) useNumberOut = true;
 	return function() {
 		var args = app.utils.argArr(arguments);
 		if(useNumber) {
@@ -153,16 +313,28 @@ Storage.prototype.wrap = function(lambda,isTrig,useNumber) {
 		if(isTrig) {
 		 	res = Functions.round(res,15);
 		}
-		return new Value(res);
+		if(useNumberOut) {
+			return new Value(res);
+		} else {
+			return res;
+		}
 	};
 }
 
 Storage.prototype.callFunction = function(name,args) {
  	var func = this.functions[name];
- 	if(!func) {
- 		throw 'No function called ' + name;
+ 	if(func) {
+ 		return func.apply(null,args);
  	}
- 	return func.apply(null,args);
+ 	func = this.customFunctions[name];
+ 	if(func) {
+ 		var frameArgs = {};
+ 		for(var i=0;i<func.parameters.length;i++) {
+ 			frameArgs[func.parameters[i]] = args[i];
+ 		}
+ 		return func.expression.valueOf(new Frame(frameArgs));
+ 	}
+ 	throw 'No function called ' + name;
  }
 
  Storage.prototype.uiSyncSubscribe = function(el) {

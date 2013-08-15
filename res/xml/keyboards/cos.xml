@@ -1,0 +1,26 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='acos' row='1' col='2'>
+		<primary close='close' action='input:left' text-label='acos'>\acos()</primary>
+	</key>
+	<key name='sec' row='2' col='1'>
+		<primary close='close' action='input:left' text-label='sec'>\sec()</primary>
+	</key>
+	<key name='asec' row='2' col='2'>
+		<primary close='close' action='input:left' text-label='asec'>\asec()</primary>
+	</key>
+	<key name='cosh' row='3' col='1'>
+		<primary close='close' action='input:left' text-label='cosh'>\cosh()</primary>
+	</key>
+	<key name='acosh' row='3' col='2'>
+		<primary close='close' action='input:left' text-label='acosh'>\acosh()</primary>
+	</key>
+	<key name='sech' row='4' col='1'>
+		<primary close='close' action='input:left' text-label='sech'>\sech()</primary>
+	</key>
+	<key name='asech' row='4' col='2'>
+		<primary close='close' action='input:left' text-label='asech'>\asech()</primary>
+	</key>
+</keyboard>

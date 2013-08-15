@@ -1,200 +1,264 @@
-def TouchInteractive {
+// Components that are difficult to separate from Sigmabox
 
-	constructor {
-		this.enabled = true;
-	}
-
-	on touchstart(e) {
-		if(this.enabled) {
-			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-			this._touchStartX = touch.screenX;
-			this._touchDeltaX = 0;
-			this._isTouchInBounds = true;
-			this._receivedTouchStart = true;
-			$this.trigger('active',e);
-		}
-	}
-	
-	on touchmove(e) {
-		if(this.enabled) {
-			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-			this._touchDeltaX = Math.abs(touch.screenX - this._touchStartX);
-			if (app.utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
-				this._isTouchInBounds = true;
-			} else {
-				this._isTouchInBounds = false;
-			}
-		}
-	}
-	
-	on touchend(e) {
-		if(this.enabled) {
-			e.stopPropagation();
-			e.preventDefault();
-			this.receivedTouchEnd = true;
-			$this.trigger('endactive');
-			$this.trigger('invoke');	
-		}
-	}
-	
-	on mousedown(e) {
-		if(this.enabled) {
-			if(this._receivedTouchStart) {
-				this._receivedTouchStart = false;
-			} else {
-				$this.trigger('active',e);
-			}
-		}
-	}
-	
-	on mouseup {
-		if(this.enabled) {
-			$this.trigger('invoke');
-			$this.trigger('endactive');
-		}
-	}
-	
-	on mouseup mouseout {
-		if(this.enabled) {
-			if(this._receivedTouchEnd) {
-				this._receivedTouchEnd = false;
-			}
-		}
+def SigmaboxAppFrame {
+	properties {
+		menuClass: 'SigmaboxSideMenu'
 	}
 
-	method enable {
-		this.enabled = true;
-	}	
-
-	method disable {
-		this.enabled = false;
+	extends {
+		SideMenuAppView
 	}
 
 	css {
-		outline: none;
-		user-select: none;
-		-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
+
 	}
 }
 
-def Button {
+
+def SigmaboxSideMenu {
+	extends {
+		SideMenu
+	}
+
+	contents {
+		<img src='res/img/logo.png' width='100%' />
+		[[SigmaboxSideMenuItem 'calculator','repl']]
+		[[SigmaboxSideMenuItem 'grapher','grapher']]
+		[[SigmaboxSideMenuItem 'functions','functions']]
+		[[SigmaboxSideMenuItem 'stats','stats']]
+		[[SigmaboxSideMenuItem 'converter','converter']]
+		[[SigmaboxSideMenuItem 'settings','settings']]
+	}
+
+	method build {
+
+	}
+
+	method setMode(mode) {
+		this.$SigmaboxSideMenuItem.each(function() {
+			if(this.mode == mode) {
+				self.selected = this;
+				this.showCircle();
+			}
+		});
+	}
+}
+
+def SigmaboxSideMenuItem(imageID,mode) {
+	extends {
+		SideMenuItem
+	}
+
+	contents {
+		<div class='circle'></div>
+		<img class='image' />
+	}
+
+	css {
+		margin-bottom: 10px;
+		background: none;
+		overflow-x hidden;
+		height: 75px;
+		width: 75px;
+		text-align: center;
+	}
+
+	my image {
+		css {
+			opacity: 0.7;
+			position: absolute;
+			width: 30px;
+			height: 30px;
+		}
+
+		on dragstart(e) {
+			e.preventDefault();
+		}
+
+		constructor {
+			this.src = app.r.image(parent.imageID);
+			$this.css('top',
+				($parent.height() - $this.height()) / 2
+			);
+			$this.css('left',
+				($parent.width() - $this.width()) / 2
+			);
+		}
+	}
+
+	my circle {
+		css {
+			position: absolute;
+			display: none;
+			width: 75px;
+			height: 75px;
+			border-radius: 50px;
+			background: #CCC;
+			opacity: 0.2;
+		}
+	}
+
+	on invoke {
+		app.setMode(this.mode);
+		setTimeout(function() {
+			app.root.hideMenu();
+		},100);
+	}
+
+	on deselect {
+		this.hideCircle();
+	}
+
+	method showCircle {
+		if(app.useGratuitousAnimations()) {
+			setTimeout(function() {
+				self.$circle.show().animate({
+					scale: 1.2
+				},500,'easeOutQuart');
+			},10);
+		} else {
+			this.$circle.css('scale',1.2).show();
+		}
+	}
+
+	method hideCircle {
+		if(app.useGratuitousAnimations()) {
+			setTimeout(function() {
+				self.$circle.show().animate({
+					scale: 0
+				},350,'easeOutQuart');
+			},10);
+		} else {
+			this.$circle.css('scale',0);
+		}
+	}
+}
+
+def IconButton(iconName,callback) {
+	html {
+		<img />
+	}
+
+	extends {
+		Button
+	}
+
+	on invoke {
+		if(this.callback) this.callback();
+	}
 
 	constructor {
-		this.enabled = true;
+		this.src = app.r.thinIcon(this.iconName);
 	}
-	
-	on touchstart(e) {
-		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		this._touchStartX = touch.screenX;
-		this._touchDeltaX = 0;
-		this._isTouchInBounds = true;
-		this._receivedTouchStart = true;
-		$this.removeClass('color-transition');
-		if(this.enabled) {
-			this.applyStyle('active');
-			$this.trigger('active',e);
-		}
+
+	css {
+		vertical-align: middle;
+		width: 30px;
+		height: 30px;
+		margin-right: 15px;
+		cursor: pointer;
 	}
-	
-	on touchmove(e) {
-		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		this._touchDeltaX = Math.abs(touch.screenX - this._touchStartX);
-		if (app.utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
-			this._isTouchInBounds = true;
-		} else {
-			this._isTouchInBounds = false;
-		}
+
+	style default {
+		opacity: 0.5;
 	}
-	
-	on touchend(e) {
-		e.stopPropagation();
-		e.preventDefault();
-		this.receivedTouchEnd = true;
-		if(this.enabled) {
-			this.applyStyle('default');
-			$this.addClass('color-transition');
-			$this.trigger('endactive');
-			$this.trigger('invoke');	
-		}
+
+	style active {
+		opacity: 0.8;
 	}
-	
-	on mousedown(e) {
-		if(this._receivedTouchStart) {
-			this._receivedTouchStart = false;
-		} else {
-			$this.removeClass('color-transition');
-			if(this.enabled) {
-				this.applyStyle('active');
-				$this.trigger('active',e);
-			}
-		}
+
+	hover {
+		opacity: 0.8;
 	}
-	
-	on mouseup {
-		if(this.enabled) {
-			$this.trigger('invoke');
-			$this.trigger('endactive');
-		}
+}
+
+def TrigSwitch(left,right,willSyncTo) {
+	extends {
+		Switch
 	}
-	
-	on mouseup mouseout {
-		if(this._receivedTouchEnd) {
-			this._receivedTouchEnd = false;
-		} else {
-			if(this.enabled) {
-				this.applyStyle('default');
-				$this.addClass('color-transition');
-			}
-		}
+
+	constructor {
+		var self = this;
 	}
-	
-	
-	on ready {
-		if(this.enabled) {
-			this.applyStyle('default');
-		} else {
+
+	style disabled {
+		opacity: 0.5;
+		background: rgba(255,0,0,0.1);
+	}
+
+	style default {
+		opacity: 1;
+		background: rgba(0,0,0,0.1);
+	}
+
+	method forceRadians() {
+		if(this.realTrigMode === undefined) {
+			this.realTrigMode = app.storage.realTrigMode;
+			this.flip(true);
+			this.disable();
 			this.applyStyle('disabled');
 		}
+		//this.size();
 	}
 
-	method enable {
-		this.enabled = true;
-		this.applyStyle('default');
+	method endForceRadians() {
+		if(this.realTrigMode !== undefined) {
+			this.flip(this.realTrigMode);
+			this.enable();
+			this.applyStyle('default');
+			this.realTrigMode = undefined;
+		}
 	}
-
-	method disable {
-		this.enabled = false;
-		this.applyStyle('disabled');
-	}
-	
-	css {
-		outline: none;
-		user-select: none;
-		-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
-	}
-	
 }
 
-def SyncSubscriber {
+def Overlay {
+	css {
+		-webkit-transform: translateX(1000px);
+		-webkit-transition: -webkit-transform 0.1s ease-out;
+		z-index: 1001;
+		background: url(res/img/background.png);
+	}
 
 	constructor {
-		app.storage.uiSyncSubscribe(this);
+
 	}
 
-	method syncTo(val) {
-		this.willSyncTo = val;
-	}
-
-	on sync {
-		var res = eval(this.willSyncTo);
-		if(this.sync && this.willSyncTo) this.sync(res);
+	on removed {
+		$this.css('translateX',$(this).width()); //.delay(1000).remove();
+		if(this.relinquish) this.relinquish();
 	}
 }
 
-def Dispatch {
+def Notification(text,duration) {
+
 	html {
-		<div></div>
+		<div>$text</div>
+	}
+
+	css {
+		position: fixed;
+		width: 100%;
+		top: 0;
+		height: 20px;
+		color: #999;
+		background: #EEE;
+		box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+		padding: 10px;
+	}
+
+	constructor {
+		$this.hide();
+	}
+
+	method invoke {
+		app.notificationCount |= 0;
+		app.notificationCount++;
+		$this.css('top',0 - $this.height()).show();
+		$this.animate({top: (app.notificationCount-1)*($this.outerHeight())},500,'easeOutQuart',function() {
+			setTimeout(function() {
+				app.notificationCount--;
+				$this.animate({top:-100},500,'easeInQuart');
+			},this.duration*1000);
+		});
 	}
 }
-
-	

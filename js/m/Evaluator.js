@@ -52,6 +52,7 @@ Value.prototype.toString = function(p) {
 		s += parseFloat(this.real.toPrecision(p));
 	}
 	if(this.complex !== 0) {
+		p = 5;
 		if(this.complex > 0) {
 			if(this.real !== 0) {
 				s += '+';	
@@ -257,6 +258,21 @@ Mult.prototype.valueOf = function(frame) {
 	return this.flatten(frame).args.reduce(function(a,b) {
 		a.val = a.valueOf(frame);
 		b.val = b.valueOf(frame);
+		if(a.val instanceof Matrix || b.val instanceof Matrix) {
+			if(a.val instanceof Matrix && b.val instanceof Matrix) {
+				return a.val.mult(b.val);
+			} else {
+				var s, m;
+				if(a.val instanceof Matrix) {
+					m = a.val;
+					s = b.val;
+				} else {
+					m = b.val;
+					s = a.val;
+				}
+				return m.mult(s);
+			}
+		}
 		if(a.val instanceof Vector || b.val instanceof Vector) {
 			if(a.val instanceof Vector && b.val instanceof Vector) {
 				var op = b.productType;
@@ -305,16 +321,25 @@ function Frac(top,bottom) {
 	this.bottom = bottom;
 }
 
+Frac.grapherMode = false;
+
 Frac.prototype.valueOf = function(frame) {
+
+	if(Frac.grapherMode) {
+		return this.grapherEval(frame);
+	}
 
 	var top = this.top.valueOf(frame);
 	var bottom = this.bottom.valueOf(frame);
 
 	if(bottom instanceof Vector) {
-		throw "Vectors cannot be denominators";
+		throw "Invalid denominator";
 	}
-	if(top instanceof Vector) {
+	if(top instanceof Vector || top instanceof Matrix) {
 		return top.mult(bottom.inverse());
+	}
+	if(bottom instanceof Matrix) {
+		return bottom.inverse().mult(top);
 	}
 	if(top instanceof Frac || bottom instanceof Frac) {
 		return top.mult(bottom.valueOf(frame).inverse()).valueOf(frame);
@@ -393,6 +418,17 @@ Frac.prototype.valueOf = function(frame) {
 	);
 }
 
+Frac.prototype.grapherEval = function(frame) {
+	var top = this.top.valueOf(frame);
+	var bottom = this.bottom.valueOf(frame);
+	top = top.toFloat();
+	bottom = bottom.toFloat();
+	if(bottom == 0) {
+		throw "Division by 0";
+	}
+	return new Value(top / bottom);
+}
+
 Frac.prototype.add = function(other) {
 	//// // console.log(this,other);
 	return new Frac(
@@ -439,6 +475,9 @@ Frac.prototype.decimalize = function(frame) {
 
 Frac.prototype.toString = function() {
 	var red = this;
+	if(red.top.equals(0)) {
+		return '0';
+	}
 	if(red.bottom) {
 		if(red.bottom.equals(1)) {
 			return red.top.toString();
@@ -474,7 +513,7 @@ Pow.prototype.valueOf = function(frame) {
 		p = p.decimalize();
 	}
 	if(b instanceof Value) {
-		if(!b.complex && !p.complex && b.real > 0) {
+		if(!b.complex && !p.complex && (b.real > 0 || p.real >= 1)) {
 			return new Value(Math.pow(b.real,p.real));
 		} else {
 			var c = Functions.complexRaise(b,p);
@@ -485,6 +524,25 @@ Pow.prototype.valueOf = function(frame) {
 			new Pow(b.top,p).valueOf(frame),
 			new Pow(b.bottom,p).valueOf(frame)
 		);
+	} else if(b instanceof Matrix) {
+		if(p.complex || p.real != Math.round(p.real)) {
+			throw 'Invalid power';
+		}
+		if(p == 0) {
+			if(b.square()) {
+				return Functions.identityMatrix(b.numRows());
+			} else {
+				throw 'Invalid power for non-square matrix';
+			}
+		}
+		if(p < 0) {
+			p = Math.abs(p);
+			b = b.inverse();
+		}
+		for(var i=0;i<p-1;i++) {
+			b = b.mult(b);
+		}
+		return b;
 	}
 }
 
@@ -526,17 +584,45 @@ Symbol.prototype.toString = function(frame) {
 }
 
 function Matrix(rows) {
-	this.rows = rows.map(function(row) {
-		return row.map(function(el) {
-			return new Value(el);
-		});
-	});
+	this.rows = rows;
 }
 
-Matrix.prototype.toString = function() {
+Matrix.prototype.map = function(lambda) {
+	var r = 0,
+		c = 0,
+		self = this;
+	return new Matrix(this.rows.map(function(row) {
+		r++;
+		c = 0;
+		return row.map(function(el) {
+			c++;
+			return lambda(el,r,c,self);
+		});
+	}));
+}
+
+Matrix.prototype.dim = function() {
+	return this.rows.length.toString() + 'x' + this.rows[0].length.toString();
+}
+
+Matrix.prototype.square = function() {
+	return this.numRows() == this.numColumns();
+}
+
+Matrix.prototype.valueOf = function(frame) {
+	var rows = this.rows;
+	rows = rows.map(function(row) {
+		return row.map(function(item) {
+			return item.valueOf(frame);
+		});
+	});
+	return new Matrix(rows);
+}
+
+Matrix.prototype.toString = function(frame) {
 	return '[' + this.rows.map(function(row) {
 		return row.map(function(el) {
-			return el.toString();
+			return el.valueOf(frame).toString();
 		}).join(',')
 	}).join('|') + ']';
 }
@@ -556,22 +642,74 @@ Matrix.prototype.numRows = function() {
 }
 
 Matrix.prototype.numColumns = function() {
-	return this.rows[0].length;
+	return this.rows[0] ? this.rows[0].length : 0;
 }
 
 Matrix.prototype.select = function(r,c) {
 	return this.rows[r-1][c-1];
 }
 
-Matrix.prototype.minor = function(row,col) {
+Matrix.prototype.add = function(other) {
+	if(!(other instanceof Matrix)) {
+		throw "Can't add these types";
+	}
+	if(this.dim() != other.dim()) {
+		throw "Dimension error";
+	}
+	var rows = [];
+	for(var i=0;i<this.rows.length;i++) {
+		var row = [];
+		for(var j=0;j<this.rows[0].length;j++) {
+			row.push(this.rows[i][j].add(other.rows[i][j]));
+		}
+		rows.push(row);
+	}
+	return new Matrix(rows);
+}
+
+Matrix.prototype.mult = function(other) {
+	var self = this;
+	if(!(other instanceof Matrix)) {
+		return this.map(function(el) {
+			return el.mult(other);
+		});
+	} else {
+		if(this.numColumns() == other.numRows()) {
+			var resRows = this.numRows();
+			var resCols = other.numColumns();
+			var dim = this.numColumns();
+			var ab = function(i,j) {
+				var res = new Value(0);
+				for(var k=1;k<=dim;k++) {
+					var s = self.select(i,k).mult(other.select(k,j));
+					res = res.add(s);
+				}
+				return res;
+			}
+			var res = [];
+			for(var i=1;i<=resRows;i++) {
+				var row = [];
+				for(var j=1;j<=resCols;j++) {
+					row.push(ab(i,j));
+				}
+				res.push(row);
+			}
+			return new Matrix(res);
+		} else {	
+			throw 'Dimension error';
+		}
+	}
+}
+
+Matrix.prototype.minor = function(r,c) {
 	var src = [], matrix = this;
-	for(var i = 1; i < matrix.numRows() + 1; i++) {
-		if(i == row) continue;			
+	for(var i = 1; i <= matrix.numRows(); i++) {
+		if(i == r) continue;	
 		var arrn = [];
 		var row = matrix.row(i);
-		for(var j = 1; j < row.length + 1; j++)
+		for(var j = 1; j <= row.length; j++)
 		{
-			if(j != col) arrn.push(matrix.select(i,j));
+			if(j != c) arrn.push(matrix.select(i,j));
 		};
 		src.push(arrn);
 	};
@@ -579,6 +717,9 @@ Matrix.prototype.minor = function(row,col) {
 }
 
 Matrix.prototype.det = function() {
+	if(this.numRows() != this.numColumns()) {
+		throw 'Invalid for non-square matrix';
+	}
 	var matrix = this;
 	var select = function(row,col) {
 		return matrix.select(row,col) || 0;
@@ -586,6 +727,9 @@ Matrix.prototype.det = function() {
 	var selectAllBut = function(col) {
 		return matrix.minor(1,col);
 	};
+	if(matrix.numRows() == 1) {
+		return this.select(1,1);
+	}
 	if(matrix.numRows() == 2 && matrix.numColumns() == 2)
 	{
 		return select(2,2).mult(select(1,1)).add(
@@ -604,6 +748,45 @@ Matrix.prototype.det = function() {
 		}
 		return sum;
 	};
+}
+
+Matrix.prototype.cofactor = function(row,col) {
+	return new Value(Math.pow(-1,row+col)).mult(this.minor(row,col).det());
+}
+
+Matrix.prototype.adjoint = function() {
+	var self = this;
+	return this.map(function(el,row,col) {
+		return self.cofactor(row,col);
+	}).transpose();
+}
+
+Matrix.prototype.inverse = function() {
+	var self = this,
+		det = this.det(),
+		adj = this.adjoint();
+	if(det == 0) {
+		throw 'Matrix has no inverse';
+	}
+	return adj.map(function(el) {
+		return el.mult(new Value(1 / det));
+	});
+}
+
+Matrix.prototype.transpose = function() {
+	var res = [];
+	for(var i=1;i<=this.numColumns();i++) {
+		var row = [];
+		for(var j=1;j<=this.numRows();j++) {
+			row.push(this.select(j,i));
+		}
+		res.push(row);
+	}
+	return new Matrix(res);
+}
+
+Matrix.prototype.serialize = function() {
+	return this.toString(new Frame({}));
 }
 
 function Vector(args) {
@@ -696,14 +879,13 @@ function Derivative(e,wrt,at) {
 Derivative.prototype.at = function(x,wrt,frame) {
 	x = x.valueOf(frame);
 	if(x.toFloat) x = x.toFloat();
-	wrt  == this.wrt || 'x'
+	wrt  = this.wrt || 'x'
 	var f = new Frame({},frame);
-	var dx = 0.00000001;
+	var dx = 0.0000001;
 	f.set(wrt,x + dx);
 	var y2 = this.expression.valueOf(f).toFloat();
 	f.set(wrt,x);
 	var y1 = this.expression.valueOf(f).toFloat();
-	// // console.log(y2,y1);
 	return new Value((y2-y1)/dx).round(3);
 }
 
@@ -718,16 +900,16 @@ function Integral(a,b,f,x) {
 	this.lower = a;
 	this.upper = b;
 	this.integrand = f;
-	this.wrt = x;
+	this.wrt = x || 'x';
 }
 
-Integral.prototype.valueOf = function(frame) {
+Integral.prototype.valueOf = function(frame,nSteps,round) {
 	app.storage.calcInCurrentExpression = true;
 	app.storage.realTrigMode = app.storage.trigUseRadians;
 	app.storage.trigUseRadians = true;
 	var	a = this.lower.valueOf(frame).toFloat(),
 		b = this.upper.valueOf(frame).toFloat(),
-		n = 2000,
+		n = nSteps || 2000,
 		dx = Math.abs((a - b) / n),
 		f = new Frame({},frame),
 		sum = 0,
@@ -742,7 +924,6 @@ Integral.prototype.valueOf = function(frame) {
 	}
 	if(dx == 0 || isNaN(dx)) return 0;
 	for(var i = a; i <= b; i += dx) {
-		i = Functions.round(i,5);
 		f.set(this.wrt,i);
 		var r = this.integrand.valueOf(f).toFloat();
 		heights.push(r);
@@ -755,7 +936,7 @@ Integral.prototype.valueOf = function(frame) {
 	// // console.log(heights[heights.length - 1]);
 	sum *= dx * 0.5;
 	if(flip) sum *= -1;
-	return new Value(sum).round(1);
+	return new Value(sum).round(round || 1);
 }
 
 Integral.prototype.toString = function() {

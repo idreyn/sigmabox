@@ -58,7 +58,6 @@ Solver.prototype.guess = function(guess) {
 		iteration++;
 		x = this.f(guess);
 		ddx = this.fPrime(guess);
-		console.log(x,ddx);
 		if(Math.abs(ddx) < epsilon) {
 			// this.cannotSolve();
 		}
@@ -129,4 +128,37 @@ Solver.parse = function(l,r) {
 	l = p.parse(l);
 	r = p.parse(r);
 	return new Solver(l,r);
+}
+
+function QuadraticSolver(a,s1,b,s2,c) {
+	if(a === '-') a = -1;
+	if(a === '') a = 1;
+	if(b === '') b = 1;
+	if(c === '') c = 0;
+	if(b === undefined || b === false) b = 0;
+	if(c === undefined || c === false) c = 0;
+	a = parseFloat(a);
+	b = parseFloat(b);
+	c = parseFloat(c);
+	if(s1 == '-') b = 0 - b;
+	if(s2 == '-') c = 0 - c;
+	this.a = new Value(a);
+	this.b = new Value(b);
+	this.c = new Value(c);
+}
+
+QuadraticSolver.prototype.solve = function() {
+	var p = new Parser();
+	var f = new Frame({
+		a: this.a,
+		b: this.b,
+		c: this.c
+	});
+	var s1 = p.parse('\\frac{-b+\\sqrt{(b)^{2}-(4)(a)(c)}}{2a}').valueOf(f);
+	var s2 = p.parse('\\frac{-b-\\sqrt{(b)^{2}-(4)(a)(c)}}{2a}').valueOf(f);
+	return [s1,s2];
+}
+
+QuadraticSolver.prototype.toString = function() {
+	return 'x = {'+this.solve().map(function(s){ return new Value(s.decimalize()).round(4); }).join(',') + '}';
 }

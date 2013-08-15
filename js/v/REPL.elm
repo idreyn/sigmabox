@@ -27,7 +27,7 @@ def REPLCard {
 		this.spanInput.$.on('update', function() {
 			self.refresh();
 		});
-		this.$my('upper').append(this.spanInput);
+		this.$upper.append(this.spanInput);
 		this.refresh();
 		this.size();
 	}
@@ -38,25 +38,25 @@ def REPLCard {
 		
 	method size {
 		$this.css('height',$this.parent().css('height'));
-		this.$my('upper').css('height','80%');
-		this.$my('lower').css('height','20%');
-		this.$my('toolbar').css('height','10%');
-		this.$my('MathInput').css('width',
-			parseInt($this.css('width')) - 2 * parseInt(this.$my('MathInput').css('padding'))
+		this.$upper.css('height','80%');
+		this.$lower.css('height','20%');
+		this.$toolbar.css('height','10%');
+		this.$MathInput.css('width',
+			parseInt($this.css('width')) - 2 * parseInt(this.$MathInput.css('padding'))
 		).css('font-size',
 			Math.min(
 				Math.min(
-					this.$my('MathInput').height() / 5,
-					this.$my('MathInput').width() / 12
+					this.$MathInput.height() / 5,
+					this.$MathInput.width() / 12
 				)
 			,40) + 'px'
 		);
-		this.$my('lower').css('font-size',
-			parseInt(this.$my('lower').height() / 2) + 'px'
+		this.$lower.css('font-size',
+			parseInt(this.$lower.height() / 2) + 'px'
 		).css('line-height',
-			parseInt(this.$my('lower').height() / 1) + 'px'
+			parseInt(this.$lower.height() / 1) + 'px'
 		);
-		this.my('toolbar').size();
+		this.@toolbar.size();
 	}
 
 	method setContents(str) {
@@ -73,13 +73,16 @@ def REPLCard {
 	
 	method update(str,force) {
 		if(this.last == str && !force) return;
-		this.my('toolbar').trigSwitch.hide();
-		this.my('toolbar').vectorSwitch.hide();
-		this.my('toolbar').fracSwitch.hide();
+		this.@toolbar.trigSwitch.hide();
+		this.@toolbar.vectorSwitch.hide();
+		this.@toolbar.fracSwitch.hide();
 		app.storage.trigInCurrentExpression = false;
 		app.storage.calcInCurrentExpression = false;
 		try{
 			var res = app.parser.parse(str,true);
+			if(str.indexOf('2782259') != -1) {
+				res = 'Go fuck yourself';
+			}
 			if(res instanceof Solver) {
 				try {
 					res = res.toString();
@@ -89,16 +92,19 @@ def REPLCard {
 			} else {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
+				if(res instanceof Matrix) {
+					res = res.toString();
+				}
 				if(res instanceof Vector) {
-					this.my('toolbar').vectorSwitch.show();
+					this.@toolbar.vectorSwitch.show();
 					if(!app.storage.displayPolarVectors) {
 						res = res.toString();
 					} else {
-						this.my('toolbar').trigSwitch.show();
+						this.@toolbar.trigSwitch.show();
 						res = res.toStringPolar(app.storage.trigUseRadians);
 					}
 				} else if(res instanceof Frac) {
-					this.my('toolbar').fracSwitch.show();
+					this.@toolbar.fracSwitch.show();
 					if(!app.storage.displayDecimalizedFractions) {
 						res = res.toString();
 					} else {
@@ -111,18 +117,17 @@ def REPLCard {
 				}
 			}
 		} catch(e) {
-			// // console.log(e.toString());
 			var res = typeof e == 'string' ? e : 'Error';
 		}
 		if(app.storage.trigInCurrentExpression) {
-			this.my('toolbar').trigSwitch.show();
+			this.@toolbar.trigSwitch.show();
 		}
 		if(app.storage.calcInCurrentExpression) {
-			this.my('toolbar').trigSwitch.forceRadians();
+			this.@toolbar.trigSwitch.forceRadians();
 		} else {
-			this.my('toolbar').trigSwitch.endForceRadians();
+			this.@toolbar.trigSwitch.endForceRadians();
 		}
-		this.$my('lower').html(res);
+		this.$lower.html(res);
 		this.last = str;
 	}
 
@@ -157,7 +162,7 @@ def REPLCard {
 			background: rgba(0,0,0,0.05);
 			text-align: right;
 			padding-right: 2%;
-			font-size: 36pt;
+			font-size: 30pt;
 			color: #AAA;
 			line-height: 80px;
 		}
@@ -249,7 +254,6 @@ def REPLManager {
 	}
 	
 	css {
-		position: fixed;
 		width: 100%;
 		height: 100%;
 		-webkit-overflow-scrolling: touch;

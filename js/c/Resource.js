@@ -25,6 +25,14 @@ Resource.prototype.keyboardImage = function(imageName) {
 	return 'res/img/keys/' + imageName + '.png';
 }
 
+Resource.prototype.image = function(imageName) {
+	return 'res/img/' + imageName + '.png';
+}
+
+Resource.prototype.thinIcon = function(iconName) {
+	return 'res/img/thin-icons/' + iconName + '.png';
+}
+
 Resource.prototype.url = function(str)  {
 	return 'url(' + str + ')';
 }

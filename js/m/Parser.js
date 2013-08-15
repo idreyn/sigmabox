@@ -25,8 +25,20 @@ Parser.prototype.parse = function(s,topLevel) {
 	// We can leverage this by just replacing all spaces with multiplication signs.
 	// Eat it, LaTeX.
 	s = ParseUtil.replace(s,' ','\\times');
+	// Two dots don't have any semantic meaning but they do cause all manner of infinite recursions
 	s = ParseUtil.replace(s,'..','.');
-	//// // console.log(s);
+	// For our purposes square brackets are parentheses
+	/* s = s.replace(/\[/,'(');
+	s = s.replace(/\]/,')'); */
+	// The LaTeX forms \left( and  \right) represent parentheses. We just want normal parentheses, though.
+	s = s.split('\\left(').join('(');
+	s = s.split('\\right)').join(')');
+	s = s.split('\\left[').join('[');
+	s = s.split('\\right]').join(']');
+	if(topLevel) {
+		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3
+		s = s.replace(/(\\times|\\cdot|\/)(\-[0-9\.]*)/,'$1($2)');
+	}
 	var p = this,
 		res = s,
 		check = [
@@ -41,6 +53,7 @@ Parser.prototype.parse = function(s,topLevel) {
 			p.func,
 			p.pow,
 			p.symbol,
+			p.matrix,
 			p.parentheses,
 			p.brackets,
 		];
@@ -52,6 +65,21 @@ Parser.prototype.parse = function(s,topLevel) {
 		// Mismatched braces, somewhere
 		// // console.log(s);
 		throw 'Mismatched parentheses';
+	}
+	var quadratic = /^((?:\-)?[0-9\.]*)x\^\{2\}(\+|\-)([0-9\.]*?)x(\+|\-)([0-9\.]*)=0$/
+	if(topLevel && quadratic.test(s)) {
+		var m = s.match(quadratic);
+		return new QuadraticSolver(m[1],m[2],m[3],m[4],m[5]);
+	}
+	var quadratic = /^((?:\-)?[0-9\.]*)x\^\{2\}(\+|\-)([0-9\.]*?)x=0$/
+	if(topLevel && quadratic.test(s)) {
+		var m = s.match(quadratic);
+		return new QuadraticSolver(m[1],m[2],m[3]);
+	}
+	var quadratic = /^((?:\-)?[0-9\.]*)x\^\{2\}(\+|\-)([0-9\.]*?)=0$/
+	if(topLevel && quadratic.test(s)) {
+		var m = s.match(quadratic);
+		return new QuadraticSolver(m[1],false,false,m[2],m[3]);
 	}
 	if(ParseUtil.nextIndexOf('=',s) != -1) {
 		var split = ParseUtil.split(s,'=');
@@ -83,6 +111,21 @@ Parser.prototype.brackets = function(s) {
 		});
 		return new Vector(contents);
 	} else {
+		return Parser.NO_MATCH;
+	}
+}
+
+Parser.prototype.matrix = function(s) {
+	var self = this;
+	if(s.charAt(0) == '[') {
+		s = s.slice(1,-1);
+		var rows = ParseUtil.split(s,'|').map(function(row) {
+			return ParseUtil.split(row,',').map(function(el) {
+				return self.parse(el);
+			});
+		});
+		return new Matrix(rows);
+	} else {	
 		return Parser.NO_MATCH;
 	}
 }
@@ -301,8 +344,70 @@ Parser.prototype.func = function(s) {
 				firstCharNextSet = rest.charAt(0);
 			}
 			var res;
-			//// // console.log(func,args);
-			if(func == 'frac') {
+			if(func.indexOf('matrix') == 0) {
+				var dim = func.slice(6),
+					rows;
+				args = args.map(function(arg) {
+					return self.parse(arg);
+				});
+				switch(dim) {
+					case 'OneOne':
+						rows = [
+							[args[0]]
+						];
+						break;
+					case 'OneTwo':
+						rows = [
+							[args[0],args[1]]
+						];
+						break;
+					case 'OneThree':
+						rows = [
+							[args[0],args[1],args[2]]
+						];
+						break;
+					case 'TwoOne':
+						rows = [
+							[args[0]],
+							[args[1]]
+						];
+						break;
+					case 'TwoTwo':
+						rows = [
+							[args[0],args[1]],
+							[args[2],args[3]]
+						];
+						break;
+					case 'TwoThree':
+						rows = [
+							[args[0],args[1],args[2]],
+							[args[3],args[4],args[5]]
+						];
+						break;
+					case 'ThreeOne':
+						rows = [
+							[args[0]],
+							[args[1]],
+							[args[2]]
+						];
+						break;
+					case 'ThreeTwo':
+						rows = [
+							[args[0],args[1]],
+							[args[2],args[3]],
+							[args[4],args[5]]
+						];
+						break;
+					case 'ThreeThree':
+						rows = [
+							[args[0],args[1],args[2]],
+							[args[3],args[4],args[5]],
+							[args[6],args[7],args[8]]
+						];
+						break;
+				}
+				res = new Matrix(rows);
+			} else if(func == 'frac') {
 				// Create a fraction object
 				res = new Frac(
 					self.parse(args[0]),
@@ -383,7 +488,9 @@ Parser.prototype.leadingNumber = function(s) {
 			new Factor(self.parse(lead))
 		];
 		var rest = s.slice(ind);
-		
+		if(rest.charAt(0) == '^') {
+			return Parser.NO_MATCH;
+		}
 		if(rest.length > 0) {
 			_factors.push(new Factor(self.parse(rest)));
 		}

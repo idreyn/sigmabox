@@ -41,8 +41,13 @@ def Keyboard(keyboardSource) {
 		bottom: 0px;
 		width: 100%;
 		background: #1b1b1b;
-		-webkit-overflow-scrolling: touch;
 		z-index: 1000;
+		-webkit-overflow-scrolling: touch;
+		-webkit-transform: translateY(0);
+	}
+
+	style animated {
+		-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
 
 	on touchmove(e) {
@@ -52,46 +57,42 @@ def Keyboard(keyboardSource) {
 	constructor {
 		this.size();
 	}
-	
+
 	method slideUp(n,e) {
-		$this.show().css(
-			'bottom',
-			0-parseInt($this.css('height'))
-		).delay(100).animate({
-			'bottom': 0,
-		}, {
-			duration: n || 300,
-			easing: e || 'easeOutQuart'
-		});
+		$this.show();
+		setTimeout(function() {
+			$this.css({
+				'translateY': 0,
+			});
+		},0);
 	}
 
 	method slideDown(n,e) {
-		$this.show().css(
-			'bottom',
-			0
-		).delay(100).animate({
-			'bottom': 0-parseInt($this.css('height')),
-		}, {
-			duration: n || 300,
-			easing: e || 'easeInQuart'
+		$this.css({
+			'translateY': parseInt($this.css('height'))
 		});
 	}
 	
 	method init() {
 		this.createKeys();
+		$this.css('translateY',parseInt($this.css('height')));
+		this.applyStyle('animated');
 	}
 	
-	method size(i) {
-	 	i = i || this.screenFraction || 0.5;
+	method size() {
 		$this.css(
 			'height',
-			app.utils.viewport().y * i
+			app.utils.viewport().y * 0.5
 		).css(
 			'bottom',
 			0
 		);
 		this.screenFraction = i;
-		if(this.hasKeys) this.positionKeys();
+		if(this.hasKeys) {
+			setTimeout(function() {
+				self.positionKeys();
+			},0);
+		}
 	}
 	
 	method positionKeys() {
@@ -151,10 +152,6 @@ def Keyboard(keyboardSource) {
 		}
 	}
 	
-	method jakeStark(peen) {
-		return peen;
-	}
-	
 	method snapBack {
 		var interval = (this.padding + this.keyWidth);
 	}
@@ -170,49 +167,53 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on invoke {
-		if(this.activeSubkey().attr('variable')) {
-			if(app.storage.varSaveMode) {
-				app.storage.setVariable(
-					this.activeSubkey().attr('variable'),
-					app.mode.result()
-				);
-				app.popNotification(
-					'Set ' + this.activeSubkey().attr('variable') + ' to ' + app.mode.result().toString()
-				);
-				app.storage.cancelVariableSave();
-			} else {
-				app.mode.currentInput().acceptLatexInput(
-					this.activeSubkey().attr('variable')
-				);
+		try {
+			if(this.activeSubkey().attr('variable')) {
+				if(app.storage.varSaveMode) {
+					app.storage.setVariable(
+						this.activeSubkey().attr('variable'),
+						app.mode.result()
+					);
+					app.storage.cancelVariableSave();
+				} else {
+					app.mode.currentInput().acceptLatexInput(
+						this.activeSubkey().attr('variable')
+					);
+				}
 			}
+			if(this.activeSubkey().get(0).childNodes[0]) {
+				var latex = this.activeSubkey().get(0).childNodes[0].nodeValue;
+				app.mode.currentInput().acceptLatexInput(latex);
+				app.mode.currentInput().takeFocus();
+			}
+			if(this.activeSubkey().attr('close')) {
+				app.useKeyboard('main');
+			}
+			if(this.activeSubkey().attr('action')) {
+				this.activeSubkey().attr('action').split('|').forEach(function(attr) {
+					split = attr.split(':'),
+					target = StringUtil.trim(split[0]),
+					action = StringUtil.trim(split[1]);
+					////console.log(target,action);
+					if(target == 'input') {
+						app.mode.currentInput().acceptActionInput(action);
+					}
+					if(target == 'app') {
+						app.acceptActionInput(action);
+					}
+				});
+			}
+		} catch(e) {
+
+		} finally {
+			this.setPrimary();
 		}
-		if(this.activeSubkey().get(0).childNodes[0]) {
-			app.mode.currentInput().acceptLatexInput(this.activeSubkey().get(0).childNodes[0].nodeValue);
-			app.mode.currentInput().takeFocus();
-		}
-		if(this.activeSubkey().attr('close')) {
-			app.useKeyboard('main');
-		}
-		if(this.activeSubkey().attr('action')) {
-			this.activeSubkey().attr('action').split('|').forEach(function(attr) {
-				split = attr.split(':'),
-				target = StringUtil.trim(split[0]),
-				action = StringUtil.trim(split[1]);
-				//console.log(target,action);
-				if(target == 'input') {
-					app.mode.currentInput().acceptActionInput(action);
-				}
-				if(target == 'app') {
-					app.acceptActionInput(action);
-				}
-			});
-		}
-		this.setPrimary();
 	}
 	
 	on active(e) {
 		var self = this;
 		this.altTimeout = setTimeout(function() {
+			//console.log('altTimeout');
 			self.setAlt();
 		},250);
 	}
@@ -223,6 +224,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on endactive {
+		//console.log('endactive');
 		var self = this;
 		clearTimeout(this.altTimeout);
 		setTimeout(function() {
@@ -260,6 +262,12 @@ def Key(_keyData,keyboard) {
 				s = l.split('_');
 				l = s[0] + '<sub>' + s[1] + '</sub>';
 			}
+			if(skd.attr('style')) {
+				skd.attr('style').split(';').forEach(function(line) {
+					line = line.split(':');
+					$this.css(line[0],line[1]);
+				})
+			}
 			$this.find('.label').html(l);
 		} else if(skd.attr('image-label')) {
 			this.labelType = 'image';
@@ -276,6 +284,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	method setAlt() {
+		//console.log('setAlt');
 		if(this.hasAlt()) {
 			this.altMode = true;
 			this.label();
@@ -284,6 +293,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	method setPrimary() {
+		//console.log('setPrimary');
 		if(!!this.keyData().find('primary').length) {
 			this.altMode = false;
 			this.label();

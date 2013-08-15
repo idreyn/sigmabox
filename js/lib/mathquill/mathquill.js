@@ -1357,7 +1357,7 @@ var RootMathBlock = P(MathBlock, function(_, _super) {
 
     case 'Shift-Backspace':
     case 'Backspace':
-      this.cursor.backspace();
+      //this.cursor.backspace();
       break;
 
     // Tab or Esc -> go one block right if it exists, else escape right.
@@ -1454,11 +1454,11 @@ var RootMathBlock = P(MathBlock, function(_, _super) {
       }
       break;
 
-    case 'Left': this.cursor.moveLeft(); break;
+    case 'Left': /* this.cursor.moveLeft(); */ break;
     case 'Shift-Left': this.cursor.selectLeft(); break;
     case 'Ctrl-Left': break;
 
-    case 'Right': this.cursor.moveRight(); break;
+    case 'Right': /* this.cursor.moveRight(); */ break;
     case 'Shift-Right': this.cursor.selectRight(); break;
     case 'Ctrl-Right': break;
 
@@ -1616,6 +1616,8 @@ var RootTextBlock = P(MathBlock, function(_) {
  **************************/
 
 var CharCmds = {}, LatexCmds = {}; //single character commands, LaTeX commands
+
+window.LatexCmds = LatexCmds;
 
 var scale, // = function(jQ, x, y) { ... }
 //will use a CSS 2D transform to scale the jQuery-wrapped HTML elements,
@@ -1931,12 +1933,16 @@ var Bracket = P(MathCommand, function(_, _super) {
 var Matrix =
 LatexCmds.matrix = P(MathCommand, function(_, _super) {
   _.ctrlSeq = '\\matrix';
-  _.htmlTemplate = '<table class="mtable">&0</table>';
+  _.htmlTemplate = 
+      '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   "don't call me directly, yo"
+      + '</table>'
+
   _.latex = function() {
-    return '\\begin{matrix}' + this.foldChildren([], function(latex, child) {
-      latex.push(child.latex());
+    return '\\matrix' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
       return latex;
-    }).join('\\\\') + '\\end{matrix}';
+    }).join('');
   };
   _.text = function() {
     return '[' + this.foldChildren([], function(text, child) {
@@ -1945,89 +1951,135 @@ LatexCmds.matrix = P(MathCommand, function(_, _super) {
     }).join() + ']';
   }
   _.createBefore = function(cursor) {
+    this.cursor.writeLatex('moo');
+    alert('createBefore');
     _super.createBefore.call(this, this.cursor = cursor);
   };
-  _.onKey = function(key, e) {
-    var currentBlock = this.cursor.parent;
+});
 
-    if (currentBlock.parent === this) {
-      if (key === 'Enter') { //enter
-        var newBlock = MathBlock();
-        newBlock.parent = this;
-        newBlock.jQ = $('<span></span>')
-          .attr(mqBlockId, newBlock.id)
-          .insertAfter(currentBlock.jQ);
-        if (currentBlock.next)
-          currentBlock.next.prev = newBlock;
-        else
-          this.lastChild = newBlock;
+var Matrix_1_1 = 
+LatexCmds.matrixOneOne = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixOneOne' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-        newBlock.next = currentBlock.next;
-        currentBlock.next = newBlock;
-        newBlock.prev = currentBlock;
-        this.bubble('redraw').cursor.appendTo(newBlock);
+var Matrix_1_2 = 
+LatexCmds.matrixOneTwo = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixOneTwo' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-        e.preventDefault();
-        return false;
-      }
-      else if (key === 'Tab' && !currentBlock.next) {
-        if (currentBlock.isEmpty()) {
-          if (currentBlock.prev) {
-            this.cursor.insertAfter(this);
-            delete currentBlock.prev.next;
-            this.lastChild = currentBlock.prev;
-            currentBlock.jQ.remove();
-            this.bubble('redraw');
+var Matrix_1_3 = 
+LatexCmds.matrixOneThree = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td><td>&2</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixOneThree' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-            e.preventDefault();
-            return false;
-          }
-          else
-            return;
-        }
+var Matrix_2_1 = 
+LatexCmds.matrixTwoOne = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td></tr>'
+      +   '<tr><td>&1</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixTwoOne' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-        var newBlock = MathBlock();
-        newBlock.parent = this;
-        newBlock.jQ = $('<span></span>').attr(mqBlockId, newBlock.id).appendTo(this.jQ);
-        this.lastChild = newBlock;
-        currentBlock.next = newBlock;
-        newBlock.prev = currentBlock;
-        this.bubble('redraw').cursor.appendTo(newBlock);
+var Matrix_2_2 = 
+LatexCmds.matrixTwoTwo = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td></tr>'
+      +   '<tr><td>&2</td><td>&3</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixTwoTwo' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-        e.preventDefault();
-        return false;
-      }
-      else if (e.which === 8) { //backspace
-        if (currentBlock.isEmpty()) {
-          if (currentBlock.prev) {
-            this.cursor.appendTo(currentBlock.prev)
-            currentBlock.prev.next = currentBlock.next;
-          }
-          else {
-            this.cursor.insertBefore(this);
-            this.firstChild = currentBlock.next;
-          }
+var Matrix_2_3 = 
+LatexCmds.matrixTwoThree = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td><td>&2</td></tr>'
+      +   '<tr><td>&3</td><td>&4</td><td>&5</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixTwoThree' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-          if (currentBlock.next)
-            currentBlock.next.prev = currentBlock.prev;
-          else
-            this.lastChild = currentBlock.prev;
+var Matrix_3_1 = 
+LatexCmds.matrixThreeOne = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td></tr>'
+      +   '<tr><td>&1</td></tr>'
+      +   '<tr><td>&2</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixThreeOne' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-          currentBlock.jQ.remove();
-          if (this.isEmpty())
-            this.cursor.deleteForward();
-          else
-            this.bubble('redraw');
+var Matrix_3_2 = 
+LatexCmds.matrixThreeTwo = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td></tr>'
+      +   '<tr><td>&2</td><td>&3</td></tr>'
+      +   '<tr><td>&4</td><td>&5</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixThreeTwo' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
+  };
+});
 
-          e.preventDefault();
-          return false;
-        }
-        else if (!this.cursor.prev) {
-          e.preventDefault();
-          return false;
-        }
-      }
-    }
+var Matrix_3_3 = 
+LatexCmds.matrixThreeThree = P(Matrix, function(_, _super) {
+  _.htmlTemplate =  '<table style="vertical-align:middle" class="matrix-table non-leaf">'
+      +   '<tr><td>&0</td><td>&1</td><td>&2</td></tr>'
+      +   '<tr><td>&3</td><td>&4</td><td>&5</td></tr>'
+      +   '<tr><td>&6</td><td>&7</td><td>&8</td></tr>'
+      + '</table>';
+  _.latex = function() {
+    return '\\matrixThreeThree' + this.foldChildren([], function(latex, child) {
+      latex.push('{'+child.latex()+'}');
+      return latex;
+    }).join('');
   };
 });
 
@@ -2118,7 +2170,7 @@ CharCmds['['] = bind(Paren, '[', ']');
 var CloseParen = P(CloseBracket, parenMixin);
 
 LatexCmds.rparen =
-CharCmds[')'] = bind(CloseParen, '(', ')');
+CharCmds[')'] = bind(Paren, '(',')')
 LatexCmds.rbrack =
 LatexCmds.rbracket =
 CharCmds[']'] = bind(CloseParen, '[', ']');
@@ -3151,6 +3203,8 @@ var NonItalicizedFunction = P(Symbol, function(_, _super) {
   };
 });
 
+window.NonItalicizedFunction = NonItalicizedFunction;
+
 LatexCmds.ln =
 LatexCmds.lg =
 LatexCmds.log =
@@ -3631,10 +3685,11 @@ var Cursor = P(function(_) {
 
     if (this.deleteSelection()); // pass
     else if (this.prev) {
-      if (this.prev.isEmpty())
+      if (this.prev.isEmpty()) {
         this.prev = this.prev.remove().prev;
-      else
+      } else {
         this.selectLeft();
+      }
     }
     else if (this.parent !== this.root) {
       if (this.parent.parent.isEmpty())

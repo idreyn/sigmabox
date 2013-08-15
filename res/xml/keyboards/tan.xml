@@ -1,0 +1,26 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='atan' row='1' col='2'>
+		<primary close='close' action='input:left' text-label='atan'>\atan()</primary>
+	</key>
+	<key name='cot' row='2' col='1'>
+		<primary close='close' action='input:left' text-label='cot'>\cot()</primary>
+	</key>
+	<key name='acot' row='2' col='2'>
+		<primary close='close' action='input:left' text-label='acot'>\acot()</primary>
+	</key>
+	<key name='tanh' row='3' col='1'>
+		<primary close='close' action='input:left' text-label='tanh'>\tanh()</primary>
+	</key>
+	<key name='atanh' row='3' col='2'>
+		<primary close='close' action='input:left' text-label='atanh'>\atanh()</primary>
+	</key>
+	<key name='coth' row='4' col='1'>
+		<primary close='close' action='input:left' text-label='coth'>\coth()</primary>
+	</key>
+	<key name='acoth' row='4' col='2'>
+		<primary close='close' action='input:left' text-label='acoth'>\acoth()</primary>
+	</key>
+</keyboard>

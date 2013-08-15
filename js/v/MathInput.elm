@@ -37,35 +37,59 @@ def MathInput(owner) {
 		return $this.mathquill('get');
 	}
 	
-	method acceptLatexInput(input) {
-		$this.mathquill('write',input);
-		$this.trigger('update');
+	method acceptLatexInput(input,doUpdate) {
+		if(doUpdate === undefined) doUpdate = true;
+		if(!(self.preventInput && self.preventInput(input))) $this.mathquill('write',input);
+		if(doUpdate) $this.trigger('update');
 	}
 
 	method setContents(input) {
-		$this.html('');
+		$this.html('',true);
 		$this.mathquill('latex',input);
 	}
 	
 	method acceptActionInput(type) {
-		var self = this;
+		var oldContents = this.contents();
 		type.split(',').forEach(function(t) {
 			switch(t) {
 				case 'left':
-					self.mathSelf().cursor.moveLeft();
+					if(!(self.preventCursorLeft && self.preventCursorLeft())) self.mathSelf().cursor.moveLeft();
 					break;
 				case 'right':
-					self.mathSelf().cursor.moveRight();
+					if(!(self.preventCursorRight && self.preventCursorRight())) self.mathSelf().cursor.moveRight();
 					break;
 				case 'backspace':
-					self.mathSelf().cursor.backspace();
+					if(!(self.preventBackspace && self.preventBackspace())) self.mathSelf().cursor.backspace();
 					break;
 				case 'clear':
 					$this.mathquill('latex','');
-			
+					break;
+				case 'function':
+					app.overlay(elm.create('FunctionChoiceView',function(func) {
+						var commas = '';
+						for(var i=0;i<func.parameters.length-1;i++) {
+							commas += ',';
+						}
+						self.acceptLatexInput(
+							'\\' + func.name + '(' + commas + ')'
+						);
+						for(var i=0;i<func.parameters.length;i++) {
+							self.mathSelf().cursor.moveLeft();
+						}
+					}));
+					break;
 			}
 		});
+		if(self.afterInput) self.afterInput(oldContents,this.contents());
 		$this.trigger('update');
+	}
+
+	on keydown(e) {
+		e.preventDefault();
+	}
+
+	on keypress(e) {
+		e.preventDefault();
 	}
 
 	on keyup(e) {
@@ -81,25 +105,70 @@ def MathInput(owner) {
 		e.preventDefault();
 		var x = e.originalEvent.touches[0].pageX;
 		var y = e.originalEvent.touches[0].pageY;
-		this.mathSelf().cursor.seek($(this),x,y);
+		if(x > 50) {
+			this.mathSelf().cursor.seek($(this),x,y);
+		}
 	}
 
 	on touchmove(e) {
-		return
 		e.preventDefault();
+		return;
 		var x = e.originalEvent.touches[0].pageX;
 		var y = e.originalEvent.touches[0].pageY;
 		this.mathSelf().cursor.seek($(this),x,y);	
 	}
 }
 
-def MathTextfield(fm) {
-
+def SmallMathInput {
 	extends {
 		MathInput
 	}
 
+	method empty {
+		return this.contents() == '';
+	}
+
+	css {
+		width: 100%;
+		line-height: 30px;
+		min-height: 30px;
+		background: #FFF;
+		padding-top: 20px;
+		padding-bottom: 20px;
+		font-size: 25px;
+		border-bottom: 2px solid #EEE;
+		box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+		text-shadow: 1px 1px 10px rgba(0,0,0,0.1);
+	}
+
 	constructor {
+
+	}
+}
+
+def MathTextField(fm) {
+
+	html {
+		<div>
+		</div>
+	}
+
+	css {
+
+	}
+
+	constructor {
+		this.input = elm.create('SmallMathInput').named('input');
+		this.input.$.on('update',this.#updated);
+		$this.append(this.input);
+	}
+
+	method updated {
+		if($this.parents('.ListView')) {
+			// Do as I say, not as I do :P
+			$this.parents('.ListView').get(0).updateScroll();
+		}
+		$this.trigger('update');
 	}
 
 	on click {
@@ -112,22 +181,41 @@ def MathTextfield(fm) {
 		this.mathSelf().cursor.show();
 	}
 
-	method empty {
-		return this.contents().length === 0;
+	method mathSelf() {
+		return this.input.mathSelf();
+	}
+
+	method contents() {
+		return this.input.contents();
+	}
+
+	method acceptLatexInput(input) {
+		this.mathSelf().cursor.show();
+		return this.input.acceptLatexInput(input);
+	}
+
+	method acceptActionInput(input) {
+		return this.input.acceptActionInput(input);
 	}
 
 	method takeFocus {
-		// this.fm.setFocus(this);
+		try {
+			this.input.takeFocus();
+			return this.fm.setFocus(this);
+		} catch (e) {
+
+		}
 	}
 
-	css {
-		width: 100%;
-		height: 30px;
-		background: #FFF;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		font-size: 25px;
-		border-bottom: 2px solid #EEE;
-		box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+	method loseFocus {
+		return this.input.loseFocus();
+	}
+
+	method setContents(c) {
+		return this.input.setContents(c);
+	}
+
+	method empty {
+		return this.input.empty();
 	}
 }

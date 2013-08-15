@@ -1,7 +1,8 @@
 <?php
 
 $ua =  $_SERVER['HTTP_USER_AGENT'];
-if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && false) {
+$allow_offline = false;
+if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow_offline) {
 	// It's an iOS webapp
 	echo "<html manifest='index.manifest'>";
 } else {
@@ -14,7 +15,7 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && false)
 		<script type="text/javascript">
  
 		  function logEvent(event) {
-		      // // console.log(event.type);
+
 		  }
 		 
 		  window.applicationCache.addEventListener('checking',logEvent,false);
@@ -32,6 +33,7 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && false)
 		<script type="text/javascript" src='js/lib/mathquill/mathquill.js'></script>
 		<script type='text/javascript' src='js/lib/iscroll.js'> </script>
 		<script type='text/javascript' src='js/lib/qtransform.js'> </script>
+		<script type='text/javascript' src='js/lib/hammer.js'> </script>
 		<!-- Models -->
 		<script type='text/javascript' src='js/m/Parser.js'> </script>
 		<script type='text/javascript' src='js/m/Evaluator.js'> </script>
@@ -43,8 +45,8 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && false)
 		<script type='text/elemental' src='js/v/MathInput.elm'> </script>
 		<script type='text/elemental' src='js/v/REPL.elm'> </script>
 		<script type='text/elemental' src='js/v/Components.elm'> </script>
-		<script type='text/elemental' src='js/v/Notification.elm'> </script>
 		<script type='text/elemental' src='js/v/Grapher.elm'> </script>
+		<script type='text/elemental' src='js/v/Functions.elm'> </script>
 		<!-- Controllers -->
 		<script type='text/javascript' src='js/c/Application.js'> </script>
 		<script type='text/javascript' src='js/c/Resource.js'> </script>
@@ -55,7 +57,7 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && false)
 		<!-- Elemental -->
 		<script type='text/javascript' src='js/lib/elemental.js'> </script>
 		<!-- Scripts -->
-		<script type='text/javascript' src='js/interaction.js'> </script>
+		<script type='text/javascript' src='js/init.js'> </script>
 		<!-- CSS -->
 		<link rel='stylesheet' type='text/css' href='css/style.css' />
 		<link rel='stylesheet' type='text/css' href='css/lib/touchscroll.css' />

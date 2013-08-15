@@ -1,0 +1,26 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='asin' row='1' col='2'>
+		<primary close='close' action='input:left' text-label='asin'>\asin()</primary>
+	</key>
+	<key name='csc' row='2' col='1'>
+		<primary close='close' action='input:left' text-label='csc'>\csc()</primary>
+	</key>
+	<key name='acsc' row='2' col='2'>
+		<primary close='close' action='input:left' text-label='acsc'>\acsc()</primary>
+	</key>
+	<key name='sinh' row='3' col='1'>
+		<primary close='close' action='input:left' text-label='sinh'>\sinh()</primary>
+	</key>
+	<key name='asinh' row='3' col='2'>
+		<primary close='close' action='input:left' text-label='asinh'>\asinh()</primary>
+	</key>
+	<key name='csch' row='4' col='1'>
+		<primary close='close' action='input:left' text-label='csch'>\csch()</primary>
+	</key>
+	<key name='acsch' row='4' col='2'>
+		<primary close='close' action='input:left' text-label='acsch'>\acsch()</primary>
+	</key>
+</keyboard>

@@ -150,7 +150,6 @@ ParseUtil.isClear = function (src, ind) {
 		if (c == "]") sbracket--;
 		if (c == "(") paren++;
 		if (c == ")") paren--;
-		if (c == "|") bar = !bar;
 	}
 	if(t == "(") {
 		return cbracket == 0 && abracket == 0 && sbracket == 0 && paren == 1 && quote == "";
@@ -164,7 +163,7 @@ ParseUtil.isClear = function (src, ind) {
 	if(t == "{") {
 		return cbracket == 1 && abracket == 0 && sbracket == 0 && paren == 0 && quote == "";
 	}
-	return cbracket == 0 && sbracket == 0 && abracket == 0 && paren == 0 && quote == "" && !bar;
+	return cbracket == 0 && sbracket == 0 && abracket == 0 && paren == 0 && quote == "";
 }
 
 ParseUtil.nextIndexOf = function (a, src) {
@@ -246,10 +245,9 @@ ParseUtil.completeStatement = function (src) {
 		if (c == "}") cbracket--;
 		if (c == "[") sbracket++;
 		if (c == "]") sbracket--;
-		if (c == "|") bar = !bar;
 
 	}
-	return quote == "" && paren == 0 && cbracket == 0 && sbracket == 0 && bar;
+	return quote == "" && paren == 0 && cbracket == 0 && sbracket == 0;
 }
 
 ParseUtil.replace = function (src, from, to) {

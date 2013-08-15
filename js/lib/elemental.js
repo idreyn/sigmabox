@@ -218,6 +218,82 @@ var elm;
         return s.replace(/\\n/g, "\n").replace(/\\t/g, "\t")
     }
 
+    function javascript_syntactic_sugar(res) {
+        // A little bit of syntactic sugar: @my-element becomes my('my-element')
+        res = res.replace(/@[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
+            return "my('" + s.slice(1) + "')"
+        });
+        // ...and $my-element becomes $my('my-element') except in a few cases
+         res = res.replace(/\$[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
+            if(['parent','this','root','my'].indexOf(s.slice(1)) == -1) {
+                return "$my('" + s.slice(1) + "')"
+            } else {
+                return s;
+            }
+        });
+        // And use # as a 'fat arrow' to bind methods to their owners
+        // this.#myMethod -> $.proxy(this.myMethod,this)
+        res = res.replace(/this.#([A-Za-z][A-Za-z0-9_\-]*)/g, function(s) {
+            return '$.proxy(' + s.split('#').join('') + ',this)';
+        });
+        // [[Typename param1,param2...]] becomes elm.create('TypeName',param1,param2...)
+        res = res.replace(/\[\[([A-Za-z][A-Za-z0-9_\-]*):([A-Za-z][A-Za-z0-9_\-]*)\s*(.*)\]\]/,"elm.create('$2',$3).named('$1')");
+        res = res.replace(/\[\[([A-Za-z][A-Za-z0-9_\-]*)\s*(.*)\]\]/,"elm.create('$1',$2)");
+        return res;
+    }
+
+    function add_elemental_methods(self,frame) {
+        frame = frame || {};
+        self.$ = $(self);
+        // Add getStyle, setStyle, applyStyle function
+        self.getStyle = function(name,prop) {
+            var style = self.__styles__[name];
+            if(!prop) return style;
+            if(!style) return;
+            style.forEach(function(s) {
+                if(s.prop == prop) {
+                    return s.value;
+                }
+            });
+        };
+        self.setStyle = function(name,prop,val) {
+            var style = self.__styles__[name];
+            style.forEach(function(s) {
+                if(s.prop == prop) {
+                    s.value = val;
+                }
+            });
+        };
+        self.applyStyle = function(name) {
+            var style = (typeof name == 'string') ? self.__styles__[name] : name;
+            if(!style) return;
+            style.forEach(function (p) {
+                var val = p.value;
+                for (var prop in frame) {
+                    val = val.split('$' + prop).join(frame[prop]);
+                }
+                $(self).css(p.prop, val);
+            });
+        };
+        self.my = function(type) {
+            return $(self).find('.' + type).get(0);
+        };
+        self.$my = function(type) {
+            return $(self).find('.' + type);
+        };
+        self.named = function(name) {
+            $(self).addClass(name);
+            return self;
+        }
+        self.parent = function(name) {
+            if(name) {
+                return $(self).parents('.' + name).get(0);
+            } else {
+                return $(self).parent().get(0);
+            }
+        }
+    }
+
     elm = {
         _argarr: function (a) {
             var n = [],
@@ -264,7 +340,7 @@ var elm;
             }
         },
         extend: function(el,type,frame) {
-        	return elm.def(type).call(null,frame || [],el,false);
+            return elm.def(type).call(null,frame || [],el,false);
         },
         using: function () {
             var files = elm._argarr(arguments),
@@ -313,7 +389,6 @@ var elm;
                         return input.substring(0, i);
                     }
                 }
-
                 return "";
             }
 
@@ -359,7 +434,7 @@ var elm;
                 lineNumber = 0;
                 expectable = {
                     'DEFINITION': 'def',
-                    'BLOCK': ['html','contents','css','method','on','extends','find','my','style','hover','focus','constructor'],
+                    'BLOCK': ['html','contents','css','method','on','extends','find','my','style','hover','focus','constructor','properties'],
                     'CONTENTS': ''
                 };
 
@@ -393,7 +468,8 @@ var elm;
                     'on': 'event',
                     'constructor': 'constructor',
                     'find': 'subselector',
-                    'my': 'subdef'
+                    'my': 'subdef',
+                    'properties': 'properties'
                 };
                 return map[kw];
             }
@@ -522,6 +598,7 @@ var elm;
                     body = body.map(str.trim);
                 }
                 switch(kw) {
+                    case 'properties':
                     case 'css':
                     case 'hover':
                     case 'focus':
@@ -531,7 +608,7 @@ var elm;
                             var r = line.split(':'),
                                 prop = str.trim(r[0]),
                                 value = str.trim(r[1]);
-                            if (value.charAt(value.length - 1) == ';') {
+                            if (value.charAt(value.length - 1) == ';' || value.charAt(value.length - 1) == ',') {
                                 value = value.slice(0, -1);
                             }
                             return {
@@ -544,25 +621,9 @@ var elm;
                     case 'method':
                     case 'constructor':
                     case 'on':
-                        // Javascript
+                         // Javascript
                         res = body.join('\n');
-                        // A little bit of syntactic sugar: @my-element becomes my('my-element')
-                        res = res.replace(/@[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
-                            return "my('" + s.slice(1) + "')"
-                        });
-                        // ...and #my-element becomes $my('my-element') except in a few cases
-                         res = res.replace(/\$[A-Za-z][A-Za-z0-9_\-]*/g, function(s) {
-                            if(['parent','this','root','my'].indexOf(s.slice(1)) == -1) {
-                                return "$my('" + s.slice(1) + "')"
-                            } else {
-                                return s;
-                            }
-                        });
-                        // And use # as a 'fat arrow' to bind methods to their owners
-                        // this.#myMethod -> $.proxy(this.myMethod,this)
-                        res = res.replace(/this.#([A-Za-z][A-Za-z0-9_\-]*)/g, function(s) {
-                            return '$.proxy(' + s.split('#').join('') + ',this)';
-                        });
+                        res = javascript_syntactic_sugar(res);
                         break;
                     case 'contents':
                     case 'html':
@@ -663,6 +724,7 @@ var elm;
                         switch(first) {
                             case 'html':
                             case 'contents':
+                            case 'properties':
                             case 'css':
                             case 'hover':
                             case 'focus':
@@ -718,10 +780,10 @@ var elm;
                 }
                 if(self) self.__elemental = true;
                 definition.body.forEach(function (selector) {
-                	//try {
-                    	self = elm.applyBlockTo(self, selector, frame, null, root);
+                    //try {
+                        self = elm.applyBlockTo(self, selector, frame, null, root);
                     //} catch(e) {
-                   // 	throw new Error('To create an element with elm.create(), its definition must begin with an html block.');
+                   //   throw new Error('To create an element with elm.create(), its definition must begin with an html block.');
                   //  }
                 });
                 self.____construct = function() {
@@ -731,44 +793,7 @@ var elm;
                         constructor.called = true;
                     });
                  }
-                // Add getStyle, setStyle, applyStyle function
-                self.getStyle = function(name,prop) {
-                	var style = self.__styles__[name];
-                	style.forEach(function(s) {
-                		if(s.prop == prop) {
-                			return s.value;
-                		}
-                	});
-                };
-                self.setStyle = function(name,prop,val) {
-                	var style = self.__styles__[name];
-                	style.forEach(function(s) {
-                		if(s.prop == prop) {
-                			s.value = val;
-                		}
-                	});
-                };
-				self.applyStyle = function(name) {
-					var style = self.__styles__[name];
-					if(!style) return;
-					style.forEach(function (p) {
-						var val = p.value;
-						for (var prop in frame) {
-							val = val.split('$' + prop).join(frame[prop]);
-						}
-						$(self).css(p.prop, val);
-					});
-				};
-                self.my = function(type) {
-                    return $(self).find('.' + type).get(0);
-                };
-                self.$my = function(type) {
-                    return $(self).find('.' + type);
-                };
-                self.named = function(name) {
-                    $(self).addClass(name);
-                    return self;
-                }
+                add_elemental_methods(self,frame);
                 self.____construct();
                 $(self).find('*').each(function() {
                     if(this.____construct) {
@@ -785,6 +810,7 @@ var elm;
             // All of these underscores are to avoid namespace pollution...
             // These local variables will be closed under eval(), so we need
             // to make them as hard to access as possible.
+            var self = __el__;
             if (root === true) root = __el__;
             switch (__selector__.type) {
                 case 'html':
@@ -796,10 +822,42 @@ var elm;
                         __el__ = $(markup).get(0);
                     }
                     __el__.__elemental = true;
-                    elm.log(__frame__);
                     for (var prop in __frame__) {
                         __el__[prop] = __frame__[prop];
                     }
+                    // Find [[]]
+                    var nl = __el__.childNodes;
+                    var arr = [];
+                    for(var i = nl.length; i--; arr.unshift(nl[i]));
+                    arr.forEach(function(node) {
+                        var text = node.nodeValue;
+                        if(!text) return;
+                        var elementsToAdd = [];
+                        text.split('\n').forEach(function(line) {
+                            var m = line.match(/\[\[([A-Za-z][A-Za-z0-9_\-:]*)\s*(.*)\]\]/);
+                            if(m) {
+                                var args = eval('(function() { return [' + m[2] + ']; }).call(__el__);');
+                                var name;
+                                var type = m[1];
+                                var split = type.split(':');
+                                if(split.length > 1) {
+                                    name = split[0];
+                                    type = split[1];
+                                }
+                                args.unshift(type);
+                                var el = elm.create.apply(null,args);
+                                if(name) $(el).addClass(name);
+                                elementsToAdd.push(el);
+                            } else {
+                                elementsToAdd.push(line);
+                            }
+                        });
+                        elementsToAdd.forEach(function(el) {
+                            $(node).before(el);
+                        });
+                        $(node).remove();
+                    });
+                    // Attach some functions
                     __el__.__definitions = {};
                     __el__.create = function () {
                         var args = elm._argarr(arguments),
@@ -819,7 +877,39 @@ var elm;
                     for (var prop in __frame__) {
                         markup = markup.split('$' + prop).join(__frame__[prop]);
                     }
-                    $(__el__).html(markup);
+                    $(__el__).append(markup);
+                    // Find [[]]
+                    var nl = __el__.childNodes;
+                    var arr = [];
+                    for(var i = nl.length; i--; arr.unshift(nl[i]));
+                    arr.forEach(function(node) {
+                        var text = node.nodeValue;
+                        if(!text) return;
+                        var elementsToAdd = [];
+                        text.split('\n').forEach(function(line) {
+                            var m = line.match(/\[\[([A-Za-z][A-Za-z0-9_\-:]*)\s*(.*)\]\]/);
+                            if(m) {
+                                var args = eval('(function() { return [' + m[2] + ']; }).call(__el__);');
+                                var name;
+                                var type = m[1];
+                                var split = type.split(':');
+                                if(split.length > 1) {
+                                    name = split[0];
+                                    type = split[1];
+                                }
+                                args.unshift(type);
+                                var el = elm.create.apply(null,args);
+                                if(name) $(el).addClass(name);
+                                elementsToAdd.push(el);
+                            } else {
+                                elementsToAdd.push(line);
+                            }
+                        });
+                        elementsToAdd.forEach(function(el) {
+                            $(node).before(el);
+                        });
+                        $(node).remove();
+                    });
                     break;
                 case 'extensor':
                     __selector__.supers.forEach(function (s) {
@@ -836,15 +926,15 @@ var elm;
                     });
                     break;
                 case 'style': 
-                	if(!__el__.__styles__) __el__.__styles__ = {};
-                	__el__.__styles__[__selector__.name] = __selector__.properties.map(function(p) {
-                		// We're mapping to create a new list of CSS properties for each element, instead of modifying the definition
-                		return {
-                			prop: p.prop,
-                			value: p.value
-                		};
-                	});
-                	break;
+                    if(!__el__.__styles__) __el__.__styles__ = {};
+                    __el__.__styles__[__selector__.name] = __selector__.properties.map(function(p) {
+                        // We're mapping to create a new list of CSS properties for each element, instead of modifying the definition
+                        return {
+                            prop: p.prop,
+                            value: p.value
+                        };
+                    });
+                    break;
                 case 'hover':
                     var changes = __selector__.properties.map(function (p) {
                         var val = p.value;
@@ -915,7 +1005,7 @@ var elm;
                         prev = [];
                     });
                 case 'event':
-                    var $this = $(__el__);
+                    var $this = $self = $(__el__);
                     var $parent = $(parent);
                     var $root = $(root);
                     $(__el__).bind(__selector__.event, function () {
@@ -932,7 +1022,7 @@ var elm;
                     });
                     break;
                 case 'constructor':
-                    var $this = $(__el__);
+                    var $this = $self = $(__el__);
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __constructor__ = function() { ';
@@ -949,7 +1039,7 @@ var elm;
                     } catch (e) {}
                     break;
                 case 'method':
-                    var $this = $(__el__);
+                    var $this = $self = $(__el__);
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __method__ = function(' + __selector__.parameters.join(',') + ') {';
@@ -967,15 +1057,8 @@ var elm;
                         __selector__.body.forEach(function (block) {
                             elm.applyBlockTo(e, block, __frame__, __el__, root);
                         });
-                    });
-                    break;
-                case 'subdef':
-                    __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);
-                    $(__el__).find('.' + __selector__.name).each(function (i, e) {
-                        __selector__.body.forEach(function (block) {
-                            elm.applyBlockTo(e, block, __frame__, __el__, root);
-                        });
                         e.$ = $(e);
+                        add_elemental_methods(e);
                         e.____construct = function() {
                             e.____constructors = e.____constructors || [];
                             e.____constructors.reverse().forEach(function(constructor) {
@@ -986,6 +1069,41 @@ var elm;
                          e.____construct();
                     });
                     break;
+                case 'subdef':
+                    if(!__el__.__definitions) __el__.__definitions = {};
+                    var constructMe = __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);
+                    $(__el__).find('.' + __selector__.name).each(function (i, e) {
+                        __selector__.body.forEach(function (block) {
+                            elm.applyBlockTo(e, block, __frame__, __el__, root);
+                        });
+                        e.$ = $(e);
+                        add_elemental_methods(e);
+                        e.____construct = function() {
+                            e.____constructors = e.____constructors || [];
+                            e.____constructors.reverse().forEach(function(constructor) {
+                                if(!constructor.called) constructor.call(e);
+                                constructor.called = true;
+                            });
+                         }
+                         e.____construct();
+                    });
+                    break;
+                case 'properties':
+                    if(__el__) {
+                        __selector__.properties.forEach(function (p) {
+                            var val = p.value;
+                            var fn = '(function() { return ' + val + '; }).call(__el__)';
+                            __el__[p.prop] = eval(fn);
+                        });
+                    } else {
+                        __selector__.properties.forEach(function(p) {
+                            var val = eval(p.value);
+                            __frame__[p.prop] = val;
+                        });
+                    }
+                    break;
+                default:
+                    throw "[Elemental] I don't know what to do with a " + __selector__.type + " block!";
             };
             return __el__;
         },

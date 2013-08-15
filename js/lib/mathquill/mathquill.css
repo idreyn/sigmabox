@@ -362,6 +362,37 @@
   display:inline-block;
 }
 
-.mtable span {
-  color: #F00;
+.matrix-table {
+  border-left: 2px solid #000;
+  border-right: 2px solid #000;
+  margin-left: 10px;
+  margin-right: 10px;
 }
+
+.matrix-table td {
+  padding: 5px;
+}
+
+.replcard .mathquill-rendered-math span:not(.cursor), .replcard .mathquill-rendered-math var, .replcard .mathquill-rendered-math big, .replcard .mathquill-rendered-math table {
+  -webkit-animation-name: fadeIn !important;
+  -webkit-animation-duration: 0.1s;
+  -webkit-transition: all 0.1s;
+}
+
+.replcard .mathquill-rendered-math .selection, .mathquill-rendered-math .selection * {
+  -webkit-animation: none !important;
+  -webkit-transition: none;
+}
+
+@-webkit-keyframes fadeIn {
+  from {
+    -webkit-transform: translateY(-50px);
+    opacity: 0;
+  }
+
+  to {
+    -webkit-transform: translateY(0px);
+    opacity: 1;
+  }
+}
+
