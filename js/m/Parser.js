@@ -22,7 +22,7 @@ Parser.tokens = {
 Parser.prototype.parse = function(s,topLevel) {
 	// Spaces have meaning in LaTeX, apparently.
 	// When you input (PI) then (E), LaTeX produces \pi e (with space) to demarcate the difference.
-	// We can leverage this by just replacing all spaces with multiplication signs.
+	// We can leverage this by just LiveEvalacing all spaces with multiplication signs.
 	// Eat it, LaTeX.
 	s = ParseUtil.replace(s,' ','\\times');
 	// Two dots don't have any semantic meaning but they do cause all manner of infinite recursions
@@ -35,6 +35,7 @@ Parser.prototype.parse = function(s,topLevel) {
 	s = s.split('\\right)').join(')');
 	s = s.split('\\left[').join('[');
 	s = s.split('\\right]').join(']');
+	s = s.split('&nbsp;').join('');
 	if(topLevel) {
 		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3
 		s = s.replace(/(\\times|\\cdot|\/)(\-[0-9\.]*)/,'$1($2)');

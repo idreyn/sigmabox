@@ -365,21 +365,20 @@
 .matrix-table {
   border-left: 2px solid #000;
   border-right: 2px solid #000;
-  margin-left: 10px;
-  margin-right: 10px;
+  margin: 10px;
 }
 
 .matrix-table td {
   padding: 5px;
 }
 
-.replcard .mathquill-rendered-math span:not(.cursor), .replcard .mathquill-rendered-math var, .replcard .mathquill-rendered-math big, .replcard .mathquill-rendered-math table {
+.LiveEvalcard .mathquill-rendered-math span:not(.cursor), .LiveEvalcard .mathquill-rendered-math var, .LiveEvalcard .mathquill-rendered-math big, .LiveEvalcard .mathquill-rendered-math table {
   -webkit-animation-name: fadeIn !important;
   -webkit-animation-duration: 0.1s;
   -webkit-transition: all 0.1s;
 }
 
-.replcard .mathquill-rendered-math .selection, .mathquill-rendered-math .selection * {
+.LiveEvalcard .mathquill-rendered-math .selection, .mathquill-rendered-math .selection * {
   -webkit-animation: none !important;
   -webkit-transition: none;
 }

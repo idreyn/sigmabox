@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 1.0.6 8-8-2013
+#version 1.0.3 8-17-2013
 
 CACHE:
 
@@ -19,6 +19,9 @@ res/img/settings.png
 res/img/stats.png
 res/img/thin-icons/close.png
 res/img/thin-icons/pen.png
+res/img/keys/delete.png
+res/img/keys/left.png
+res/img/keys/right.png
 
 #internal HTML documents
 index.php
@@ -45,7 +48,7 @@ js/m/Solver.js
 js/v/Core.elm
 js/v/Keyboard.elm
 js/v/MathInput.elm
-js/v/REPL.elm
+js/v/LiveEval.elm
 js/v/Components.elm
 js/v/Grapher.elm
 js/v/Functions.elm
@@ -64,6 +67,9 @@ res/xml/keyboards/main.xml
 res/xml/keyboards/constants.xml
 res/xml/keyboards/variables.xml
 res/xml/keyboards/advanced.xml
+res/xml/keyboards/sin.xml
+res/xml/keyboards/cos.xml
+res/xml/keyboards/tan.xml
 
 
 #fonts

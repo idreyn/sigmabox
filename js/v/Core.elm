@@ -22,7 +22,7 @@ def SigmaboxSideMenu {
 
 	contents {
 		<img src='res/img/logo.png' width='100%' />
-		[[SigmaboxSideMenuItem 'calculator','repl']]
+		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'functions','functions']]
 		[[SigmaboxSideMenuItem 'stats','stats']]

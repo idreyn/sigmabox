@@ -39,10 +39,9 @@ def GrapherView {
 			this.@graph-window.@trace-readouts.hide();
 			this.@graph-window.@range-readouts.hide();
 			this.@graph-window.homeWindow();
-			this.@graph-window.render();
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
-			},500);
+			},0);
 			app.hideKeyboard();
 		} catch(e) {
 			app.popNotification(e);
@@ -495,7 +494,7 @@ def GraphWindow {
 		c.closePath();
 		c.stroke();	
 
-		if(app.useGratuitousAnimations()) this.inputs.map(function(item) {
+		if(app.useGratuitousAnimations() || renderEquations) this.inputs.map(function(item) {
 			var data = item.data,
 				type = item.type,
 				color = item.color;

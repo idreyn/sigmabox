@@ -2135,7 +2135,7 @@ LatexCmds.lang = bind(Bracket, '&lang;','&rang;','\\langle ','\\rangle ');
 var CloseBracket = P(Bracket, function(_, _super) {
   _.createBefore = function(cursor) {
     // if I'm at the end of my parent who is a matching open-paren,
-    // and I am not replacing a selection fragment, don't create me,
+    // and I am not LiveEvalacing a selection fragment, don't create me,
     // just put cursor after my parent
     if (!cursor.next && cursor.parent.parent && cursor.parent.parent.end === this.end && !this.replacedFragment)
       cursor.insertAfter(cursor.parent.parent);
