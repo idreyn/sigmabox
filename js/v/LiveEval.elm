@@ -1,4 +1,4 @@
-def REPLCard {
+def LiveEvalCard {
 	html {
 		<div> 
 			<div class='upper'> 
@@ -190,7 +190,7 @@ def REPLCard {
 
 		constructor {
 
-			// this.convertButton = elm.create('REPLButton','A&rarr;B');
+			// this.convertButton = elm.create('LiveEvalButton','A&rarr;B');
 			// this.$.append(this.convertButton);
 
 			this.fracSwitch = elm.create('Switch','DEC','FRC','app.storage.displayDecimalizedFractions');
@@ -213,7 +213,7 @@ def REPLCard {
 			this.$.append(this.vectorSwitch);
 
 
-			this.storeButton = elm.create('REPLButton','STO');
+			this.storeButton = elm.create('LiveEvalButton','STO');
 			this.storeButton.$.on('invoke',function() {
 				if(!app.storage.varSaveMode) {
 					app.storage.initVariableSave();
@@ -222,7 +222,7 @@ def REPLCard {
 			});
 			this.$.append(this.storeButton);
 
-			this.clearButton = elm.create('REPLButton','CLR');
+			this.clearButton = elm.create('LiveEvalButton','CLR');
 			this.clearButton.$.on('invoke',function() {
 				app.mode.currentInput().acceptActionInput('clear');
 			});
@@ -243,7 +243,7 @@ def REPLCard {
 	}
 }
 
-def REPLManager {
+def LiveEvalManager {
 	
 	html {
 		<div> 
@@ -301,12 +301,12 @@ def REPLManager {
 			'top',
 			0
 		);
-		$this.find('.REPLCard').each(function() { this.size(); });
+		$this.find('.LiveEvalCard').each(function() { this.size(); });
 		this.screenFraction = i;
 	}
 	
 	method addCard(str) {
-		var c = elm.create('REPLCard'),
+		var c = elm.create('LiveEvalCard'),
 			self = this;
 		this.$inner.append(c);
 		c.init();

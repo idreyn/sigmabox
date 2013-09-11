@@ -624,7 +624,7 @@ Matrix.prototype.toString = function(frame) {
 		return row.map(function(el) {
 			return el.valueOf(frame).toString();
 		}).join(',')
-	}).join('|') + ']';
+	}).join('&nbsp;|&nbsp;') + ']';
 }
 
 Matrix.prototype.row = function(n) {
@@ -769,7 +769,7 @@ Matrix.prototype.inverse = function() {
 		throw 'Matrix has no inverse';
 	}
 	return adj.map(function(el) {
-		return el.mult(new Value(1 / det));
+		return el.mult(new Frac(new Value(1),new Value(det)));
 	});
 }
 

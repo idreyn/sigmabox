@@ -6080,7 +6080,7 @@ jQuery.fn.extend({
 		var isFunc = jQuery.isFunction( value );
 
 		// Make sure that the elements are removed from the DOM before they are inserted
-		// this can help fix replacing a parent with child elements
+		// this can help fix LiveEvalacing a parent with child elements
 		if ( !isFunc && typeof value !== "string" ) {
 			value = jQuery( value ).not( this ).detach();
 		}
@@ -6203,7 +6203,7 @@ function findOrAppend( elem, tag ) {
 	return elem.getElementsByTagName( tag )[0] || elem.appendChild( elem.ownerDocument.createElement( tag ) );
 }
 
-// Replace/restore the type attribute of script elements for safe DOM manipulation
+// replace/restore the type attribute of script elements for safe DOM manipulation
 function disableScript( elem ) {
 	var attr = elem.getAttributeNode("type");
 	elem.type = ( attr && attr.specified ) + "/" + elem.type;

@@ -495,6 +495,7 @@ def SlideView {
 
 	css {
 		postion: relative;
+		-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
 
 	my container {
@@ -1121,7 +1122,7 @@ def Switch(left,right,willSyncTo) {
 	}
 }
 
-def REPLButton(text) {
+def LiveEvalButton(text) {
 	html {
 		<div>
 			<div class='label'>$text</div>

@@ -473,7 +473,7 @@ IScroll.prototype = {
 
 		this._translate(newX, newY);
 
-/* REPLACE START: _move */
+/* replace START: _move */
 
 		if ( timestamp - this.startTime > 300 ) {
 			this.startTime = timestamp;
@@ -481,7 +481,7 @@ IScroll.prototype = {
 			this.startY = this.y;
 		}
 
-/* REPLACE END: _move */
+/* replace END: _move */
 
 	},
 
@@ -624,12 +624,12 @@ IScroll.prototype = {
 		this.wrapperWidth	= this.wrapper.clientWidth;
 		this.wrapperHeight	= this.wrapper.clientHeight;
 
-/* REPLACE START: refresh */
+/* replace START: refresh */
 
 		this.scrollerWidth	= this.scroller.offsetWidth;
 		this.scrollerHeight	= this.scroller.offsetHeight;
 
-/* REPLACE END: refresh */
+/* replace END: refresh */
 
 		this.maxScrollX		= this.wrapperWidth - this.scrollerWidth;
 		this.maxScrollY		= this.wrapperHeight - this.scrollerHeight;
@@ -781,11 +781,11 @@ IScroll.prototype = {
 	_translate: function (x, y) {
 		if ( this.options.useTransform ) {
 
-/* REPLACE START: _translate */
+/* replace START: _translate */
 
 			this.scrollerStyle[utils.style.transform] = 'translate(' + x + 'px,' + y + 'px)' + this.translateZ;
 
-/* REPLACE END: _translate */
+/* replace END: _translate */
 
 		} else {
 			x = Math.round(x);

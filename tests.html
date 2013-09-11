@@ -1,16 +1,5 @@
-<?php
-
-$ua =  $_SERVER['HTTP_USER_AGENT'];
-$allow_offline = true;
-if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow_offline) {
-	// It's an iOS webapp
-	echo "<html manifest='index.manifest'>";
-} else {
-	// It's not
-	echo "<html>";
-}
-
-?>
+<!DOCTYPE html>
+<html>
 	<head>
 		<script type="text/javascript">
  
@@ -77,7 +66,6 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow
 		<title>Sigmabox</title>
 	</head>
 	<body>
-	
+
 	</body>
 </html>
- 
