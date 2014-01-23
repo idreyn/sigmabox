@@ -84,16 +84,7 @@ def MathInput(owner) {
 		$this.trigger('update');
 	}
 
-	on keydown(e) {
-		e.preventDefault();
-	}
-
-	on keypress(e) {
-		e.preventDefault();
-	}
-
 	on keyup(e) {
-		e.preventDefault();
 		$this.trigger('update');
 	}
 	
@@ -158,6 +149,7 @@ def MathTextField(fm) {
 	}
 
 	constructor {
+		this.enabled = true;
 		this.input = elm.create('SmallMathInput').named('input');
 		this.input.$.on('update',this.#updated);
 		$this.append(this.input);
@@ -165,18 +157,24 @@ def MathTextField(fm) {
 
 	method updated {
 		if($this.parents('.ListView')) {
-			// Do as I say, not as I do :P
-			$this.parents('.ListView').get(0).updateScroll();
+			// Do as I say, not as I do.
+			$this.parents('.ListView').get(0) ? $this.parents('.ListView').get(0).updateScroll() : 0;
 		}
 		$this.trigger('update');
 	}
 
 	on click {
+		if(!this.enabled) {
+			return;
+		}
 		this.fm.setFocus(this);
 		this.mathSelf().cursor.show();
 	}
 
 	on touchstart {
+		if(!this.enabled) {
+			return;
+		}
 		this.fm.setFocus(this);
 		this.mathSelf().cursor.show();
 	}
@@ -189,6 +187,19 @@ def MathTextField(fm) {
 		return this.input.contents();
 	}
 
+	method disable() {
+		var contents = this.contents();
+		this.enabled = false;
+		this.input.$.mathquill('revert');
+		this.input.$.html(contents);
+		this.input.$.mathquill();
+	}
+
+	method enable {
+		this.enabled = true;
+		this.input.$.mathquill('editable');
+	}
+
 	method acceptLatexInput(input) {
 		this.mathSelf().cursor.show();
 		return this.input.acceptLatexInput(input);
@@ -199,12 +210,8 @@ def MathTextField(fm) {
 	}
 
 	method takeFocus {
-		try {
-			this.input.takeFocus();
-			return this.fm.setFocus(this);
-		} catch (e) {
-
-		}
+		this.input.takeFocus();
+		return this.fm.setFocus(this);
 	}
 
 	method loseFocus {

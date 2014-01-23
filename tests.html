@@ -36,8 +36,9 @@
 		<script type='text/elemental' src='js/v/Components.elm'> </script>
 		<script type='text/elemental' src='js/v/Grapher.elm'> </script>
 		<script type='text/elemental' src='js/v/Functions.elm'> </script>
+		<script type='text/elemental' src='js/v/REPL.elm'> </script>
 		<!-- Controllers -->
-		<script type='text/javascript' src='js/c/Application.js'> </script>
+		<!-- <script type='text/javascript' src='js/c/Application.js'> </script> -->
 		<script type='text/javascript' src='js/c/Resource.js'> </script>
 		<script type='text/javascript' src='js/c/Storage.js'> </script>
 		<script type='text/javascript' src='js/c/Utils.js'> </script>
@@ -45,13 +46,30 @@
 		<script type='text/javascript' src='js/c/Sound.js'> </script>
 		<!-- Elemental -->
 		<script type='text/javascript' src='js/lib/elemental.js'> </script>
-		<!-- Scripts -->
-		<script type='text/javascript' src='js/init.js'> </script>
+
+		<script type='text/javascript'>
+		var test;
+		$(function() {
+			test = elm.create('TabbedView');
+			$('body').append(test);
+			test.size();
+		});
+
+		</script>
+		<!-- scrippts -->
+		<!-- <script type='text/javascript' src='js/init.js'> </script> -->
 		<!-- CSS -->
 		<link rel='stylesheet' type='text/css' href='css/style.css' />
 		<link rel='stylesheet' type='text/css' href='css/lib/touchscroll.css' />
 		<link rel="stylesheet" type="text/css" href="js/lib/mathquill/mathquill.css" />
+		<style type='text/css'>
 
+		html, body {
+			width: 100%;
+			height: 100%;
+		}
+
+		</style>
 		<!-- Meta -->
 		<meta name="viewport" content="initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />

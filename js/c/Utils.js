@@ -36,6 +36,22 @@ Utils.prototype.hitTest = function(touch, elemposition, width, height) {
     return (touchX > left && touchX < right && touchY > top && touchY < bottom);
 };
 
+Utils.prototype.tabletMode = function() {
+	var v = utils.viewport();
+	return v.x > 800 && v.y > 600;
+}
+
+Utils.prototype.isAppleWebApp = function() {
+	var ua = navigator.userAgent;
+	if(ua.indexOf('AppleWebKit') > -1 && ua.indexOf('Safari') == -1) {
+		return true;
+	} else {
+		return false;
+	}
+}
+
+var utils = new Utils();
+
 // A set of utilities for manipulating and parsing strings. StringUtil is lifted
 // more or less directly from as3corelib's StringUtil...todo add license?
 
@@ -256,4 +272,22 @@ ParseUtil.replace = function (src, from, to) {
 
 ParseUtil.handleEscapeChars = function (s) {
 	return s.replace(/\\n/g, "\n").replace(/\\t/g, "\t");
+}
+
+function FocusManager() {
+	this.current = null;
+}
+
+FocusManager.prototype.getCurrent = function() {
+	return this.current || app.nullInput;
+}
+
+FocusManager.prototype.setFocus = function(c) {
+	c.$.trigger('gain-focus');
+	if(c == this.current) return;
+	if(this.current) {
+		this.current.$.trigger('lost-focus');
+		this.current.loseFocus();
+	}
+	this.current = c;
 }

@@ -30,7 +30,7 @@ def GrapherView {
 				tbf = this.#toolbarFix,
 				eqns = this.@equations-list.collect();
 			if(eqns.length == 0) return;
-			app.setModeHeight(1);
+			app.hideKeyboard();
 			this.noKeyboard = true;
 			this.@graph-window.inputs = eqns;
 			this.@graph-window.buildEquationButtonSet();
@@ -38,11 +38,10 @@ def GrapherView {
 			this.@graph-window.$trace-handle.hide();
 			this.@graph-window.@trace-readouts.hide();
 			this.@graph-window.@range-readouts.hide();
-			this.@graph-window.homeWindow();
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
-			},0);
-			app.hideKeyboard();
+				self.@graph-window.homeWindow();
+			},10);
 		} catch(e) {
 			app.popNotification(e);
 		}
@@ -53,10 +52,7 @@ def GrapherView {
 			tbf = this.#toolbarFix;
 		app.showKeyboard();
 		this.noKeyboard = false;
-		setTimeout(function() {
-			app.setModeHeight(0.5);
-			self.slideTo(self.@equations-list,tbf);
-		},500);
+		self.slideTo(self.@equations-list,tbf);
 	}
 
 	method toolbarFix {
@@ -96,6 +92,10 @@ def GraphWindow {
 		this.addEvents();
 
 		this.setWindow(10,false);
+	}
+
+	on invalidate {
+
 	}
 
 	method addButtons {
@@ -243,7 +243,7 @@ def GraphWindow {
 		this.xmax = this._xmax - Math.round(e.gesture.center.pageX - this.dragOriginX) / this.x_scale;
 		this.ymin = this._ymin + Math.round(e.gesture.center.pageY - this.dragOriginY) / this.y_scale;
 		this.ymax = this._ymax + Math.round(e.gesture.center.pageY - this.dragOriginY) / this.y_scale;
-		this.render(false);
+		this.render(true);
 	}
 
 	method cursorDragEnd(e) {
@@ -262,14 +262,17 @@ def GraphWindow {
 	}
 
 	method traceDragged(e) {
-		var pageX = e.gesture.center.pageX;
+		var pageX = e.gesture.center.pageX - this.$.offset().left;
 		var planeX = this.canvasToPlane({x: pageX}).x;
 		if(this.@equation-choice.selected) {
+			var tur = app.trigUseRadians;
+			app.storage.trigUseRadians = true;
 			var planeY = 0 - this.@equation-choice.selected.equation.data.valueOf(
 				new Frame({
 					x: planeX
 				})
 			).toFloat();
+			app.storage.trigUseRadians = tur;
 			this.$trace-handle.show();
 		} else {
 			planeY = this.canvasToPlane({y: e.gesture.center.pageY}).y;
@@ -309,7 +312,7 @@ def GraphWindow {
 		this.@trace-readouts.hide();
 		this.$range.show();
 		var p = this.canvasToPlane({
-			x: e.gesture.center.pageX,
+			x: e.gesture.center.pageX - this.$.offset().left,
 			y: e.gesture.center.pageY
 		});
 		this.placeTraceHandle(p.x,p.y);
@@ -320,7 +323,7 @@ def GraphWindow {
 	}
 
 	method rangeDragged(e) {;
-		this._rangeCurrentX = e.gesture.center.pageX;
+		this._rangeCurrentX = e.gesture.center.pageX - this.$.offset().left;
 		if(this._rangeCurrentX > this._rangeStartX) {
 			this.$range.css({
 				'left': this._rangeStartX,
@@ -665,13 +668,7 @@ def GraphListField(fm) {
 			this.setContents(c);
 		}
 	}
-
-	on gain-focus {
-		if(this.childNodes[0].nodeValue == this.defaultText) {
-
-		}
-	}
-
+	
 	css {
 		position: relative;
 	}

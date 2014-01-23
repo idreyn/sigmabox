@@ -1,3 +1,7 @@
+Number.prototype.toFloat = function() {
+	return this;
+}
+
 function Solver(left,right) {
 	this.frame = new Frame();
 	var self = this;
@@ -10,12 +14,14 @@ function Solver(left,right) {
 
 Solver.prototype.leftAt = function(x) {
 	this.frame.set('x',x);
-	return this.left.valueOf(this.frame).toFloat();
+	var v =  this.left.valueOf(this.frame);
+	return v.toFloat()
 }
 
 Solver.prototype.rightAt = function(x) {
 	this.frame.set('x',x);
-	return this.right.valueOf(this.frame).toFloat();
+	var v = this.right.valueOf(this.frame);
+	return v.toFloat();
 }
 
 Solver.prototype.f = function(x) {

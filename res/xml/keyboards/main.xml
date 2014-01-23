@@ -80,7 +80,7 @@
 	</key>
 	<key name='parentheses' row='2' col='5'>
 		<primary text-label='( )' action='input:left'>\left(\right)</primary>
-		<alternate text-label='&lt; &gt;' action='input:left'>&lt;&gt;</alternate>
+		<alternate text-label='{ }' action='input:left'>\left\{\right\}</alternate>
 	</key>
 	<key name='i' row='3' col='5'>
 		<primary text-label='i'>i</primary>
@@ -89,7 +89,7 @@
 		<primary text-label='x'>x</primary>
 	</key>
 	<key name='more' row='5' col='5' default-color='#333'>
-		<primary text-label='&#931;&#8747;' action='app: keyboard advanced'/>
+		<primary text-label='&#931;&#8747;' action='app: keyboard matrix'/>
 	</key>
 	
 	
@@ -121,7 +121,7 @@
 	</key>
 	<key name='cos' row='2' col='7'>
 		<primary text-label='cos' action='input:left'>\cos()</primary>
-		<alternate text-label='...' action='app: keyboard sin'></alternate>
+		<alternate text-label='...' action='app: keyboard cos'></alternate>
 	</key>
 	<key name='tan' row='3' col='7'>
 		<primary text-label='tan' action='input:left'>\tan()</primary>

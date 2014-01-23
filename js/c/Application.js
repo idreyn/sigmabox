@@ -13,7 +13,6 @@ function Application() {
 Application.prototype.initLayout = function(wrapper) {
 
 	this.nullInput = elm.create('MathTextField');
-	this.dispatch = elm.create('Dispatch');
 	this.storage.init();
 
 	var self = this;
@@ -24,6 +23,9 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.initKeyboards();
 
+	this.repl = elm.create('REPL');
+	this.root.addChild(this.repl);
+
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
@@ -33,7 +35,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.functions = elm.create('FunctionListView');
 	this.root.addChild(this.functions);
 
-	this.modes = [this.eval,this.grapher,this.functions];
+	this.modes = [this.repl,this.eval,this.grapher,this.functions];
 	this.root.menu.build();
 	this.setMode(this.storage.mode || 'eval');
 
@@ -53,7 +55,7 @@ Application.prototype.setModeHeight = function(n) {
 Application.prototype.hideKeyboard = function() {
 	var self = this;
 	this.modeHeight = 1;
-	if(this.isAppleWebApp() && false) {
+	if(utils.isAppleWebApp() && false) {
 		this.keyboardHeight = 0;
 	} else {
 		this.keyboard.slideDown();
@@ -61,21 +63,22 @@ Application.prototype.hideKeyboard = function() {
 			self.keyboardHeight = 1 - self.modeHeight;
 		},500);
 	}
-	this.resize();
+	self.keyboardHeight = 1 - self.modeHeight;
+	this.liteResize();
 }
 
 Application.prototype.showKeyboard = function() {
 	var self = this;
 	this.modeHeight = 0.5;
 	this.keyboardHeight = 1 - this.modeHeight;
-	if(this.isAppleWebApp() && false) {
+	if(utils.isAppleWebApp() && false) {
 		this.keyboardHeight = 0.5;
-		this.resize();
+		this.liteResize();
 	} else {
 		this.keyboard.slideUp();
-		setTimeout(function() {
-			self.keyboardHeight = 1 - self.modeHeight;
-		},500);
+		self.keyboardHeight = 1 - self.modeHeight;
+		this.liteResize();
+
 	}
 }
 
@@ -84,44 +87,22 @@ Application.prototype.resize = function() {
 }
 
 Application.prototype.liteResize = function() {
-	this.keyboard.size();
-	this.mode.size();
+	this.keyboard.size(this.keyboardHeight);
+	this.mode.size(this.modeHeight);
 }
 
 Application.prototype.initKeyboards = function() {
-	this.keyboards.main = elm.create('Keyboard','res/xml/keyboards/main.xml');
+	this.keyboards.main = elm.create('DragKeyboard','res/xml/keyboards/main.xml');
 	this.root.addChild(this.keyboards.main);
 	this.keyboards.main.init();
-
-	this.keyboards.constants = elm.create('Keyboard','res/xml/keyboards/constants.xml');
-	this.root.addChild(this.keyboards.constants);
-	this.keyboards.constants.init();
-	this.keyboards.constants.$.hide();
-
-	this.keyboards.variables = elm.create('Keyboard','res/xml/keyboards/variables.xml');
-	this.root.addChild(this.keyboards.variables);
-	this.keyboards.variables.init();
-	this.keyboards.variables.$.hide();
-
-	this.keyboards.advanced = elm.create('Keyboard','res/xml/keyboards/advanced.xml');
-	this.root.addChild(this.keyboards.advanced);
-	this.keyboards.advanced.init();
-	this.keyboards.advanced.$.hide();
-
-	this.keyboards.sin = elm.create('Keyboard','res/xml/keyboards/sin.xml');
-	this.root.addChild(this.keyboards.sin);
-	this.keyboards.sin.init();
-	this.keyboards.sin.$.hide();
-
-	this.keyboards.cos = elm.create('Keyboard','res/xml/keyboards/cos.xml');
-	this.root.addChild(this.keyboards.cos);
-	this.keyboards.cos.init();
-	this.keyboards.cos.$.hide();
-
-	this.keyboards.tan = elm.create('Keyboard','res/xml/keyboards/tan.xml');
-	this.root.addChild(this.keyboards.tan);
-	this.keyboards.tan.init();
-	this.keyboards.tan.$.hide();
+	var self = this;
+	var kb = ['constants','variables','advanced','sin','cos','tan','matrix','list'];
+	kb.forEach(function(k) {
+		self.keyboards[k] = elm.create('Keyboard','res/xml/keyboards/' + k + '.xml');
+		self.root.addChild(self.keyboards[k]);
+		self.keyboards[k].init();
+		self.keyboards[k].$.hide();
+	});
 
 	this.keyboard = this.keyboards.main;
 }
@@ -135,12 +116,12 @@ Application.prototype.setMode = function(mode) {
 	this.mode = mode;
 	this.mode.$.show();
 	this.mode.$.trigger('active');
-	this.mode.size();
 	if(!this.mode.noKeyboard) {
 		this.showKeyboard();
 	} else {
 		this.hideKeyboard();
 	}
+	this.mode.size(this.modeHeight);
 	this.storage.mode = mstring;
 	this.root.menu.setMode(mstring);
 	this.storage.serialize();
@@ -160,20 +141,15 @@ Application.prototype.useKeyboard = function(name,forceMain) {
 }
 
 Application.prototype.acceptActionInput = function(input) {
-	if(input.split(' ')[0] == 'keyboard'){
-		this.useKeyboard(input.split(' ')[1]);
+	var split = input.split(' ');
+	var kw = split[0];
+	if(kw == 'keyboard'){
+		this.useKeyboard(split[1]);
+	}
+	if(kw == 'notify') {
+		this.popNotification(split[1]);
 	}
 }
-
-Application.prototype.isAppleWebApp = function() {
-	var ua = navigator.userAgent;
-	if(ua.indexOf('AppleWebKit') > -1 && ua.indexOf('Safari') == -1) {
-		return true;
-	} else {
-		return false;
-	}
-}
-
 
 Application.prototype.popNotification = function(text) {
 	var n = elm.create('Notification',text,1);
@@ -196,29 +172,6 @@ Application.prototype.overlay = function(view) {
 	this.root.setOverlay(view);
 }
 
-Application.prototype.tabletMode = function() {
-	var v = app.utils.viewport();
-	return v.x > 800 && v.y > 600;
-}
-
 Application.prototype.useGratuitousAnimations = function() {
-	return !this.isAppleWebApp();
-}
-
-function FocusManager() {
-	this.current = null;
-}
-
-FocusManager.prototype.getCurrent = function() {
-	return this.current || app.nullInput;
-}
-
-FocusManager.prototype.setFocus = function(c) {
-	c.$.trigger('gain-focus');
-	if(c == this.current) return;
-	if(this.current) {
-		this.current.$.trigger('lost-focus');
-		this.current.loseFocus();
-	}
-	this.current = c;
+	return !utils.isAppleWebApp();
 }

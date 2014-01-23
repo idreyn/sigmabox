@@ -1,76 +1,81 @@
 // Components that ought to live somewhere separate from Sigmabox because they are highly reusable.
 
 def TouchInteractive {
-
 	constructor {
-		this.enabled = true;
-		Hammer(this).on('tap',this.tapped);
+		Hammer(this).on('tap',this.#tapped);
+		Hammer(this).on('touch',this.#touched);
+		Hammer(this).on('release',this.#released);
+		Hammer(this).on('dragged',this.#dragged);
 	}
 
-	on tap(e) {
-		//$this.trigger('tap');
+	css {
+		outline: none;
+		user-select: none;
+		-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
 	}
 
-	on touchstart(e) {
-		if(this.enabled) {
-			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-			this._touchStartX = touch.screenX;
-			this._touchDeltaX = 0;
-			this._isTouchInBounds = true;
-			this._receivedTouchStart = true;
-			$this.trigger('active',e);
-		}
+	method tapped(e) {
+		this.$.trigger('invoke');
 	}
-	
+
+	method touched(e) {
+		this.$.trigger('begin');
+		this.$.trigger('active');
+	}
+
+	method released(e) {
+		this.$.trigger('end');
+		this.$.trigger('endactive');
+	}
+
+	on mouseout(e) {
+		this._isTouchInBounds = false;
+	}
+
+	on mousemove(e) {
+		this._isTouchInBounds = true;
+	}
+
 	on touchmove(e) {
 		if(this.enabled) {
 			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
 			this._touchDeltaX = Math.abs(touch.screenX - this._touchStartX);
-			if (app.utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
+			if (utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
 				this._isTouchInBounds = true;
 			} else {
 				this._isTouchInBounds = false;
-				$this.trigger('mouseout');
 			}
 		}
 	}
-	
-	on touchend(e) {
-		if(this.enabled) {
-			if(this._isTouchInBounds) {
-				$this.trigger('invoke');
-			}	
-			e.stopPropagation();
-			e.preventDefault();
-			this.receivedTouchEnd = true;
-			$this.trigger('endactive');
-		}
-	}
-	
-	on mousedown(e) {
-		if(this.enabled) {
-			if(this._receivedTouchStart) {
-				this._receivedTouchStart = false;
-			} else {
-				$this.trigger('active',e);
-			}
-		}
+}
+
+def Button {
+	extends {
+		TouchInteractive
 	}
 
-	on mouseup {
-		if(this.enabled) {
-			$this.trigger('invoke');
-			$this.trigger('endactive');
-		}
+	constructor {
+		this.enabled = true;
 	}
-	
-	on mouseout {
-		if(this.enabled) {
-			if(this._receivedTouchEnd) {
-				this._receivedTouchEnd = false;
-			}
-		}
-		$this.trigger('endactive');
+
+	on ready {
+		this.applyStyle('default');
+	}
+
+	on begin {
+		$this.removeClass('color-transition');
+		this.applyStyle('active');
+		if(!this.enabled) return;
+	}
+
+	on invoke {
+		if(!this.enabled) return;
+	}
+
+	on end {
+		$this.addClass('color-transition');
+		this.applyStyle('default');
+		if(!this.enabled) return;
 	}
 
 	method enable {
@@ -85,166 +90,6 @@ def TouchInteractive {
 		outline: none;
 		user-select: none;
 		-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
-	}
-}
-
-def Hammered {
-	constructor {
-		var events = [
-			'hold',
-			'tap',
-			'doubletap',
-			'drag', 
-			'dragstart',
-			'dragend',
-			'dragup',
-			'pdragdown',
-			'dragleft',
-			'dragright',
-			'swipe',
-			'swipeup',
-			'swipedown',
-			'swipeleft',
-			'swiperight',
-			'transform',
-		 	'transformstart',
-		 	'transformend',
-			'rotate',
-			'pinch',
-			'pinchin',
-			'pinchout'
-			'touch',
-			'release'
-		];
-	}
-}
-
-def Button {
-
-	constructor {
-		this.enabled = true;
-	}
-	
-	on touchstart(e) {
-		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		this._touchStartX = touch.screenX;
-		this._touchDeltaX = 0;
-		this._isTouchInBounds = true;
-		this._receivedTouchStart = true;
-		$this.removeClass('color-transition');
-		if(this.enabled) {
-			this.applyStyle('active');
-			$this.trigger('active',e);
-		}
-	}
-	
-	on touchmove(e) {
-		var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-		this._touchDeltaX = Math.abs(touch.screenX - this._touchStartX);
-		if (app.utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
-			this._isTouchInBounds = true;
-		} else {
-			$this.trigger('mouseout');
-			this._isTouchInBounds = false;
-		}
-	}
-	
-	on touchend(e) {
-		this.receivedTouchEnd = true;
-		if(this.enabled) {
-			if(this._isTouchInBounds) {
-				$this.trigger('mouseup');
-			}
-		}
-		e.preventDefault();
-	}
-	
-	on mousedown(e) {
-		if(this._receivedTouchStart) {
-			this._receivedTouchStart = false;
-		} else {
-			$this.removeClass('color-transition');
-			if(this.enabled) {
-				this.applyStyle('active');
-				$this.trigger('active',e);
-			}
-		}
-	}
-	
-	on mouseup {
-		if(this.enabled) {
-			$this.trigger('invoke');
-			$this.trigger('endactive');
-			this.applyStyle('default');
-			$this.addClass('color-transition');
-		}
-	}
-
-	on mouseout {
-		if(this.enabled) {
-			this.applyStyle('default');
-			$this.addClass('color-transition');
-			$this.trigger('endactive');
-		}
-	}
-	
-	on mouseout {
-		if(this._receivedTouchEnd) {
-			this._receivedTouchEnd = false;
-		} else {
-			if(this.enabled) {
-				this.applyStyle('default');
-				$this.addClass('color-transition');
-			}
-		}
-	}
-	
-	
-	on ready {
-		if(this.enabled) {
-			this.applyStyle('default');
-		} else {
-			this.applyStyle('disabled');
-		}
-	}
-
-	method enable {
-		this.enabled = true;
-		this.applyStyle('default');
-	}
-
-	method disable {
-		this.enabled = false;
-		this.applyStyle('disabled');
-	}
-	
-	css {
-		outline: none;
-		user-select: none;
-		-webkit-tap-highlight-color: rgba(255, 255, 255, 0); 
-	}
-	
-}
-
-def SyncSubscriber {
-
-	constructor {
-		app.storage.uiSyncSubscribe(this);
-	}
-
-	method syncTo(val) {
-		this.willSyncTo = val;
-	}
-
-	on sync {
-		var res = eval(this.willSyncTo);
-		if(this.sync && this.willSyncTo) this.sync(res);
-	}
-}
-
-def Dispatch {
-	html {
-		<div></div>
 	}
 }
 
@@ -312,12 +157,12 @@ def View {
 	}
 }
 
-def PageView {
+def PageView(title) {
 	html {
 		<div>
 			<div class='top-bar-container'>
 				<div class='top-bar'>
-					<span class='title'></span>
+					<span class='title'>$title</span>
 					<span class='toolbar'></span>
 				</div>
 			</div>
@@ -386,10 +231,10 @@ def PageView {
 		this.$contents.append(el);
 	}
 
-	method updateScroll {
+	method updateScroll(toScrollY) {
 		var self = this;
 		setTimeout(function() {
-			var sy = 0;
+			var sy = scrollY || 0;
 			if(self.scroll) {
 				self.scroll.enabled = false;
 				sy = self.scroll.y;
@@ -401,7 +246,6 @@ def PageView {
 	extends {
 		View
 	}
-
 }
 
 def ListView {
@@ -479,6 +323,144 @@ def ListView {
 		contents {
 			[[items-list:List]]
 		}
+	}
+}
+
+def TabbedView {
+	extends {
+		View
+	}
+
+	properties {
+		noKeyboard: true
+	}
+
+	contents {
+		<div class='tab-bar'></div>
+		<div class='tab-contents-container'></div>
+	}
+
+	constructor {
+		this.tabs = [];
+		this.addTab('Tab One',elm.create('PageView','Tab One'));
+		this.addTab('Tab Two',elm.create('PageView','Tab Two'));
+		this.addTab('Tab Three',elm.create('PageView','Tab Three'));
+		this.addTab('Tab Four',elm.create('PageView','Tab Four'));
+		this.addTab('Tab Five',elm.create('PageView','Tab Five'));
+		this.addTab('Tab Six',elm.create('PageView','Tab Six'));
+		this.$.find('.PageView .top-bar-container').hide();
+	}
+
+	on invalidate {
+		this.renderTabs();
+	}
+
+	on ready {
+		this.renderTabs();
+	}
+
+	method addTab(name,view) {
+		this.tabs.push({name: name,view:view});
+		this.$tab-contents-container.append(view);
+		this.renderTabs();
+	}
+
+	method renderTabs {
+		var currentView;
+		if(this.selectedTab) currentView = this.selectedTab.view;
+		this.$tab-bar.html('');
+		for(var i=0;i<this.tabs.length;i++) {
+			var t = this.tabs[i];
+			var tab = elm.create('TabbedViewTab',t.name,t.view,this);
+			this.$tab-bar.append(tab);
+			var pxWidth = parseFloat($this.width());
+			tab.$.css('width',pxWidth / this.tabs.length);
+		}
+		var currentViewTab;
+		if(currentView) {
+			currentViewTab = this.@tab-bar.$TabbedViewTab.toArray().filter(function(tab) {
+				return tab.view == currentView;
+			})[0];
+		}
+		console.log(currentViewTab);
+		if(currentViewTab) {
+			this.select(currentViewTab);
+		} else {
+			this.select(this.@tab-bar.$TabbedViewTab.get(0));
+		}
+	}
+
+	method select(tab) {
+		this.$tab-contents-container.children().hide();
+		if(this.selectedTab) {
+			this.selectedTab.applyStyle('not-selected');
+		}
+		tab.applyStyle('selected');
+		tab.view.$.show();
+		this.selectedTab = tab;
+	}
+
+	my tab-bar {
+		css {
+			width: 100%;
+			height: 50px;
+			background: #EEE;
+		}
+	}
+
+	my tab-contents-container {
+		method size {
+			this.$.css('height',root.$.height() - root.$tab-bar.height() - 4)
+		}
+
+		css {
+			width: 100%;
+			background: #FFF;
+			padding-top: 4px;
+		}
+	}
+}
+
+def TabbedViewTab(label,view,tabView) {
+	html {
+		<div>$label</div>
+	}
+
+	extends {
+		Button
+	}
+
+	css {
+		background: #EEE:
+		height: 50px;
+		line-height: 50px;
+		text-align: center;
+		display: inline-block;
+		cursor: pointer;
+	}
+
+	constructor {
+		this.applyStyle('not-selected');
+	}
+
+	on invoke {
+		this.tabView.select(this);
+	}
+
+	style selected {
+		border-bottom: 4px solid #A33;
+	}
+
+	style active {
+
+	}
+
+	style default {
+
+	}
+
+	style not-selected {
+		border-bottom: 4px solid #EEE;
 	}
 }
 
@@ -676,7 +658,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 		view.relinquish = function() {
 			self.overlay = undefined;
 		}
-		if(app.tabletMode()) {
+		if(utils.tabletMode()) {
 			view.$.css('translateX',0-this.menu.$.width());
 		} else {
 			view.$.css('translateX',0);
@@ -687,7 +669,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(app.tabletMode()) return;
+		if(utils.tabletMode()) return;
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
 		if(this.menuOpen || this.overlay) {
@@ -725,7 +707,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method showMenu(duration) {
-		if(app.tabletMode()) return;
+		if(utils.tabletMode()) return;
 		if(this.overlay) return;
 		this.$touch-shield.show();
 		this.menuOpen = true;
@@ -740,7 +722,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method hideMenu(duration) {
-		if(app.tabletMode()) return;
+		if(utils.tabletMode()) return;
 		var self = this;
 		duration = duration || 300;
 		$this.animate(
@@ -755,9 +737,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 		});	
 	}
 
-	method size {
-		$this.height(app.utils.viewport().y);
-		if(app.tabletMode()) {
+	method size(i) {
+		i = i || this.screenFraction || 1;
+		$this.height(utils.viewport().y * i);
+		if(utils.tabletMode()) {
 			this.isTabletMode = true;
 			$this.css('translateX',this.menu.$.width());
 			this.$container.width($this.width() - this.menu.$.width());

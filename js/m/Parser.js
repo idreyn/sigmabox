@@ -35,6 +35,8 @@ Parser.prototype.parse = function(s,topLevel) {
 	s = s.split('\\right)').join(')');
 	s = s.split('\\left[').join('[');
 	s = s.split('\\right]').join(']');
+	s = s.split('\\left\\{').join('<');
+	s = s.split('\\right\\}').join('>');
 	s = s.split('&nbsp;').join('');
 	if(topLevel) {
 		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3
@@ -55,8 +57,8 @@ Parser.prototype.parse = function(s,topLevel) {
 			p.pow,
 			p.symbol,
 			p.matrix,
-			p.parentheses,
 			p.brackets,
+			p.parentheses,
 		];
 	if(s.length == 0) return new Value(0);
 	if(s.charAt(s.length - 1) == '.') {
@@ -102,9 +104,7 @@ Parser.prototype.parse = function(s,topLevel) {
 Parser.prototype.brackets = function(s) {
 	var self = this;
 	if(s.charAt(0) == '<') {
-		// The source starts with an angle bracket, indicating a vector (probably)
-		// It's safe to assume that the entire expression is actually the vector
-		// because of operator precedence
+		// The source starts with a curly bracket, indicating a vector
 		var contents = ParseUtil.split(s.slice(1,s.length - 1),',').filter(function(n) {
 			return n;
 		}).map(function(n){
@@ -290,7 +290,6 @@ Parser.prototype.derivative = function(s) {
 		if(wrt != wrt2) {
 			throw 'Derivative error';
 		}
-		// // console.log(inner,wrt,at);
 		return new Derivative(
 			inner,
 			wrt,
@@ -443,7 +442,7 @@ Parser.prototype.func = function(s) {
 				rest = s.slice(closeParen + 1);
 			var res = new Func(
 				func,
-				args.split(',').map(function(i) {
+				ParseUtil.split(args,[',']).map(function(i) {
 					return self.parse(i);
 				})
 			);

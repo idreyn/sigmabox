@@ -68,6 +68,8 @@ Value.prototype.toString = function(p) {
 	return s;
 }
 
+Value.prototype.text = Value.prototype.toString;
+
 Value.prototype.toFloat = function() {
 	return this.real;
 }
@@ -489,6 +491,10 @@ Frac.prototype.toString = function() {
 	}
 }
 
+Frac.prototype.tex = function() {
+	return '\\frac{' + this.top.tex() + '}{ ' + this.bottom.tex() + '}';
+}
+
 Frac.prototype.toFloat = function() {
 	return this.decimalize().toFloat();
 }
@@ -582,6 +588,8 @@ Symbol.prototype.valueOf = function(frame) {
 Symbol.prototype.toString = function(frame) {
 	return this.name;
 }
+
+Symbol.prototype.text = Symbol.prototype.toString;
 
 function Matrix(rows) {
 	this.rows = rows;
@@ -842,7 +850,7 @@ Vector.prototype.dot = function(v2) {
 }
 
 Vector.prototype.toString = function() {
-	return '<' + this.valueOf().args.join(',') + '>';
+	return '{' + this.valueOf().args.join(',') + '}';
 }
 
 Vector.prototype.toStringPolar = function(rads) {
@@ -859,6 +867,10 @@ Vector.prototype.toStringPolar = function(rads) {
 	}
 	angle = Functions.normalize(angle,rads);
 	return magnitude.toString(3) + '\u2220' + angle.toString(3) + (rads? '' : '\u00B0');
+}
+
+Vector.prototype.map = function(func) {
+	return new Vector(this.args.map(func));
 }
 
 Vector.prototype.serialize = function() {
@@ -922,6 +934,7 @@ Integral.prototype.valueOf = function(frame,nSteps,round) {
 		b = inter;
 		flip = true;
 	}
+	console.log('nSteps =',n);
 	if(dx == 0 || isNaN(dx)) return 0;
 	for(var i = a; i <= b; i += dx) {
 		f.set(this.wrt,i);

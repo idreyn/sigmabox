@@ -1170,7 +1170,7 @@ function createRoot(jQ, root, textbox, editable) {
    */
   var textareaSelectionTimeout;
   root.selectionChanged = function() {
-  	if (app.isAppleWebApp()) return;
+  	if (utils.isAppleWebApp()) return;
     if (textareaSelectionTimeout === undefined) {
       textareaSelectionTimeout = setTimeout(setTextareaSelection);
     }
@@ -1357,7 +1357,7 @@ var RootMathBlock = P(MathBlock, function(_, _super) {
 
     case 'Shift-Backspace':
     case 'Backspace':
-      //this.cursor.backspace();
+      this.cursor.backspace();
       break;
 
     // Tab or Esc -> go one block right if it exists, else escape right.
@@ -1454,11 +1454,11 @@ var RootMathBlock = P(MathBlock, function(_, _super) {
       }
       break;
 
-    case 'Left': /* this.cursor.moveLeft(); */ break;
+    case 'Left': this.cursor.moveLeft();  break;
     case 'Shift-Left': this.cursor.selectLeft(); break;
     case 'Ctrl-Left': break;
 
-    case 'Right': /* this.cursor.moveRight(); */ break;
+    case 'Right': this.cursor.moveRight();  break;
     case 'Shift-Right': this.cursor.selectRight(); break;
     case 'Ctrl-Right': break;
 
