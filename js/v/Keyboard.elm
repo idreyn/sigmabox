@@ -42,6 +42,8 @@ def Keyboard(keyboardSource) {
 		width: 100%;
 		background: #1b1b1b;
 		z-index: 1000;
+		transform: translate3d(0,0,0);
+		-webkit-transform: translate3d(0,0,0);
 		-webkit-overflow-scrolling: touch;
 		-webkit-transform: translateY(0);
 	}
@@ -50,15 +52,29 @@ def Keyboard(keyboardSource) {
 		-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
 
+	style not-animated {
+		-webkit-transition: none;
+	}
+
+	method animated {
+		this.applyStyle('animated');
+	}
+
+	method notAnimated {
+		this.applyStyle('not-animated');
+	}
+
 	on touchmove(e) {
 		e.preventDefault();
 	}
 	
 	constructor {
 		this.size();
+		this.notAnimated();
 	}
 
 	method slideUp(n,e) {
+		this.animated();
 		$this.show();
 		setTimeout(function() {
 			$this.css({
@@ -68,6 +84,7 @@ def Keyboard(keyboardSource) {
 	}
 
 	method slideDown(n,e) {
+		this.animated();
 		$this.css({
 			'translateY': parseInt($this.css('height'))
 		});
@@ -82,7 +99,7 @@ def Keyboard(keyboardSource) {
 	method size() {
 		$this.css(
 			'height',
-			app.utils.viewport().y * 0.5
+			utils.viewport().y * 0.5
 		).css(
 			'bottom',
 			0
@@ -125,6 +142,7 @@ def Keyboard(keyboardSource) {
 			var maxCol = 0;
 			$(d).find('key').each(function(i,key) {
 				var k = elm.create('Key',key,this);
+				k.parentKeyboard = self;
 				if(parseInt($(key).attr('col')) > maxCol) maxCol = parseInt($(key).attr('col'));
 				$(inner).append(k);
 				self.keys.push(k);
@@ -157,6 +175,99 @@ def Keyboard(keyboardSource) {
 	}
 }
 
+def DragKeyboard(keyboardSource) {
+	extends {
+		Keyboard
+	}
+
+	constructor {
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('drag',this.#dragged);
+		Hammer(this).on('dragend',this.#dragEnd);
+		this.$.append(elm.create('DragIndicator'));
+	}
+
+	method dragStart(e) {
+		this.disabled = true;
+		this.notAnimated();
+		this.currentKey.$.removeClass('color-transition');
+		this.currentKey.applyStyle('default');
+		this._dragOrigin = e.gesture.center.pageY;
+	}
+
+	method dragged(e) {
+		if(!this.maxHeight) this.maxHeight = this.@DragIndicator.maxHeight;
+		var y = Math.abs(Math.min(e.gesture.center.pageY - this._dragOrigin,0));
+		var k = 250;
+		var translateY = - Math.round(this.maxHeight * (1 - Math.exp(-y/k)));
+		this.@DragIndicator.setHeight(Math.abs(translateY));
+		$this.css(
+			'translateY',
+			translateY
+		);
+	}
+
+	method dragEnd(e) {
+		setTimeout(function() {
+			self.disabled = false;
+		},500);
+		this.slideUp();
+		this.@DragIndicator.invoke();
+	}
+
+
+	on invalidate {
+		this.$DragIndicator.css('top',$this.height());
+	}
+}
+
+def DragIndicator {
+	html {
+		<div></div>
+	}
+
+	constructor {
+		this.maxHeight = 300;
+		this.options = [
+			{label: ''},
+			{label: 'Matrix', action: 'keyboard matrix'},
+			{label: 'List', action: 'keyboard list'},
+			{label: 'Numerical'},
+			{label: 'Probability'},
+		];
+	}
+
+	css {
+		width: 100%;
+		height: 500px;
+		background: #000;
+		text-align: center;
+		color: #FFF;
+		font-size: 40px;
+	}
+
+	method setHeight(y) {
+		y = Math.round(y);
+		var index = Math.max(0,Math.floor(y / (this.maxHeight / this.options.length)));
+		var color = 27 + index * 25;
+		var rgbString = 'rgb(' + color.toString() + ',' + color.toString() + ',' + color.toString() + ')';
+		$this.css('line-height',y + 'px')
+		//.css('background',rgbString);
+		this.current = this.options[index];
+		$this.html(this.current.label);
+	}
+
+	method invoke {
+		if(this.current.action) {
+			if(this.current.action instanceof Function) {
+				this.current.action();
+			} else {
+				app.acceptActionInput(this.current.action);
+			}
+		}
+	}
+}
+
 def Key(_keyData,keyboard) {
 
 	html {
@@ -167,6 +278,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on invoke {
+		if(this.cannotInvoke) return;
 		try {
 			if(this.activeSubkey().attr('variable')) {
 				if(app.storage.varSaveMode) {
@@ -211,20 +323,33 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on active(e) {
+		this.parentKeyboard.currentKey = this;
 		var self = this;
 		this.altTimeout = setTimeout(function() {
-			//console.log('altTimeout');
 			self.setAlt();
 		},250);
+	}
+
+	method cancel {
+		this.$.trigger('endactive');
+		this.cannotInvoke = true;
+		setTimeout(function() {
+			self.cannotInvoke = false;
+		},500);
 	}
 	
 	on ready {
 		this.sub = $this.find('.submenu').get(0);
 		this.init();
 	}
+
+	on end {
+		if(self.altMode && self._isTouchInBounds && !self.parentKeyboard.disabled) {
+			self.$.trigger('invoke');
+		}
+	}
 	
 	on endactive {
-		//console.log('endactive');
 		var self = this;
 		clearTimeout(this.altTimeout);
 		setTimeout(function() {

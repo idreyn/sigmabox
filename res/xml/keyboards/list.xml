@@ -1,0 +1,29 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='list' row='2' col='1'>
+		<primary close='close' text-label='{ }' action='input: left'>\left\{\right\}</primary>
+	</key>
+	<key name='list' row='3' col='1'>
+		<primary close='close' name='min' text-label='min' action='input: left'>\min()</primary>
+	</key>
+	<key name='list' row='4' col='1'>
+		<primary close='close' name='max' text-label='max' action='input: left'>\max()</primary>
+	</key>
+	<key name='list' row='5' col='1'>
+		<primary close='close' name='range' text-label='range' action='input: left,left'>\range(,)</primary>
+	</key>
+	<key name='list' row='1' col='2'>
+		<primary close='close' name='lsum' text-label='lsum' action='input: left'>\lsum()</primary>
+	</key>
+	<key name='list' row='2' col='2'>
+		<primary close='close' name='lprod' text-label='lprod' action='input: left'>\lprod()</primary>
+	</key>
+	<key name='cumsum' row='3' col='2'>
+		<primary close='close' name='csum' text-label='csum' action='input: left'>\csum()</primary>
+	</key>
+	<key name='dlist' row='4' col='2'>
+		<primary close='close' name='dlist' text-label='dlist' action='input: left'>\dlist()</primary>
+	</key>
+</keyboard>

@@ -78,11 +78,8 @@ def LiveEvalCard {
 		this.@toolbar.fracSwitch.hide();
 		app.storage.trigInCurrentExpression = false;
 		app.storage.calcInCurrentExpression = false;
-		try{
+		try {
 			var res = app.parser.parse(str,true);
-			if(str.indexOf('2782259') != -1) {
-				res = 'Go fuck yourself';
-			}
 			if(res instanceof Solver) {
 				try {
 					res = res.toString();
@@ -96,12 +93,20 @@ def LiveEvalCard {
 					res = res.toString();
 				}
 				if(res instanceof Vector) {
-					this.@toolbar.vectorSwitch.show();
-					if(!app.storage.displayPolarVectors) {
-						res = res.toString();
+					if(res.args.length == 2) {
+						this.@toolbar.vectorSwitch.show();
+						if(!app.storage.displayPolarVectors) {
+							res = res.toString();
+						} else {
+							this.@toolbar.trigSwitch.show();
+							res = res.toStringPolar(app.storage.trigUseRadians);
+						}
 					} else {
-						this.@toolbar.trigSwitch.show();
-						res = res.toStringPolar(app.storage.trigUseRadians);
+						if(res.args.length <= 10) {
+							res = res.toString();
+						} else {
+							res = '{' + res.args.length + ' item vector}';
+						}
 					}
 				} else if(res instanceof Frac) {
 					this.@toolbar.fracSwitch.show();
@@ -111,12 +116,17 @@ def LiveEvalCard {
 						res = res.decimalize().toString();
 					}
 				} else if(res instanceof Value) {
-					res = res.toString(16);
+					if(res.complex != 0) {
+						res = res.toString(4);
+					} else {
+						res = res.toString(16);
+					}
 				} else  {
 					res = res.toString();
 				}
 			}
 		} catch(e) {
+			console.log(e);
 			var res = typeof e == 'string' ? e : 'Error';
 		}
 		if(app.storage.trigInCurrentExpression) {
@@ -296,7 +306,7 @@ def LiveEvalManager {
 		i = i || this.screenFraction || 0.5;
 		$this.css(
 			'height',
-			app.utils.viewport().y * i
+			utils.viewport().y * i
 		).css(
 			'top',
 			0

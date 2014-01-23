@@ -15,19 +15,36 @@ def SigmaboxAppFrame {
 }
 
 
+def SyncSubscriber {
+	constructor {
+		app.storage.uiSyncSubscribe(this);
+	}
+
+	method syncTo(val) {
+		this.willSyncTo = val;
+	}
+
+	on sync {
+		var res = eval(this.willSyncTo);
+		if(this.sync && this.willSyncTo) this.sync(res);
+	}
+}
+
+
 def SigmaboxSideMenu {
 	extends {
 		SideMenu
 	}
 
 	contents {
-		<img src='res/img/logo.png' width='100%' />
+		<img src='res/img/logo-alpha.png' width='100%' />
+//		[[SigmaboxSideMenuItem 'calculator', 'repl']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'functions','functions']]
-		[[SigmaboxSideMenuItem 'stats','stats']]
-		[[SigmaboxSideMenuItem 'converter','converter']]
-		[[SigmaboxSideMenuItem 'settings','settings']]
+//		[[SigmaboxSideMenuItem 'stats','stats']]
+//		[[SigmaboxSideMenuItem 'converter','converter']]
+//		[[SigmaboxSideMenuItem 'settings','settings']]
 	}
 
 	method build {

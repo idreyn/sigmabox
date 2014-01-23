@@ -1,7 +1,7 @@
 var Functions = {};
 
 Functions.gcf = function() {
-	var args = app.utils.argArr(arguments).filter(function(item) {
+	var args = utils.argArr(arguments).filter(function(item) {
 		return item != 0;
 	});
 	if(args.length == 1) {
@@ -27,7 +27,7 @@ Functions.gcf = function() {
 }
 
 Functions.scaleToWhole = function() {
-	var args = app.utils.argArr(arguments).filter(function(item) {
+	var args = utils.argArr(arguments).filter(function(item) {
 		return item != 0;
 	});
 	var i = 0;

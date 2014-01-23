@@ -1,7 +1,7 @@
 <?php
 
 $ua =  $_SERVER['HTTP_USER_AGENT'];
-$allow_offline = true;
+$allow_offline = false;
 if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow_offline) {
 	// It's an iOS webapp
 	echo "<html manifest='index.manifest'>";
@@ -43,6 +43,7 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow
 		<script type='text/elemental' src='js/v/Core.elm'> </script>
 		<script type='text/elemental' src='js/v/Keyboard.elm'> </script>
 		<script type='text/elemental' src='js/v/MathInput.elm'> </script>
+		<script type='text/elemental' src='js/v/REPL.elm'> </script>
 		<script type='text/elemental' src='js/v/LiveEval.elm'> </script>
 		<script type='text/elemental' src='js/v/Components.elm'> </script>
 		<script type='text/elemental' src='js/v/Grapher.elm'> </script>

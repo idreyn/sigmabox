@@ -137,23 +137,78 @@ Storage.prototype.init = function() {
 		},false),
 		'id': this.wrap(Functions.identityMatrix,false,true,false),
 		'det': this.wrap(function(m) {
-			if(!(m instanceof Matrix)) {
-				throw 'Matrix expected';
-			}
+			self.expect(m,Matrix);
 			return m.det();
 		},false,false),
 		'transpose': this.wrap(function(m) {
-			if(!(m instanceof Matrix)) {
-				throw 'Matrix expected';
-			}
+			self.expect(m,Matrix);
 			return m.transpose();
 		},false,false,false),
 		'inverse': this.wrap(function(m) {
-			if(!(m instanceof Matrix)) {
-				throw 'Matrix expected';
-			}
+			self.expect(m,Matrix);
 			return m.inverse();
-		},false,false,false)
+		},false,false,false),
+		// Vector functions
+		'min': this.wrap(function(v) {
+			console.log(v);
+			self.expect(v,Vector);
+			var min = Infinity;
+			for(var i=0;i<v.args.length;i++) {
+				if(v.args[i] < min) {
+					min = v.args[i];
+				}
+			}
+			return min;
+		}),
+		'max': this.wrap(function(v) {
+			self.expect(v,Vector);
+			var max = -Infinity;
+			for(var i=0;i<v.args.length;i++) {
+				if(v.args[i] > max) {
+					max = v.args[i];
+				}
+			}
+			return max;
+		}),
+		'range': this.wrap(function(min,max,step) {
+			if(!step) step = 1;
+			var res = [];
+			for(var i=min;i<=max;i+=step) {
+				res.push(i);
+			}
+			return new Vector(res);
+		}),
+		'lsum': this.wrap(function(v) {
+			self.expect(v,Vector);
+			return v.args.reduce(function(a,b) {
+				return (a.add) ? a.add(b) : a + b;
+			});
+		},false,false),
+		'lprod': this.wrap(function(v) {
+			self.expect(v,Vector);
+			return v.args.reduce(function(a,b) {
+				return (a.mult) ? a.mult(b) : a * b;
+			});
+		},false,false),
+		'csum': this.wrap(function(v) {
+			self.expect(v,Vector);
+			var sum = 0;
+			var arr = [];
+			for(var i=0; i<v.args.length; i++) {
+				sum += v.args[i];
+				arr.push(sum);
+			}
+			return new Vector(arr);
+		}),
+		'dlist': this.wrap(function(v) {
+			self.expect(v,Vector);
+			var arr = [],
+				list = v.args;
+			for(var i = 1; i < list.length; i++) {
+				arr.push(list[i] - list[i - 1]);
+			}
+			return arr;
+		})
 	}
 
 	for(var k in this.functions) {
@@ -167,6 +222,50 @@ Storage.prototype.init = function() {
 	this.deserialize();
 }
 
+Storage.prototype.expect = function(arg,type) {
+	if(!(arg instanceof type)) {
+		throw type.name + ' expected';
+	}
+}
+
+Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
+	var self = this;
+	if(useNumber === undefined || useNumber === null) useNumber = true;
+	if(useNumberOut === undefined || useNumberOut === null) useNumberOut = true;
+	return function() {
+		var args = utils.argArr(arguments);
+		var toNum = function(i) {
+			if(i instanceof Frac) return i.decimalize();
+			if(i instanceof Value) return i.real;
+			if(i instanceof Vector || i instanceof Matrix) return i.map(toNum);
+			return i;
+		};
+		var toVal = function(i) {
+			if(!isNaN(i)) return new Value(i);
+			if(i instanceof Vector || i instanceof Matrix) return i.map(toVal);
+			return i;
+		};
+		if(useNumber) {
+			args = args.map(toNum);
+		}
+		if(isTrig) {
+			self.trigInCurrentExpression = true;
+		}
+		if(isTrig && !app.storage.trigUseRadians) {
+			 // Convert given degrees to required radians
+			args = args.map(Functions.d2r);
+		}
+		var res = lambda.apply(null,args);
+		if(isTrig) {
+		 	res = Functions.round(res,15);
+		}
+		if(!useNumberOut) {
+			return toNumVal(res);
+		} else {
+			return res;
+		}
+	};
+}
 
 Storage.prototype.deserialize = function() {
 	var s = JSON.parse(window.localStorage[this.lsNamespace] || '{}'),
@@ -288,37 +387,6 @@ Storage.prototype.deserializeFunctions = function(f) {
 		this.updateFunction(f[k].name,f[k].parameters,f[k].body);
 	}
 	return this.customFunctions;
-}
-
-Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
-	var self = this;
-	if(useNumber === undefined || useNumber === null) useNumber = true;
-	if(useNumberOut === undefined || useNumberOut === null) useNumberOut = true;
-	return function() {
-		var args = app.utils.argArr(arguments);
-		if(useNumber) {
-			args = args.map(function(i) {
-				if(i instanceof Frac) i = i.decimalize();
-				return i.real;
-			});
-		}
-		if(isTrig) {
-			self.trigInCurrentExpression = true;
-		}
-		if(isTrig && !app.storage.trigUseRadians) {
-			 // Convert given degrees to required radians
-			args = args.map(Functions.d2r);
-		}
-		var res = lambda.apply(null,args);
-		if(isTrig) {
-		 	res = Functions.round(res,15);
-		}
-		if(useNumberOut) {
-			return new Value(res);
-		} else {
-			return res;
-		}
-	};
 }
 
 Storage.prototype.callFunction = function(name,args) {
