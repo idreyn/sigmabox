@@ -1,0 +1,32 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='mod' row='2' col='1'>
+		<primary close='close' action='input: left,left' text-label='mod'>\mod(,)</primary>
+	</key>
+	<key name='fact' row='3' col='1'>
+		<primary close='close' action='input: left' text-label='fact'>\fact()</primary>
+	</key>
+	<key name='ncr' row='4' col='1'>
+		<primary close='close' action='input: left' text-label='polar'>\polar()</primary>
+	</key>
+	<key name='npr' row='5' col='1'>
+		<primary close='close' action='input: left' text-label='prime'>\prime()</primary>
+	</key>
+	<key name='abs' row='1' col='2'>
+		<primary close='close' action='input: left' text-label='abs'>\abs()</primary>
+	</key>
+	<key name='gcd' row='2' col='2'>
+		<primary close='close' action='input: left,left' text-label='gcd'>\gcd(,)</primary>
+	</key>
+	<key name='lcm' row='3' col='2'>
+		<primary close='close' action='input: left,left' text-label='lcm'>\lcm(,)</primary>
+	</key>
+	<key name='lcm' row='4' col='2'>
+		<primary close='close' action='input: left' text-label='round'>\round()</primary>
+	</key>
+	<key name='lcm' row='5' col='2'>
+		<primary close='close' action='input: left' text-label='isprime'>\isprime()</primary>
+	</key>
+</keyboard>

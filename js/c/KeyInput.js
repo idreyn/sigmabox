@@ -13,7 +13,7 @@ function CallbackBinding(callback,keyCode,shiftKey,alt) {
 }
 
 function KeyInput(src) {
-	// this.bind(src);
+	this.bind(src);
 }
 
 KeyInput.prototype.bindings = [

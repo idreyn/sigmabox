@@ -34,6 +34,7 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow
 		<script type='text/javascript' src='js/lib/iscroll.js'> </script>
 		<script type='text/javascript' src='js/lib/qtransform.js'> </script>
 		<script type='text/javascript' src='js/lib/hammer.js'> </script>
+		<script type='text/javascript' src='js/lib/color.js'> </script>
 		<!-- Models -->
 		<script type='text/javascript' src='js/m/Parser.js'> </script>
 		<script type='text/javascript' src='js/m/Evaluator.js'> </script>

@@ -137,21 +137,21 @@ Storage.prototype.init = function() {
 		},false),
 		'id': this.wrap(Functions.identityMatrix,false,true,false),
 		'det': this.wrap(function(m) {
-			self.expect(m,Matrix);
+			Functions.expect(m,Matrix);
 			return m.det();
 		},false,false),
 		'transpose': this.wrap(function(m) {
-			self.expect(m,Matrix);
+			Functions.expect(m,Matrix);
 			return m.transpose();
 		},false,false,false),
 		'inverse': this.wrap(function(m) {
-			self.expect(m,Matrix);
+			Functions.expect(m,Matrix);
 			return m.inverse();
 		},false,false,false),
 		// Vector functions
 		'min': this.wrap(function(v) {
 			console.log(v);
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			var min = Infinity;
 			for(var i=0;i<v.args.length;i++) {
 				if(v.args[i] < min) {
@@ -161,7 +161,7 @@ Storage.prototype.init = function() {
 			return min;
 		}),
 		'max': this.wrap(function(v) {
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			var max = -Infinity;
 			for(var i=0;i<v.args.length;i++) {
 				if(v.args[i] > max) {
@@ -179,19 +179,19 @@ Storage.prototype.init = function() {
 			return new Vector(res);
 		}),
 		'lsum': this.wrap(function(v) {
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			return v.args.reduce(function(a,b) {
 				return (a.add) ? a.add(b) : a + b;
 			});
 		},false,false),
 		'lprod': this.wrap(function(v) {
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			return v.args.reduce(function(a,b) {
 				return (a.mult) ? a.mult(b) : a * b;
 			});
 		},false,false),
 		'csum': this.wrap(function(v) {
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			var sum = 0;
 			var arr = [];
 			for(var i=0; i<v.args.length; i++) {
@@ -201,14 +201,58 @@ Storage.prototype.init = function() {
 			return new Vector(arr);
 		}),
 		'dlist': this.wrap(function(v) {
-			self.expect(v,Vector);
+			Functions.expect(v,Vector);
 			var arr = [],
 				list = v.args;
 			for(var i = 1; i < list.length; i++) {
 				arr.push(list[i] - list[i - 1]);
 			}
 			return arr;
-		})
+		}),
+		'sort': this.wrap(function(v) {
+			Functions.expect(v,Vector);
+			return v.args.sort();
+		}),
+		// Numerical stuff
+		'lcm': this.wrap(function(a,b) {
+			var gcd_rec = function(a, b) {
+			    if (b) {
+			        return gcd_rec(b, a % b);
+			    } else {
+			        return Math.abs(a);
+			    }
+			};
+			return Math.floor((a * b) / gcd_rec(a,b));
+		}),
+		'gcd': this.wrap(function(a,b) {
+			var gcd_rec = function(a, b) {
+			    if (b) {
+			        return gcd_rec(b, a % b);
+			    } else {
+			        return Math.abs(a);
+			    }
+			};
+			return gcd_rec(a,b);
+		}),
+		'round': this.wrap(Math.round),
+		'isprime': this.wrap(Functions.isPrime),
+		'prime': this.wrap(Functions.nthPrime),
+		// Probability shit
+		'normalpdf': this.wrap(Functions.normalpdf),
+		'normalcdf': this.wrap(Functions.normalcdf),
+		'stdnormalcdf': this.wrap(Functions.stdnormalcdf),
+		'znormal': this.wrap(Functions.znormal),
+		'binompdf': this.wrap(Functions.binompdf),
+		'binomcdf': this.wrap(Functions.binomcdf),
+		'geompdf': this.wrap(Functions.geompdf),
+		'geomcdf': this.wrap(Functions.geomcdf),
+		'poissonpdf': this.wrap(Functions.poissonpdf),
+		'poissoncdf': this.wrap(Functions.poissoncdf),
+		// Stats stuff
+		'mean': this.wrap(Functions.mean),
+		'median': this.wrap(Functions.median),
+		'mode': this.wrap(Functions.mode),
+		'stdev': this.wrap(Functions.stdev)
 	}
 
 	for(var k in this.functions) {
@@ -220,12 +264,6 @@ Storage.prototype.init = function() {
 	};
 
 	this.deserialize();
-}
-
-Storage.prototype.expect = function(arg,type) {
-	if(!(arg instanceof type)) {
-		throw type.name + ' expected';
-	}
 }
 
 Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
@@ -332,9 +370,9 @@ Storage.prototype.cancelVariableSave = function() {
 	this.varSaveMode = false;
 }
 
-Storage.prototype.setVariable = function(k,v) {
+Storage.prototype.setVariable = function(k,v,silent) {
 	this.variables[k] = v;
-	app.popNotification(
+	if(!silent) app.popNotification(
 		'Set ' + k + ' to ' + v.toString()
 	);
 	this.serialize();

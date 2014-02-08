@@ -798,13 +798,17 @@ Matrix.prototype.serialize = function() {
 }
 
 function Vector(args) {
-	this.args = args;
+	this.args = args || [];
 }
 
 Vector.prototype.valueOf = function(frame) {
 	return new Vector(this.args.map(function(a) {
 		return a.valueOf(frame);
 	}));
+}
+
+Vector.prototype.copy = function() {
+	return new Vector(this.args);
 }
 
 Vector.prototype.add = function(v2) {
@@ -882,6 +886,19 @@ Vector.prototype.serialize = function() {
 	};
 }
 
+Vector.prototype.indexOf = function(item) {
+	for(var i=0;i<this.args.length;i++) {
+		if((item.equals && item.equals(this.args[i])) || item == this.args[i]) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+Vector.prototype.append = function(item) {
+	this.args.push(item);
+}
+
 function Derivative(e,wrt,at) {
 	this.expression = e;
 	this.wrt = wrt;
@@ -934,7 +951,6 @@ Integral.prototype.valueOf = function(frame,nSteps,round) {
 		b = inter;
 		flip = true;
 	}
-	console.log('nSteps =',n);
 	if(dx == 0 || isNaN(dx)) return 0;
 	for(var i = a; i <= b; i += dx) {
 		f.set(this.wrt,i);

@@ -199,6 +199,7 @@ html, body {
 	font-family: 'RobotoRegular' sans-serif;
     background: url(../res/img/background.png);
     overflow: hidden;
+    top: 0;
 }
 
 .shadow {

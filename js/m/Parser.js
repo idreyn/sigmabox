@@ -22,19 +22,21 @@ Parser.tokens = {
 Parser.prototype.parse = function(s,topLevel) {
 	// Spaces have meaning in LaTeX, apparently.
 	// When you input (PI) then (E), LaTeX produces \pi e (with space) to demarcate the difference.
-	// We can leverage this by just LiveEvalacing all spaces with multiplication signs.
+	// We can leverage this by just replacing all spaces with multiplication signs.
 	// Eat it, LaTeX.
 	s = ParseUtil.replace(s,' ','\\times');
 	// Two dots don't have any semantic meaning but they do cause all manner of infinite recursions
 	s = ParseUtil.replace(s,'..','.');
-	// For our purposes square brackets are parentheses
 	/* s = s.replace(/\[/,'(');
 	s = s.replace(/\]/,')'); */
 	// The LaTeX forms \left( and  \right) represent parentheses. We just want normal parentheses, though.
 	s = s.split('\\left(').join('(');
 	s = s.split('\\right)').join(')');
+	// Square brackets denote a matrix of arbitrary dimension
 	s = s.split('\\left[').join('[');
 	s = s.split('\\right]').join(']');
+	// Curly brackets are everywhere in LaTeX notation, so it uses \left{ and \right} instead.
+	// It's convenient for us to replace those with < > for parsing.
 	s = s.split('\\left\\{').join('<');
 	s = s.split('\\right\\}').join('>');
 	s = s.split('&nbsp;').join('');

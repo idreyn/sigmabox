@@ -89,7 +89,7 @@
 		<primary text-label='x'>x</primary>
 	</key>
 	<key name='more' row='5' col='5' default-color='#333'>
-		<primary text-label='&#931;&#8747;' action='app: keyboard matrix'/>
+		<primary text-label='&#931;&#8747;' action='app: keyboard advanced'/>
 	</key>
 	
 	

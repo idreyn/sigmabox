@@ -6,6 +6,7 @@ def MathInput(owner) {
 	
 	constructor {
 		$this.mathquill('editable');
+		$this.find('textarea').attr('disabled','disabled');
 	}
 	
 	css { 
@@ -18,15 +19,17 @@ def MathInput(owner) {
 		text-shadow: 1px 1px 10px #666;
 		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	}
-	
-	method takeFocus {
-		this.mathSelf().focus();
-		this.mathSelf().cursor.show();
+
+	on focus {
+
 	}
 
 	method loseFocus {
-		this.mathSelf().blur();
 		this.mathSelf().cursor.hide();
+	}
+
+	method takeFocus {
+		
 	}
 	
 	method contents {
@@ -210,8 +213,7 @@ def MathTextField(fm) {
 	}
 
 	method takeFocus {
-		this.input.takeFocus();
-		return this.fm.setFocus(this);
+		this.fm.setFocus(this);
 	}
 
 	method loseFocus {

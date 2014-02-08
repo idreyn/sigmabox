@@ -26,4 +26,19 @@
 	<key name='dlist' row='4' col='2'>
 		<primary close='close' name='dlist' text-label='dlist' action='input: left'>\dlist()</primary>
 	</key>
+	<key name='dlist' row='5' col='2'>
+		<primary close='close' name='sort' text-label='sort' action='input: left'>\sort()</primary>
+	</key>
+	<key name='mean' row='1' col='3'>
+		<primary close='close' name='lprod' text-label='mean' action='input: left'>\mean()</primary>
+	</key>
+	<key name='median' row='2' col='3'>
+		<primary close='close' name='csum' text-label='median' action='input: left'>\median()</primary>
+	</key>
+	<key name='mode' row='3' col='3'>
+		<primary close='close' name='stdev' text-label='mode' action='input: left'>\mode()</primary>
+	</key>
+	<key name='stdev' row='4' col='3'>
+		<primary close='close' name='sort' text-label='stdev' action='input: left'>\stdev()</primary>
+	</key>
 </keyboard>

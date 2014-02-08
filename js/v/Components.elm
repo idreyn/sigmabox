@@ -6,6 +6,7 @@ def TouchInteractive {
 		Hammer(this).on('touch',this.#touched);
 		Hammer(this).on('release',this.#released);
 		Hammer(this).on('dragged',this.#dragged);
+		this.enabled = true;
 	}
 
 	css {
@@ -15,15 +16,18 @@ def TouchInteractive {
 	}
 
 	method tapped(e) {
+		if(!this.enabled) return;
 		this.$.trigger('invoke');
 	}
 
 	method touched(e) {
+		if(!this.enabled) return;
 		this.$.trigger('begin');
 		this.$.trigger('active');
 	}
 
 	method released(e) {
+		if(!this.enabled) return;
 		this.$.trigger('end');
 		this.$.trigger('endactive');
 	}
@@ -47,6 +51,14 @@ def TouchInteractive {
 			}
 		}
 	}
+
+	method enable {
+		this.enabled = true;
+	}	
+
+	method disable {
+		this.enabled = false;
+	}
 }
 
 def Button {
@@ -55,7 +67,7 @@ def Button {
 	}
 
 	constructor {
-		this.enabled = true;
+
 	}
 
 	on ready {
@@ -65,25 +77,15 @@ def Button {
 	on begin {
 		$this.removeClass('color-transition');
 		this.applyStyle('active');
-		if(!this.enabled) return;
 	}
 
 	on invoke {
-		if(!this.enabled) return;
+
 	}
 
 	on end {
 		$this.addClass('color-transition');
 		this.applyStyle('default');
-		if(!this.enabled) return;
-	}
-
-	method enable {
-		this.enabled = true;
-	}	
-
-	method disable {
-		this.enabled = false;
 	}
 
 	css {
@@ -382,7 +384,6 @@ def TabbedView {
 				return tab.view == currentView;
 			})[0];
 		}
-		console.log(currentViewTab);
 		if(currentViewTab) {
 			this.select(currentViewTab);
 		} else {
@@ -669,7 +670,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(utils.tabletMode()) return;
+		if(true) return;
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
 		if(this.menuOpen || this.overlay) {
@@ -1206,33 +1207,46 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeIn {
-		this.$overlay.css('opacity',0).animate({
-			'opacity': 0.8
-		},100);
-		this.$contents-container.css('translateY',-500).delay(100).animate({
-			'translateY':-100
-		},500,'easeInOutBack',function() {
+		var bullshit = false;
+		if(bullshit) {
+			this.$overlay.css('opacity',0).animate({
+				'opacity': 0.8
+			},0);
+			this.$contents-container.css('translateY',-500).delay(100).animate({
+				'translateY':-100
+			},100,'easeInOutQuart',function() {
+				$this.trigger('showing');
+			});
+		} else {
+			this.$overlay.css('opacity',0.8);
+			this.$contents-container.css('translateY',-100);
 			$this.trigger('showing');
-		});
+		}
 	}
 
 	method fadeOut {
-		self.$overlay.css('opacity',0.8).delay(500).animate({
-			'opacity': 0
-		},100);
-		self.$contents-container.css('translateY',-100).animate({
-			'translateY':-500
-		},500,'easeInOutBack');
-		setTimeout(function() {
+		var bullshit = false
+		if(bullshit) {
+			self.$overlay.css('opacity',0.8).delay(500).animate({
+				'opacity': 0
+			},100);
+			self.$contents-container.css('translateY',-100).animate({
+				'translateY':-500
+			},100,'easeInOutBack');
+			setTimeout(function() {
+				$this.hide().remove().trigger('removed');
+			},300);
+		} else {
 			$this.hide().remove().trigger('removed');
-		},600);
+		}
 	}
 
 	method cancel {
+		if(self.cancelCallback) self.cancelCallback();
 		self.fadeOut();
 	}
 
-	method buttonInvoked {
+	method buttonInvoked {p
 
 	}
 
@@ -1289,8 +1303,14 @@ def Dialog(title,buttons,contents) {
 		css {
 			padding-top: 100px;
 			width: 100%;
-			background: #EEE;
-			box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+			background: #F9F9F9;
+ 			box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+		}
+	}
+
+	my toolbar {
+		css {
+			box-shadow: none;
 		}
 	}
 
@@ -1330,6 +1350,66 @@ def Prompt(title,callback,defaultValue) {
 		contents {
 			[[ToolbarButton root.cancelLabel || 'Cancel',root.cancel]]
 			[[ToolbarButtonImportant root.okayLabel || 'Okay',root.okay]]
+		}
+	}
+}
+
+def MathPrompt(title,callback,fm) {
+	extends {
+		Dialog
+	}
+
+	my contents {
+		contents {
+			[[input:MathTextField]]
+		}
+
+		css {
+			min-height: 80px;
+		}
+
+		constructor {
+			this.@input.fm = root.fm;
+			this.@input.takeFocus();
+		}
+	}
+
+	my MathTextField {
+		css {
+			width: 100%;
+			height: 40px;
+			padding: 0px;
+			box-shadow: none;
+			border-right: none;
+		}
+
+		my MathInput {
+			css {
+				line-height: 40px;
+				padding: 0px;
+				padding-top: 10px;
+				padding-bottom: 10px;
+				box-shadow: none;
+				-webkit-box-shadow: none;
+			}
+		}
+	}
+
+	css {
+		height: 50%;
+	}
+
+	method okay {
+		self.fadeOut();
+		if(self.callback) {
+			self.callback.call();
+		}
+	}
+
+	my toolbar {
+		contents {
+			[[ToolbarButton root.cancelLabel || 'Cancel',root.cancel]]
+			[[ToolbarButtonImportant root.okayLabel || 'Enter',root.okay]]
 		}
 	}
 }

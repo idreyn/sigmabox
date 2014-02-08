@@ -188,10 +188,6 @@ def DragKeyboard(keyboardSource) {
 	}
 
 	method dragStart(e) {
-		this.disabled = true;
-		this.notAnimated();
-		this.currentKey.$.removeClass('color-transition');
-		this.currentKey.applyStyle('default');
 		this._dragOrigin = e.gesture.center.pageY;
 	}
 
@@ -205,12 +201,21 @@ def DragKeyboard(keyboardSource) {
 			'translateY',
 			translateY
 		);
+		// Stop keys from being pressed
+		if(y > 30 && !this.disabled) {
+			this.disabled = true;
+			this.notAnimated();
+			this.currentKey.$.removeClass('color-transition');
+			this.currentKey.applyStyle('default');
+		}
 	}
 
 	method dragEnd(e) {
+		console.log('dragEnd')
 		setTimeout(function() {
 			self.disabled = false;
 		},500);
+		this.didCancel =
 		this.slideUp();
 		this.@DragIndicator.invoke();
 	}
@@ -232,8 +237,8 @@ def DragIndicator {
 			{label: ''},
 			{label: 'Matrix', action: 'keyboard matrix'},
 			{label: 'List', action: 'keyboard list'},
-			{label: 'Numerical'},
-			{label: 'Probability'},
+			{label: 'Numerical', action: 'keyboard numerical'},
+			{label: 'Probability', action: 'keyboard probability'},
 		];
 	}
 
@@ -252,7 +257,6 @@ def DragIndicator {
 		var color = 27 + index * 25;
 		var rgbString = 'rgb(' + color.toString() + ',' + color.toString() + ',' + color.toString() + ')';
 		$this.css('line-height',y + 'px')
-		//.css('background',rgbString);
 		this.current = this.options[index];
 		$this.html(this.current.label);
 	}
