@@ -50,6 +50,13 @@ Utils.prototype.isAppleWebApp = function() {
 	}
 }
 
+Utils.prototype.profile = function(func,name) {
+	var t1 = new Date().valueOf();
+	func();
+	var t2 = new Date().valueOf();
+	console.log('Ran',name,'in',t2-t1);
+}
+
 var utils = new Utils();
 
 // A set of utilities for manipulating and parsing strings. StringUtil is lifted
@@ -283,11 +290,21 @@ FocusManager.prototype.getCurrent = function() {
 }
 
 FocusManager.prototype.setFocus = function(c) {
-	c.$.trigger('gain-focus');
 	if(c == this.current) return;
 	if(this.current) {
-		this.current.$.trigger('lost-focus');
-		this.current.loseFocus();
+		this.current.mathSelf().cursor.hide();
 	}
 	this.current = c;
+	this.current.mathSelf().cursor.show();
 }
+
+$.fn.extend({ 
+        disableSelection : function() { 
+                this.each(function() { 
+                        this.onselectstart = function() { return false; }; 
+                        this.unselectable = "on"; 
+                        $(this).css('-moz-user-select', 'none'); 
+                        $(this).css('-webkit-user-select', 'none'); 
+                }); 
+        } 
+});

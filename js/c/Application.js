@@ -96,7 +96,7 @@ Application.prototype.initKeyboards = function() {
 	this.root.addChild(this.keyboards.main);
 	this.keyboards.main.init();
 	var self = this;
-	var kb = ['constants','variables','advanced','sin','cos','tan','matrix','list'];
+	var kb = ['constants','variables','advanced','sin','cos','tan','matrix','list','numerical','probability'];
 	kb.forEach(function(k) {
 		self.keyboards[k] = elm.create('Keyboard','res/xml/keyboards/' + k + '.xml');
 		self.root.addChild(self.keyboards[k]);
@@ -161,11 +161,21 @@ Application.prototype.popNotification = function(text) {
 }
 
 Application.prototype.prompt = function(name,callback,defaultVal) {
-	$('body').append(elm.create('Prompt',name,callback,defaultVal));
+	var p = elm.create('Prompt',name,callback,defaultVal);
+	$('body').append(p);
+	return p;
+}
+
+Application.prototype.mathPrompt = function(name,callback,fm) {
+	var p = elm.create('MathPrompt',name,callback,fm);
+	$('body').append(p);
+	return p;
 }
 
 Application.prototype.confirm = function(title,contents,callback,okayLabel,cancelLabel) {
-	$('body').append(elm.create('Confirm',title,contents,callback,okayLabel,cancelLabel));
+	var c = elm.create('Confirm',title,contents,callback,okayLabel,cancelLabel);
+	$('body').append(c);
+	return c;
 }
 
 Application.prototype.overlay = function(view) {

@@ -1046,7 +1046,7 @@ var elm;
                     ____func += 'try {';
                     ____func += __selector__.body;
                     ____func += '} catch(e) {';
-                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#' + __selector__.name + '<- " + e.valueOf();'; 
+                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#' + __selector__.name + ' <- " + e.valueOf();'; 
                     ____func += '}';
                     ____func += '}';
                     eval(____func);

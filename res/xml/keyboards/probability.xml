@@ -1,0 +1,45 @@
+<keyboard>
+	<key name='close' row='1' col='1' default-color='#333'>
+		<primary close='close' text-label='close'/>
+	</key>
+	<key name='stdnormalcdf' row='3' col='3'>
+		<primary close='close' action='input: left,left' text-label='stdnormalcdf'>\stdnormalcdf(,)</primary>
+	</key>
+	<key name='stdnormalpdf' row='4' col='3'>
+		<primary close='close' action='input: left,left' text-label='stdnormalcdf'>\stdnormalcdf(,)</primary>
+	</key>
+	<key name='nCr' row='1' col='3'>
+		<primary close='close' action='input: left,left' text-label='nPr'>\nCr(,)</primary>
+	</key>
+	<key name='nPr' row='2' col='3'>
+		<primary close='close' action='input: left,left' text-label='nPr'>\nPr(,)</primary>
+	</key>
+	<key name='znormal' row='1' col='2'>
+		<primary close='close' action='input: left' text-label='znormal'>\znormal()</primary>
+	</key>
+	<key name='normalpdf' row='2' col='1'>
+		<primary close='close' action='input: left,left,left' text-label='normalpdf'>\normalpdf(,,)</primary>
+	</key>
+	<key name='normalcdf' row='2' col='2'>
+		<primary close='close' action='input: left,left,left' text-label='normalcdf'>\normalpcf(,,)</primary>
+	</key>
+	<key name='binompdf' row='3' col='1'>
+		<primary close='close' action='input: left,left,left' text-label='binompdf'>\binompdf(,,)</primary>
+	</key>
+	<key name='binompdf' row='3' col='2'>
+		<primary close='close' action='input: left,left,left' text-label='binomcdf'>\binomcdf(,,)</primary>
+	</key>
+	<key name='geompdf' row='4' col='1'>
+		<primary close='close' action='input: left,left' text-label='geompdf'>\geompdf(,)</primary>
+	</key>
+	<key name='geomcdf' row='4' col='2'>
+		<primary close='close' action='input: left,left' text-label='geomcdf'>\geomcdf(,)</primary>
+	</key>
+	<key name='poissonpdf' row='5' col='1'>
+		<primary close='close' action='input: left,left' text-label='poissonpdf'>\poissonpdf(,)</primary>
+	</key>
+	<key name='poissoncdf' row='5' col='2'>
+		<primary close='close' action='input: left,left' text-label='poissoncdf'>\poissoncdf(,)</primary>
+	</key>
+
+</keyboard>

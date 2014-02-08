@@ -23,17 +23,19 @@ def LiveEvalCard {
 	
 	method init {
 		var self = this;
+		this.fm = new FocusManager();
 		this.spanInput = elm.create('MathInput',this);
 		this.spanInput.$.on('update', function() {
 			self.refresh();
 		});
+		this.fm.setFocus(this.spanInput);
 		this.$upper.append(this.spanInput);
 		this.refresh();
 		this.size();
 	}
 	
 	method input {
-		return this.spanInput;
+		return this.fm.getCurrent();
 	}
 		
 	method size {
@@ -69,7 +71,6 @@ def LiveEvalCard {
 		app.storage.currentInput = this.spanInput.contents();
 		app.storage.serialize();
 	}
-
 	
 	method update(str,force) {
 		if(this.last == str && !force) return;
@@ -133,6 +134,7 @@ def LiveEvalCard {
 			this.@toolbar.trigSwitch.show();
 		}
 		if(app.storage.calcInCurrentExpression) {
+			console.log('calc')
 			this.@toolbar.trigSwitch.forceRadians();
 		} else {
 			this.@toolbar.trigSwitch.endForceRadians();
@@ -141,10 +143,23 @@ def LiveEvalCard {
 		this.last = str;
 	}
 
-	method result() {
+	method result {
 		return this._result;
 	}
-	
+
+	method askForX {
+		var prompt = app.mathPrompt('x = ?',function() {
+			self.fm.setFocus(self.spanInput);
+			var c = prompt.@input.contents()
+			var p = new Parser();
+			var res = p.parse(c).valueOf(new Frame());
+			app.storage.setVariable('x',res,true);
+			self.refresh(true);
+		},self.fm);
+		prompt.cancelCallback = function() {
+			self.fm.setFocus(self.spanInput);
+		}
+	}
 	
 	find .upper {
 		css {
@@ -222,6 +237,12 @@ def LiveEvalCard {
 			});
 			this.$.append(this.vectorSwitch);
 
+			this.evalButton = elm.create('LiveEvalButton','EVAL');
+			this.evalButton.$.on('invoke',function() {
+				root.askForX();				
+			});
+
+			this.$.append(this.evalButton);
 
 			this.storeButton = elm.create('LiveEvalButton','STO');
 			this.storeButton.$.on('invoke',function() {
