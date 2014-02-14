@@ -41,10 +41,10 @@ def SigmaboxSideMenu {
 //		[[SigmaboxSideMenuItem 'calculator', 'repl']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
+		[[SigmaboxSideMenuItem 'stats','stats']]
 		[[SigmaboxSideMenuItem 'functions','functions']]
-//		[[SigmaboxSideMenuItem 'stats','stats']]
-//		[[SigmaboxSideMenuItem 'converter','converter']]
-//		[[SigmaboxSideMenuItem 'settings','settings']]
+		[[SigmaboxSideMenuItem 'converter','converter']]
+		[[SigmaboxSideMenuItem 'settings','settings']]
 	}
 
 	method build {

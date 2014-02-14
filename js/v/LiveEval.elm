@@ -53,20 +53,20 @@ def LiveEvalCard(manager) {
 	
 	method init {
 		var self = this;
-		this.fm = new FocusManager();
+		this.focusManager = new FocusManager();
 		this.spanInput = elm.create('MathInput',this);
 		this.spanInput.$.on('update', function() {
 			self.refresh();
 		});
-		this.spanInput.fm = this.fm;
-		this.fm.setFocus(this.spanInput);
+		this.spanInput.focusManager = this.focusManager;
+		this.focusManager.setFocus(this.spanInput);
 		this.$upper.append(this.spanInput);
 		this.refresh();
 		this.size();
 	}
 	
 	method input {
-		return this.fm.getCurrent();
+		return this.focusManager.getCurrent();
 	}
 		
 	method size {

@@ -283,6 +283,7 @@ ParseUtil.handleEscapeChars = function (s) {
 
 function FocusManager() {
 	this.current = null;
+	this.fields = [];
 }
 
 FocusManager.prototype.getCurrent = function() {
@@ -298,6 +299,11 @@ FocusManager.prototype.setFocus = function(c) {
 	this.current = c;
 	this.current.mathSelf().cursor.show();
 	this.current.$.trigger('gain-focus');
+}
+
+FocusManager.prototype.register = function(f) {
+	this.fields = this.fields || [];
+	this.fields.push(f);
 }
 
 $.fn.extend({ 

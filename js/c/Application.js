@@ -13,6 +13,7 @@ function Application() {
 Application.prototype.initLayout = function(wrapper) {
 
 	this.nullInput = elm.create('MathTextField');
+	this.nullInput.$.addClass('null-input');
 	this.storage.init();
 
 	var self = this;
@@ -32,7 +33,11 @@ Application.prototype.initLayout = function(wrapper) {
 	this.functions = elm.create('FunctionListView');
 	this.root.addChild(this.functions);
 
-	this.modes = [this.eval,this.grapher,this.functions];
+
+	this.stats = elm.create('StatsView');
+	this.root.addChild(this.stats);
+
+	this.modes = [this.eval,this.grapher,this.functions,this.stats];
 	this.root.menu.build();
 	this.setMode(this.storage.mode || 'eval');
 
@@ -186,15 +191,15 @@ Application.prototype.setVariablePrompt = function(variable,silent,callback) {
 	var self = this;
 	var originalInput = app.mode.currentInput();
 	var prompt = app.mathPrompt(variable + ' = ?',function() {
-		if(originalInput.fm) originalInput.fm.setFocus(originalInput);
+		if(originalInput.focusManager) originalInput.focusManager.setFocus(originalInput);
 		var c = prompt.my('input').contents();
 		var p = new Parser();
 		var res = p.parse(c).valueOf(new Frame());
 		self.storage.setVariable(variable,res,silent);
 		if(callback) callback();
-	},originalInput.fm);
+	},originalInput.focusManager);
 	prompt.cancelCallback = function() {
-		if(originalInput.fm) originalInput.fm.setFocus(originalInput);
+		if(originalInput.focusManager) originalInput.focusManager.setFocus(originalInput);
 	}
 }
 
