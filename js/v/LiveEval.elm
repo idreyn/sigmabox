@@ -165,7 +165,6 @@ def LiveEvalCard(manager) {
 			this.@toolbar.trigSwitch.show();
 		}
 		if(app.storage.calcInCurrentExpression) {
-			console.log('calc')
 			this.@toolbar.trigSwitch.forceRadians();
 		} else {
 			this.@toolbar.trigSwitch.endForceRadians();

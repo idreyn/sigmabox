@@ -151,7 +151,6 @@ Storage.prototype.init = function() {
 		},false,false,false),
 		// Vector functions
 		'min': this.wrap(function(v) {
-			console.log(v);
 			Functions.expect(v,Vector);
 			var min = Infinity;
 			for(var i=0;i<v.args.length;i++) {

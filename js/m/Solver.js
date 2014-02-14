@@ -124,7 +124,6 @@ Solver.prototype.toString = function() {
 			return 'x = ' + s.toString();
 		} else {
 			return 'Failed to solve';
-			console.log(this.leftRes,this.rightRes)
 		}
 	}
 }
