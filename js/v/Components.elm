@@ -139,6 +139,9 @@ def View {
 
 	method delegateFocus(child) {
 		this.focusManager = child.focusManager;
+		this.$.find('*').each(function() {
+			if(this.focusManager) this.focusManager = child.focusManager;
+		});
 	}
 
 	method init {
@@ -180,6 +183,7 @@ def PageView(title) {
 		css {
 			background; #0F0;
 			width: 100%;
+			height: 100%;
 			position: absolute;
 			overflow: hidden;
 		}
@@ -233,8 +237,8 @@ def PageView(title) {
 		this.$contents.append(el);
 	}
 
-	method updateScroll() {
-		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{mouseWheel: true});
+	method updateScroll(horiz) {
+		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{mouseWheel: true, scrollX: horiz});
 		self.scroll.refresh();
 	}
 
@@ -298,8 +302,8 @@ def ListView {
 
 	method onFieldBlur(e) {
 		if(e.target.empty()) {
+			e.target.$.addClass('field-removed').remove();
 			this.updateScroll();
-			e.target.$.remove();
 		}
 		if(this.needsField()) {
 			this.addField();
@@ -1397,7 +1401,7 @@ def MathPrompt(title,callback,fm) {
 		}
 
 		constructor {
-			this.@input.fm = root.fm;
+			this.@input.focusManager = root.focusManager;
 			this.@input.takeFocus();
 		}
 	}

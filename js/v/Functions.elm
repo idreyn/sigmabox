@@ -24,7 +24,7 @@ def FunctionListView {
 	}
 }
 
-def FunctionField(fm) {
+def FunctionField(focusManager) {
 	extends {
 		MathTextField
 	}

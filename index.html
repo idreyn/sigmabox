@@ -1,4 +1,4 @@
-<html manifest='index.manifest'>
+<html>
 	<head>
 		<script type="text/javascript">
  
@@ -13,6 +13,14 @@
 		  window.applicationCache.addEventListener('updateready',logEvent,false);
 		  window.applicationCache.addEventListener('obsolete',logEvent,false);
 		  window.applicationCache.addEventListener('error',logEvent,false);
+
+		function onDeviceReady() {
+		    if (parseFloat(window.device.version) >= 7.0) {
+		          document.body.style.marginTop = "20px";
+		    }
+		}
+  
+		document.addEventListener('deviceready', onDeviceReady, false);
 		 
 		</script>
 		<!-- Libraries -->
@@ -36,6 +44,7 @@
 		<script type='text/elemental' src='js/v/Components.elm'> </script>
 		<script type='text/elemental' src='js/v/Grapher.elm'> </script>
 		<script type='text/elemental' src='js/v/Functions.elm'> </script>
+		<script type='text/elemental' src='js/v/Stats.elm'> </script>
 		<!-- Controllers -->
 		<script type='text/javascript' src='js/c/Application.js'> </script>
 		<script type='text/javascript' src='js/c/Resource.js'> </script>

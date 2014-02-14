@@ -654,7 +654,7 @@ def GrapherListView {
 	}
 }
 
-def GraphListField(fm) {
+def GraphListField(focusManager) {
 	extends {
 		MathTextField
 	}

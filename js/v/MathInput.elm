@@ -145,7 +145,7 @@ def SmallMathInput {
 	}
 }
 
-def MathTextField(fm) {
+def MathTextField(focusManager) {
 
 	html {
 		<div>
@@ -160,6 +160,7 @@ def MathTextField(fm) {
 		this.enabled = true;
 		this.input = elm.create('SmallMathInput').named('input');
 		this.input.$.on('update',this.#updated);
+		if(this.focusManager) this.focusManager.register(this);
 		$this.append(this.input);
 	}
 
@@ -175,7 +176,7 @@ def MathTextField(fm) {
 		if(!this.enabled) {
 			return;
 		}
-		this.fm.setFocus(this);
+		this.focusManager.setFocus(this);
 		this.mathSelf().cursor.show();
 	}
 
@@ -183,7 +184,7 @@ def MathTextField(fm) {
 		if(!this.enabled) {
 			return;
 		}
-		this.fm.setFocus(this);
+		this.focusManager.setFocus(this);
 		this.mathSelf().cursor.show();
 	}
 
@@ -218,7 +219,7 @@ def MathTextField(fm) {
 	}
 
 	method takeFocus {
-		this.fm.setFocus(this);
+		this.focusManager.setFocus(this);
 	}
 
 	method loseFocus {

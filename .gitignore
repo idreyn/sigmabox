@@ -1,0 +1,8 @@
+sftp-config.json
+Sigmabox.sublime-project
+config.xml
+platforms/
+plugins/
+spec/
+merges/
+node_modules/
