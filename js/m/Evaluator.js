@@ -331,8 +331,8 @@ Frac.prototype.valueOf = function(frame) {
 		return this.grapherEval(frame);
 	}
 
-	var top = this.top.valueOf(frame);
-	var bottom = this.bottom.valueOf(frame);
+	var top = new Value(this.top.valueOf(frame));
+	var bottom = new Value(this.bottom.valueOf(frame));
 
 	if(bottom instanceof Vector) {
 		throw "Invalid denominator";

@@ -233,16 +233,9 @@ def PageView(title) {
 		this.$contents.append(el);
 	}
 
-	method updateScroll(toScrollY) {
-		var self = this;
-		setTimeout(function() {
-			var sy = scrollY || 0;
-			if(self.scroll) {
-				self.scroll.enabled = false;
-				sy = self.scroll.y;
-			}
-			self.scroll = new IScroll(self.@contents-container-wrapper,{mouseWheel: true, startY: sy});
-		},10);
+	method updateScroll() {
+		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{mouseWheel: true});
+		self.scroll.refresh();
 	}
 
 	extends {
@@ -325,6 +318,8 @@ def ListView {
 		contents {
 			[[items-list:List]]
 		}
+
+
 	}
 }
 
@@ -595,6 +590,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	my container {
+		html {
+			<div></div>
+		}
+
 		css {
 			position: absolute;
 			width: 100%;
@@ -624,9 +623,9 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(this.menu);
 		Hammer(this.@touch-shield).on('tap',this.#tapped);
 		Hammer(this).on('swiperight',this.#swipeRight);
-		Hammer(this).on('dragstart',this.#dragStart);
-		Hammer(this).on('drag',this.#dragged);
-		Hammer(this).on('dragend',this.#dragEnd);
+		// Hammer(this).on('dragstart',this.#dragStart);
+		// Hammer(this).on('drag',this.#dragged);
+		// Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	method addChild(x) {
@@ -634,7 +633,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method tapped(e) {
-		if(this.menuOpen) {
+		if(this.menuShown) {
 			this.hideMenu();
 		}
 	}
@@ -658,11 +657,13 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(view);
 		view.relinquish = function() {
 			self.overlay = undefined;
+			this.$.remove();
 		}
 		if(utils.tabletMode()) {
-			view.$.css('translateX',0-this.menu.$.width());
+			view.$.width(this.viewWidth());
+			view.flyIn();
 		} else {
-			view.$.css('translateX',0);
+			view.flyIn();
 		}
 		view.size();
 		this.overlay = view;
@@ -670,10 +671,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(true) return;
+		if(e.gesture.direction == 'up') return;
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
-		if(this.menuOpen || this.overlay) {
+		if(this.menuShown || this.overlay) {
 			if(e.gesture.direction == 'left') {
 				this.hideMenu();
 			}
@@ -687,7 +688,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	method dragged(e) {
 		if(!this._dragOrigin) this._dragOrigin = tx;
-		if(this.menuOpen) return;
+		if(this.menuShown) return;
 		var tx = e.gesture.center.pageX - this._dragOrigin;
 		$this.css(
 			'translateX',
@@ -711,7 +712,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 		if(utils.tabletMode()) return;
 		if(this.overlay) return;
 		this.$touch-shield.show();
-		this.menuOpen = true;
+		this.menuShown = true;
 		duration = duration || 300;
 		$this.animate(
 		{
@@ -730,12 +731,24 @@ def SideMenuAppView(menuClass='SideMenu') {
 		{
 			'translateX': 0
 		}, duration, 'easeInOutQuart', function() {
-			self.menuOpen = false;
+			self.menuShown = false;
 			self.touchShieldForceShow = true;
 			setTimeout(function() {
 				self.$touch-shield.hide();
 			},100);
 		});	
+	}
+
+	method toggleMenu {
+		if(self.menuShown) {
+			self.hideMenu();
+		} else {
+			self.showMenu();
+		}
+	}
+
+	method viewWidth() {
+		return this.$.width() - (utils.tabletMode() ? this.menu.$.width() : 0);
 	}
 
 	method size(i) {
@@ -750,7 +763,17 @@ def SideMenuAppView(menuClass='SideMenu') {
 				this.isTabletMode = false;
 				this.hideMenu();
 			}
+			this.$container.width($this.width());
 		}
+
+		if(this.overlay) {
+			this.overlay.$.width(this.viewWidth());
+			this.overlay.height(this.$.height());
+			if(this.tabletMode()) {
+
+			}
+		}
+
 		this.$container.children().each(function(i,e) {
 			if(e.size) {
 				e.size();
@@ -1258,7 +1281,12 @@ def Dialog(title,buttons,contents) {
 			background: #000;
 			opacity: 0.8;
 			cursor: pointer;
+			pointer-events: none;
 		}
+	}
+
+	on touchmove(e) {
+		e.preventDefault();
 	}
 
 	my contents-wrap {
@@ -1509,5 +1537,55 @@ def TextSizer(input,initialSize) {
 		}
 		return $this.css('font-size');
 		$this.remove();
+	}
+}
+
+def Pull {
+	properties {
+		pullDirection: 'down',
+		pullMaxHeight: 300,
+		pullConstant: 250
+	}
+
+	constructor {
+		Hammer(this).on('dragstart',this.#_dragStart);
+		Hammer(this).on('drag',this.#_dragged);
+		Hammer(this).on('dragend',this.#_dragEnd);
+	}
+
+	method _dragStart(e) {
+		this._dragOrigin = e.gesture.center.pageY;
+		this.pullCancel = false;
+		if(e.gesture.direction != this.pullDirection) {
+			this.pullCancel = true;
+		}
+		if(!this.pullCancel) this.$.trigger('pullStart',{originY:this._dragOrigin});
+	}
+
+	method _dragged(e) {
+		if(this.pullCancel) return;
+		if(this.pullDirection == 'down') {
+			var y = Math.abs(Math.max(e.gesture.center.pageY - self._dragOrigin,0));
+		} else {
+			var y = Math.abs(Math.min(e.gesture.center.pageY - self._dragOrigin,0));
+		}
+		var k = this.pullConstant;
+		var translateY = (this.pullDirection == 'down' ? 1 : -1 ) * Math.round(this.pullMaxHeight * (1 - Math.exp(-y/k)));
+		$this.css(
+			'translateY',
+			translateY
+		);
+		this.pullY = y;
+		this.pullTranslateY = translateY;
+		this.$.trigger('pullUpdate',{y:y,translateY:translateY});
+	}
+
+	method _dragEnd(e) {
+		if(this.pullCancel) return;
+		$this.css(
+			'translateY',
+			0
+		);
+		this.$.trigger('pullEnd',{y:this.pullY,translateY:this.pullTranslateY});
 	}
 }

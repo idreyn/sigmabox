@@ -127,7 +127,7 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	method showCircle {
-		if(app.useGratuitousAnimations()) {
+		if(app.useGratuitousAnimations() && false) {
 			setTimeout(function() {
 				self.$circle.show().animate({
 					scale: 1.2
@@ -139,14 +139,14 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	method hideCircle {
-		if(app.useGratuitousAnimations()) {
+		if(app.useGratuitousAnimations() && false) {
 			setTimeout(function() {
-				self.$circle.show().animate({
+				self.$circle.show().stop().animate({
 					scale: 0
 				},350,'easeOutQuart');
 			},10);
 		} else {
-			this.$circle.css('scale',0);
+			this.$circle.stop().css('scale',0);
 		}
 	}
 }
@@ -229,20 +229,64 @@ def TrigSwitch(left,right,willSyncTo) {
 }
 
 def Overlay {
+	properties {
+		overlaySourceDirection: 'bottom'
+	}
+
 	css {
-		-webkit-transform: translateX(1000px);
 		-webkit-transition: -webkit-transform 0.1s ease-out;
 		z-index: 1001;
 		background: url(res/img/background.png);
 	}
 
-	constructor {
+	on ready {
+		this.flyOut();
+	}
 
+	method flyOut {
+		switch(this.overlaySourceDirection) {
+			case 'right':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
+				$this.css('translateX',app.root.$.width());
+				break;
+			case 'left':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
+				$this.css('translateX',-app.root.$.width());
+				break;
+			case 'top':
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
+				$this.css('translateY',-app.root.$.height());
+				break;
+			case 'bottom': 
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
+				$this.css('translateY',app.root.$.height());
+				break;
+		}
+	}
+
+	method flyIn {
+		switch(this.overlaySourceDirection) {
+			case 'right':
+				$this.css('translateX',0);
+				break;
+			case 'left':
+				$this.css('translateX',0);
+				break;
+			case 'top':
+				$this.css('translateY',0);
+				break;
+			case 'bottom': 
+				$this.css('translateY',0);
+				break;
+		}
 	}
 
 	on removed {
-		$this.css('translateX',$(this).width()); //.delay(1000).remove();
-		if(this.relinquish) this.relinquish();
+		this.flyOut();
+		setTimeout(function() {
+			$this.hide().remove();
+			if(self.relinquish) self.relinquish.call(self);
+		},1000)
 	}
 }
 

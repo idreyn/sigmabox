@@ -7,6 +7,7 @@ Storage.prototype.toSerialize = [
 	'trigUseRadians',
 	'displayPolarVectors',
 	'displayDecimalizedFractions',
+	'inputHistory',
 	'currentInput',
 	'grapherEquations',
 	'grapherWindow',
@@ -240,6 +241,7 @@ Storage.prototype.init = function() {
 		// Probability shit
 		'normalpdf': this.wrap(Functions.normalpdf),
 		'normalcdf': this.wrap(Functions.normalcdf),
+		'stdnormalpdf': this.wrap(Functions.stdnormalpdf),
 		'stdnormalcdf': this.wrap(Functions.stdnormalcdf),
 		'znormal': this.wrap(Functions.znormal),
 		'binompdf': this.wrap(Functions.binompdf),
@@ -252,7 +254,8 @@ Storage.prototype.init = function() {
 		'mean': this.wrap(Functions.mean),
 		'median': this.wrap(Functions.median),
 		'mode': this.wrap(Functions.mode),
-		'stdev': this.wrap(Functions.stdev)
+		'stdev': this.wrap(Functions.stdev),
+		'rand': this.wrap(Math.random)
 	}
 
 	for(var k in this.functions) {
@@ -264,6 +267,13 @@ Storage.prototype.init = function() {
 	};
 
 	this.deserialize();
+}
+
+Storage.prototype.trigForceRadians = function(f) {
+	var tt = this.trigUseRadians;
+	this.trigUseRadians = true;
+	f();
+	this.trigUseRadians = false;
 }
 
 Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
@@ -315,6 +325,7 @@ Storage.prototype.deserialize = function() {
 	});
 	this.variables = this.deserializeVariables(s.variables || {});
 	this.customFunctions = this.deserializeFunctions(s.functions || {});
+	this.inputHistory = this.inputHistory || [];
 	this.hasDeserialized = true;
 }
 
@@ -347,23 +358,13 @@ Storage.prototype.deserializeVariables = function(obj) {
 	return res;
 }
 
-Storage.prototype.startSyncing = function() {
-	var self = this;
-	return;
-	setTimeout(function() {
-		setInterval(function() {
-			self.uiSync();
-		},500);
-	},0);
-}
-
 Storage.prototype.lookup = function(symbol) {
 	symbol = symbol.name || symbol;
 	return this.constants[symbol] || this.variables[symbol] || new Value(0);
 }
 
-Storage.prototype.initVariableSave = function() {
-	this.varSaveMode = true;
+Storage.prototype.initVariableSave = function(m) {
+	this.varSaveMode = m || 'store';
 }
 
 Storage.prototype.cancelVariableSave = function() {
@@ -455,3 +456,23 @@ Storage.prototype.callFunction = function(name,args) {
  Storage.prototype.uiSync = function() {
  	$('.sync-subscriber').trigger('sync');
  }
+
+ Storage.prototype.startSyncing = function() {
+	var self = this;
+	return;
+	setTimeout(function() {
+		setInterval(function() {
+			self.uiSync();
+		},500);
+	},0);
+}
+
+Storage.prototype.clearHistory = function() {
+	this.inputHistory = [];
+}
+
+Storage.prototype.addHistoryItem = function(text) {
+	if(StringUtil.trim(text).length == 0 || /^[0-9.]+$/.test(text) || text == this.inputHistory.slice(-1).pop()) return;
+	this.inputHistory.push(text);
+	this.inputHistory = this.inputHistory.slice(-50);
+}

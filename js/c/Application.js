@@ -83,7 +83,11 @@ Application.prototype.showKeyboard = function() {
 }
 
 Application.prototype.resize = function() {
+	var self = this;
 	this.root.size();
+	setTimeout(function() {
+		self.root.size();
+	},1000);
 }
 
 Application.prototype.liteResize = function() {
@@ -149,6 +153,9 @@ Application.prototype.acceptActionInput = function(input) {
 	if(kw == 'notify') {
 		this.popNotification(split[1]);
 	}
+	if(kw == 'set') {
+		this.setVariablePrompt(split[1]);
+	}
 }
 
 Application.prototype.popNotification = function(text) {
@@ -176,6 +183,22 @@ Application.prototype.confirm = function(title,contents,callback,okayLabel,cance
 	var c = elm.create('Confirm',title,contents,callback,okayLabel,cancelLabel);
 	$('body').append(c);
 	return c;
+}
+
+Application.prototype.setVariablePrompt = function(variable,silent,callback) {
+	var self = this;
+	var originalInput = app.mode.currentInput();
+	var prompt = app.mathPrompt(variable + ' = ?',function() {
+		if(originalInput.fm) originalInput.fm.setFocus(originalInput);
+		var c = prompt.my('input').contents();
+		var p = new Parser();
+		var res = p.parse(c).valueOf(new Frame());
+		self.storage.setVariable(variable,res,silent);
+		if(callback) callback();
+	},originalInput.fm);
+	prompt.cancelCallback = function() {
+		if(originalInput.fm) originalInput.fm.setFocus(originalInput);
+	}
 }
 
 Application.prototype.overlay = function(view) {

@@ -8,8 +8,8 @@
 	<key name='fact' row='3' col='1'>
 		<primary close='close' action='input: left' text-label='fact'>\fact()</primary>
 	</key>
-	<key name='ncr' row='4' col='1'>
-		<primary close='close' action='input: left' text-label='polar'>\polar()</primary>
+	<key name='rand' row='4' col='1'>
+		<primary close='close' action='input: left' text-label='rand'>\rand()</primary>
 	</key>
 	<key name='npr' row='5' col='1'>
 		<primary close='close' action='input: left' text-label='prime'>\prime()</primary>

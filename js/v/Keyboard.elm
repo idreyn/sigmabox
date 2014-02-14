@@ -178,6 +178,12 @@ def Keyboard(keyboardSource) {
 def DragKeyboard(keyboardSource) {
 	extends {
 		Keyboard
+		Pull
+	}
+
+	properties {
+		pullDirection: 'up',
+		pullMaxHeight: 300
 	}
 
 	constructor {
@@ -188,34 +194,27 @@ def DragKeyboard(keyboardSource) {
 	}
 
 	method dragStart(e) {
-		this._dragOrigin = e.gesture.center.pageY;
+		this.notAnimated();
 	}
 
-	method dragged(e) {
-		if(!this.maxHeight) this.maxHeight = this.@DragIndicator.maxHeight;
-		var y = Math.abs(Math.min(e.gesture.center.pageY - this._dragOrigin,0));
-		var k = 250;
-		var translateY = - Math.round(this.maxHeight * (1 - Math.exp(-y/k)));
-		this.@DragIndicator.setHeight(Math.abs(translateY));
-		$this.css(
-			'translateY',
-			translateY
-		);
+	on pullUpdate(e,data) {
+		var y = data.y,
+			translateY = data.translateY;
+		self.@DragIndicator.setHeight(Math.abs(translateY));
 		// Stop keys from being pressed
-		if(y > 30 && !this.disabled) {
-			this.disabled = true;
-			this.notAnimated();
-			this.currentKey.$.removeClass('color-transition');
-			this.currentKey.applyStyle('default');
+		if(y > 30 && !self.disabled) {
+			self.disabled = true;
+			self.notAnimated();
+			self.currentKey.$.removeClass('color-transition');
+			self.currentKey.applyStyle('default');
 		}
 	}
 
 	method dragEnd(e) {
-		console.log('dragEnd')
 		setTimeout(function() {
 			self.disabled = false;
 		},500);
-		this.didCancel =
+		this.animated();
 		this.slideUp();
 		this.@DragIndicator.invoke();
 	}
@@ -235,9 +234,9 @@ def DragIndicator {
 		this.maxHeight = 300;
 		this.options = [
 			{label: ''},
+			{label: 'Numerical', action: 'keyboard numerical'},
 			{label: 'Matrix', action: 'keyboard matrix'},
 			{label: 'List', action: 'keyboard list'},
-			{label: 'Numerical', action: 'keyboard numerical'},
 			{label: 'Probability', action: 'keyboard probability'},
 		];
 	}
@@ -286,10 +285,17 @@ def Key(_keyData,keyboard) {
 		try {
 			if(this.activeSubkey().attr('variable')) {
 				if(app.storage.varSaveMode) {
-					app.storage.setVariable(
-						this.activeSubkey().attr('variable'),
-						app.mode.result()
-					);
+					if(app.storage.varSaveMode == 'store') {
+						app.storage.setVariable(
+							this.activeSubkey().attr('variable'),
+							app.mode.result()
+						);
+					}
+					if(app.storage.varSaveMode == 'set') {
+						app.setVariablePrompt(
+							this.activeSubkey().attr('variable')
+						);
+					}
 					app.storage.cancelVariableSave();
 				} else {
 					app.mode.currentInput().acceptLatexInput(
@@ -300,7 +306,6 @@ def Key(_keyData,keyboard) {
 			if(this.activeSubkey().get(0).childNodes[0]) {
 				var latex = this.activeSubkey().get(0).childNodes[0].nodeValue;
 				app.mode.currentInput().acceptLatexInput(latex);
-				app.mode.currentInput().takeFocus();
 			}
 			if(this.activeSubkey().attr('close')) {
 				app.useKeyboard('main');
@@ -348,7 +353,7 @@ def Key(_keyData,keyboard) {
 	}
 
 	on end {
-		if(self.altMode && self._isTouchInBounds && !self.parentKeyboard.disabled) {
+		if(self.altMode && !self.parentKeyboard.disabled) {
 			self.$.trigger('invoke');
 		}
 	}
@@ -447,12 +452,12 @@ def Key(_keyData,keyboard) {
 
 	method doInvoke(alt) {
 		var self = this;
-		$this.trigger('mousedown');
+		this.tapped();
 		if(alt) {
 			this.setAlt();
 		}
 		setTimeout(function() {
-			$this.trigger('mouseup');
+			self.released();
 		},10);
 	}
 	

@@ -5,7 +5,8 @@ def FunctionListView {
 
 	properties {
 		fieldType: 'FunctionField',
-		addFieldToTop: true
+		addFieldToTop: true,
+		defaultText: 'Custom functions you create will appear here.'
 	}
 
 	constructor {
@@ -311,9 +312,5 @@ def FunctionChoiceView(callback) {
 		contents {
 			[[ToolbarButton 'Cancel', root.cancel]]
 		}
-	}
-
-	css {
-
 	}
 }
