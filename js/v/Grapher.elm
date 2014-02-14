@@ -313,7 +313,6 @@ def GraphWindow {
 	method rangeDragStart(e) {
 		this.@trace-readouts.hide();
 		this.$range.show();
-		console.log(this.$.offset().left);
 		var p = this.canvasToPlane({
 			x: e.gesture.center.pageX - this.$.offset().left,
 			y: e.gesture.center.pageY
@@ -465,8 +464,6 @@ def GraphWindow {
 		this.origin = origin;
 
 		c.clearRect(0,0,this.$draw.width(),this.$draw.height());
-
-		c.webkitImageSmoothingEnabled = false;
 	
 		c.strokeStyle = "#DDD";
 		for(var i = 0; false && i < x_tickcount; i++) {
@@ -515,8 +512,11 @@ def GraphWindow {
 						if(data.cache[planeX] !== undefined) {
 							return data.cache[planeX];
 						} else {
-							var res = data.valueOf(new Frame({x: planeX})).toFloat();
-							data.cache[planeX] = res;
+							var res;
+							app.storage.trigForceRadians(function() {
+								res = data.valueOf(new Frame({x: planeX})).toFloat();
+								data.cache[planeX] = res;
+							});
 							return res;
 						}
 					}
@@ -1071,9 +1071,9 @@ def TraceReadouts {
 		if(func) {
 			var d;
 			app.storage.trigForceRadians(function() {
-				d = new Derivative(func);
+				d = new Derivative(func).at(x).toString();
 			});
-			self.@derivative.setContents('d/dx = ' + d.at(x).toString());
+			self.@derivative.setContents('d/dx = ' + d);
 		} else {
 			this.@derivative.setContents('d/dx = 0');
 		}
