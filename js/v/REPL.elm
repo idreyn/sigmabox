@@ -25,7 +25,6 @@ def REPL {
 		var p = new Parser();
 		var res = p.parse(text);
 		res = res.valueOf(new Frame({}));
-		console.log(res.toString());
 		this.addOutput(res.toString());
 		this.addInput();
 		this.scroll.refresh();
