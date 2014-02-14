@@ -23,9 +23,6 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.initKeyboards();
 
-	this.repl = elm.create('REPL');
-	this.root.addChild(this.repl);
-
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
@@ -35,7 +32,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.functions = elm.create('FunctionListView');
 	this.root.addChild(this.functions);
 
-	this.modes = [this.repl,this.eval,this.grapher,this.functions];
+	this.modes = [this.eval,this.grapher,this.functions];
 	this.root.menu.build();
 	this.setMode(this.storage.mode || 'eval');
 

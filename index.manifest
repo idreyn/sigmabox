@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 1.0.3 8-17-2013
+#version 2.13.2014.2 2-13-14
 
 CACHE:
 
@@ -42,10 +42,12 @@ js/lib/mathquill/mathquill.js
 js/lib/iscroll.js
 js/lib/qtransform.js
 js/lib/hammer.js
+
 js/m/Parser.js
 js/m/Evaluator.js
 js/m/Functions.js
 js/m/Solver.js
+
 js/v/Core.elm
 js/v/Keyboard.elm
 js/v/MathInput.elm
@@ -53,6 +55,7 @@ js/v/LiveEval.elm
 js/v/Components.elm
 js/v/Grapher.elm
 js/v/Functions.elm
+
 js/c/Application.js
 js/c/Resource.js
 js/c/Storage.js
@@ -71,6 +74,10 @@ res/xml/keyboards/advanced.xml
 res/xml/keyboards/sin.xml
 res/xml/keyboards/cos.xml
 res/xml/keyboards/tan.xml
+res/xml/keyboards/matrix.xml
+res/xml/keyboards/numerical.xml
+res/xml/keyboards/probability.xml
+res/xml/keyboards/list.xml
 
 
 #fonts
