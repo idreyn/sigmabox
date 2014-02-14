@@ -1,8 +1,10 @@
 <?php
 
-$ua =  $_SERVER['HTTP_USER_AGENT'];
 $allow_offline = false;
-if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow_offline) {
+$force_offline = false;
+
+$ua =  $_SERVER['HTTP_USER_AGENT'];
+if($force_offline || (preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow_offline)) {
 	// It's an iOS webapp
 	echo "<html manifest='index.manifest'>";
 } else {
@@ -30,11 +32,11 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow
 		<!-- Libraries -->
 		<script type='text/javascript' src='js/lib/jquery.js'> </script>
 		<script type='text/javascript' src='js/lib/jquery.easing.js'> </script>
+		<script type="text/javascript" src='js/lib/jquery.requestAnimationFrame.js'></script>
 		<script type="text/javascript" src='js/lib/mathquill/mathquill.js'></script>
 		<script type='text/javascript' src='js/lib/iscroll.js'> </script>
 		<script type='text/javascript' src='js/lib/qtransform.js'> </script>
 		<script type='text/javascript' src='js/lib/hammer.js'> </script>
-		<script type='text/javascript' src='js/lib/color.js'> </script>
 		<!-- Models -->
 		<script type='text/javascript' src='js/m/Parser.js'> </script>
 		<script type='text/javascript' src='js/m/Evaluator.js'> </script>
@@ -44,7 +46,6 @@ if(preg_match('/i(Pod|Phone|Pad)/',$ua) && !preg_match('/Safari/',$ua) && $allow
 		<script type='text/elemental' src='js/v/Core.elm'> </script>
 		<script type='text/elemental' src='js/v/Keyboard.elm'> </script>
 		<script type='text/elemental' src='js/v/MathInput.elm'> </script>
-		<script type='text/elemental' src='js/v/REPL.elm'> </script>
 		<script type='text/elemental' src='js/v/LiveEval.elm'> </script>
 		<script type='text/elemental' src='js/v/Components.elm'> </script>
 		<script type='text/elemental' src='js/v/Grapher.elm'> </script>
