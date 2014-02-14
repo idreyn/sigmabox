@@ -8,6 +8,10 @@ def MathInput(owner) {
 		$this.mathquill('editable');
 		$this.find('textarea').attr('disabled','disabled');
 	}
+
+	extends {
+		TouchInteractive
+	}
 	
 	css { 
 		padding: 20px;
@@ -43,6 +47,7 @@ def MathInput(owner) {
 	method acceptLatexInput(input,doUpdate) {
 		if(doUpdate === undefined) doUpdate = true;
 		if(!(self.preventInput && self.preventInput(input))) $this.mathquill('write',input);
+		this.mathSelf().cursor.show();
 		if(doUpdate) $this.trigger('update');
 	}
 

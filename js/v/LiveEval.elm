@@ -1,6 +1,7 @@
-def LiveEvalCard {
+def LiveEvalCard(manager) {
 	html {
 		<div> 
+			<div class='history-pull'></div>
 			<div class='upper'> 
 
 			</div>
@@ -12,13 +13,42 @@ def LiveEvalCard {
 			</div>
 		</div>
 	}
+
+	extends {
+		TouchInteractive
+		Pull
+	}
+
+	properties {
+		pullMaxHeight: 100
+		pullConstant: 50
+	}
 	
 	css {
+		position: relative;
+		display: block;
 		width: 100%;
 	}
 
+	style animated {
+		-webkit-transition: -webkit-transform 0.2s ease-in-out;
+	}
+
+	style not-animated {
+		-webkit-transition: none;
+	}
+
+	constructor {
+
+	}
+
 	on touchmove(e) {
-		e.preventDefault();
+		//e.preventDefault();
+	}
+
+	on invoke(e) {
+		if(e.target != e.currentTarget) return;
+		this.manager.setCurrentCard(this);
 	}
 	
 	method init {
@@ -28,6 +58,7 @@ def LiveEvalCard {
 		this.spanInput.$.on('update', function() {
 			self.refresh();
 		});
+		this.spanInput.fm = this.fm;
 		this.fm.setFocus(this.spanInput);
 		this.$upper.append(this.spanInput);
 		this.refresh();
@@ -39,7 +70,7 @@ def LiveEvalCard {
 	}
 		
 	method size {
-		$this.css('height',$this.parent().css('height'));
+		$this.css('height',$this.parent().parent().height());
 		this.$upper.css('height','80%');
 		this.$lower.css('height','20%');
 		this.$toolbar.css('height','10%');
@@ -146,26 +177,12 @@ def LiveEvalCard {
 	method result {
 		return this._result;
 	}
-
-	method askForX {
-		var prompt = app.mathPrompt('x = ?',function() {
-			self.fm.setFocus(self.spanInput);
-			var c = prompt.@input.contents()
-			var p = new Parser();
-			var res = p.parse(c).valueOf(new Frame());
-			app.storage.setVariable('x',res,true);
-			self.refresh(true);
-		},self.fm);
-		prompt.cancelCallback = function() {
-			self.fm.setFocus(self.spanInput);
-		}
-	}
 	
 	find .upper {
 		css {
 			height: 80;
 			width: 100%;
-			overflow-y: scroll;
+			overflow-y: hidden;
 			overflow-x: hidden;
 		}
 	}
@@ -193,6 +210,73 @@ def LiveEvalCard {
 		}
 	}
 
+	constructor {
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('dragend',this.#dragEnd);
+	}
+
+	method dragStart(e) {
+		this.notAnimated();
+	}
+
+	method dragEnd(e) {
+		this.animated();
+	}
+
+	method animated {
+		this.applyStyle('animated');
+	}
+
+	method notAnimated {
+		this.applyStyle('not-animated');
+	}
+
+	on pullStart(e,data) {
+
+	}
+
+	on pullUpdate(e,data) {
+		this.@history-pull.update(data.translateY);
+	}
+
+	on pullEnd(e,data) {
+		if(data.translateY > 90) {
+			app.overlay(elm.create('LiveEvalHistoryOverlay', function(res) {
+				self.setContents(res);
+			}));
+		}
+	}
+
+	my history-pull {
+		contents {
+			<img class='inner' src='res/img/clock.png'/> &nbsp;History
+		}
+
+		css {
+			position: absolute;
+			width: 100%;
+			height: 100px;
+			line-height: 100px;
+			text-align: center;
+			font-size: 20px;
+			top: -100px;
+			color: #FFF;
+			background: #000;
+		}
+
+		my inner {
+			css {
+				width: 40px;
+				vertical-align: middle;
+			}
+		}
+
+		method update(n) {
+			var theta = Math.max(0,-20 + 4 * (100 - n));
+			this.$inner.css('-webkit-transform','rotate(' + theta + 'deg)');
+		}
+	}
+
 	my toolbar {
 
 		html {
@@ -214,7 +298,6 @@ def LiveEvalCard {
 		}
 
 		constructor {
-
 			// this.convertButton = elm.create('LiveEvalButton','A&rarr;B');
 			// this.$.append(this.convertButton);
 
@@ -237,9 +320,12 @@ def LiveEvalCard {
 			});
 			this.$.append(this.vectorSwitch);
 
-			this.evalButton = elm.create('LiveEvalButton','EVAL');
+			this.evalButton = elm.create('LiveEvalButton','SET');
 			this.evalButton.$.on('invoke',function() {
-				root.askForX();				
+				if(!app.storage.varSaveMode) {
+					app.storage.initVariableSave('set');
+					app.useKeyboard('variables');
+				}
 			});
 
 			this.$.append(this.evalButton);
@@ -247,7 +333,7 @@ def LiveEvalCard {
 			this.storeButton = elm.create('LiveEvalButton','STO');
 			this.storeButton.$.on('invoke',function() {
 				if(!app.storage.varSaveMode) {
-					app.storage.initVariableSave();
+					app.storage.initVariableSave('store');
 					app.useKeyboard('variables');
 				}
 			});
@@ -255,6 +341,7 @@ def LiveEvalCard {
 
 			this.clearButton = elm.create('LiveEvalButton','CLR');
 			this.clearButton.$.on('invoke',function() {
+				app.storage.addHistoryItem(app.mode.currentInput().contents());
 				app.mode.currentInput().acceptActionInput('clear');
 			});
 			this.$.append(this.clearButton);
@@ -277,7 +364,8 @@ def LiveEvalCard {
 def LiveEvalManager {
 	
 	html {
-		<div> 
+		<div>
+//			[[indicator:LiveEvalPageIndicator]]
 			<div class='middle'>
 				<div class='inner'> </div>
 			</div>
@@ -294,9 +382,7 @@ def LiveEvalManager {
 	find .inner {
 		css {
 			width: 100%;
-			height: 100%;
 			position: relative;
-			overflow: hidden;
 		}
 	}
 	
@@ -314,13 +400,34 @@ def LiveEvalManager {
 	}
 	
 	method init() {
-		//this.addCard();
 		this.size();
+	}
+
+	method setupScroll {
+		try {
+			if(this.scroll) return;
+			this.scroll = new IScroll(this.@middle,{mouseWheel: false, startY: 0, snap: true, momentum: false});
+			this.scroll.on('scrollEnd',this.#scrollEnd);
+		} catch(e) {
+			// Shh shh shh just sleep
+		}
+	}
+
+	method scrollEnd {
+		this.setCurrentCard(this.$LiveEvalCard.get(this.scroll.currentPage.pageY));
+	//	this.@indicator.select(this.scroll.currentPage.pageY);
+	}
+
+	on active {
+		this.setupScroll();
 	}
 
 	on syncReady {
 		this.addCard(app.storage.currentInput || '');
+		this.setupScroll();
 		this.size();
+	//	this.@indicator.build(this.$LiveEvalCard.length);
+	//	this.@indicator.select(0);	
 	}
 	
 	method size(i) {
@@ -332,18 +439,29 @@ def LiveEvalManager {
 			'top',
 			0
 		);
+//		this.@indicator.size();
 		$this.find('.LiveEvalCard').each(function() { this.size(); });
 		this.screenFraction = i;
+		if(this.scroll) this.scroll.refresh();
 	}
 	
 	method addCard(str) {
-		var c = elm.create('LiveEvalCard'),
+		var c = elm.create('LiveEvalCard',this),
 			self = this;
-		this.$inner.append(c);
+		this.@inner.$.append(c);
 		c.init();
 		if(str) c.setContents(str);
-		this.currentCard = c;
+		this.setCurrentCard(c);
+		this.size();
+		return c;
 	}
+
+	method setCurrentCard(c) {
+		if(this.currentCard) this.currentCard.input().mathSelf().cursor.hide();
+		this.currentCard = c;
+		this.currentCard.input().mathSelf().cursor.show();
+	}
+
 	
 	method currentInput() {
 		return this.currentCard.input();
@@ -356,6 +474,112 @@ def LiveEvalManager {
 	extends {
 		SyncSubscriber
 	}
-	
 }
 		
+def LiveEvalPageIndicator {
+	html {
+		<div>
+
+		</div>
+	}
+
+	css {
+		position: absolute;
+		top: 0;
+		left: 0;
+		height: 150px;
+		width: 5px;
+	}
+
+	constructor {
+
+	}
+
+	method size {
+		var factor = 1;
+		var height = $this.parent().height() * 1;
+		this.$.height(height / factor);
+		this.$.css('top',(height - (height / factor))/2);
+	}
+
+	method build(n) {
+		for(var i=0;i<n;i++) {
+			var b = this.create('Blip');
+			b.setHeight(($this.height() / n));
+			this.$.append(b);
+		}
+		this.number = n;
+	}
+
+	method select(n) {
+		this.$Blip.css('opacity',0.1);
+		this.$Blip.get(n).$.css('opacity',0.5);
+		this.selected = n;
+	}
+
+	my Blip {
+		html {
+			<div> </div>
+		}
+
+		css {
+			background: #000;
+			width: 100%;
+			opacity: 0.1;
+		}
+
+		method setHeight(h) {
+			$this.css('height',h);
+		}
+	}
+}
+
+def LiveEvalHistoryOverlay(callback) {
+	extends {
+		ListView
+		Overlay
+	}
+
+	properties {
+		overlaySourceDirection: 'top',
+		autoAddField: false
+	}
+
+	constructor {
+		this.populate();
+		this.$title.html('History');
+	}
+
+	method cancel {
+		$this.trigger('removed');
+	}
+
+	method populate {
+		this.$MathTextField.remove();
+		app.storage.inputHistory.reverse().forEach(function(item) {
+			var f = self.addField();
+			f.disable();
+			f.setContents(item);
+			f.$.on('invoke',self.choose)
+		});
+	}
+
+	method choose(e) {
+		var func = e.target.contents();
+		self.callback(func);
+		self.cancel();
+	}
+
+	method clearHistory {
+		app.storage.clearHistory();
+		app.storage.serialize();
+		self.populate();
+	}
+
+	my toolbar {
+		contents {
+			[[ToolbarButtonImportant 'Clear History', root.clearHistory]]
+			[[ToolbarButton 'Close', root.cancel]]
+		}
+	}
+}

@@ -110,11 +110,16 @@
 	</key>
 
 	<key row='2' col='5'>
-		<primary close='close' text-label='y' variable='y' />
-		<alternate close='close' text-label='Z' variable='y' />
+		<primary close='close' text-label='x' variable='x' />
+		<alternate close='close' text-label='X' variable='X' />
 	</key>
 
 	<key row='3' col='5'>
+		<primary close='close' text-label='y' variable='y' />
+		<alternate close='close' text-label='Y' variable='y' />
+	</key>
+
+	<key row='4' col='5'>
 		<primary close='close' text-label='z' variable='z' />
 		<alternate close='close' text-label='Z' variable='Z' />
 	</key>

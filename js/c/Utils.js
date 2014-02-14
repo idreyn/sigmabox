@@ -50,11 +50,11 @@ Utils.prototype.isAppleWebApp = function() {
 	}
 }
 
-Utils.prototype.profile = function(func,name) {
+Utils.prototype.profile = function(func,name,silent) {
 	var t1 = new Date().valueOf();
 	func();
 	var t2 = new Date().valueOf();
-	console.log('Ran',name,'in',t2-t1);
+	if(!silent) console.log('Profile[' + name + ']: ' + (t2-t1) + 'ms');
 }
 
 var utils = new Utils();
@@ -293,9 +293,11 @@ FocusManager.prototype.setFocus = function(c) {
 	if(c == this.current) return;
 	if(this.current) {
 		this.current.mathSelf().cursor.hide();
+		this.current.$.trigger('lost-focus');
 	}
 	this.current = c;
 	this.current.mathSelf().cursor.show();
+	this.current.$.trigger('gain-focus');
 }
 
 $.fn.extend({ 

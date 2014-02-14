@@ -308,10 +308,6 @@ Functions.intersection = function(a,b) {
 	return res;
 }
 
-Functions.normalpdf = function(x,mu,sigma) {
-	return (1/sigma) * Functions.stdnormalpdf((x - mu) / sigma);
-}
-
 Functions.stdnormalpdf = function(x) {
 	return (1 / Math.sqrt( 2 * Math.PI)) * Math.exp(-0.5 * x * x);
 }
@@ -327,6 +323,11 @@ Functions.stdnormalcdf = function(z1,z2) {
 Functions.znormal = function(z) {
 	return Functions.stdnormalcdf(-6,z);
 }
+
+Functions.normalpdf = function(x,mu,sigma) {
+	return (1/sigma) * Functions.stdnormalpdf((x - mu) / sigma);
+}
+
 
 Functions.normalcdf = function(z1,z2,mu,sigma) {
 	return Functions.stdnormalcdf(

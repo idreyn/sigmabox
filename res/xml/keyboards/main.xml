@@ -7,7 +7,7 @@
 		<primary text-label='8'>8</primary>
 	</key>
 	<key name='9' row='2' col='3' default-color='#595959'>
-		<primary text-label='9'>9</primary>
+		<primary text-label='9' action='input:bloop'>9</primary>
 	</key>
 	<key name='4' row='3' col='1' default-color='#595959'>
 		<primary text-label='4'>4</primary>

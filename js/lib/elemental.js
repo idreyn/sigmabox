@@ -233,7 +233,7 @@ var elm;
         });
         // And use # as a 'fat arrow' to bind methods to their owners
         // this.#myMethod -> $.proxy(this.myMethod,this)
-        res = res.replace(/this.#([A-Za-z][A-Za-z0-9_\-]*)/g, function(s) {
+        res = res.replace(/this.#([A-Za-z_][A-Za-z0-9_\-]*)/g, function(s) {
             return '$.proxy(' + s.split('#').join('') + ',this)';
         });
         // [[Typename param1,param2...]] becomes elm.create('TypeName',param1,param2...)
@@ -321,7 +321,6 @@ var elm;
             for(var def in elm._definitions) {
                 $(el).find('.' + def).toArray().map(function(child) {
                     if(!$(child).hasClass('elm-init')) {
-                        console.log('go',$(child).attr('class'));
                         elm.apply(child,def);
                     }
                 });
@@ -758,7 +757,7 @@ var elm;
             }
 
             return definitions;
-        },       
+        },
         createConstructor: function (definition, root) {
             if (root === undefined) root = true;
             return function (args, self, fireReady) {
@@ -780,11 +779,7 @@ var elm;
                 }
                 if(self) self.__elemental = true;
                 definition.body.forEach(function (selector) {
-                    //try {
-                        self = elm.applyBlockTo(self, selector, frame, null, root);
-                    //} catch(e) {
-                   //   throw new Error('To create an element with elm.create(), its definition must begin with an html block.');
-                  //  }
+                    self = elm.applyBlockTo(self, selector, frame, null, root);
                 });
                 self.____construct = function() {
                     self.____constructors = self.____constructors || [];
@@ -794,6 +789,16 @@ var elm;
                     });
                  }
                 add_elemental_methods(self,frame);
+                self.create = function() {
+                    var args = elm._argarr(arguments);
+                        type = args[0],
+                        rest = args.slice(1);
+                    if (this.__definitions[type]) {
+                        return this.__definitions[type].call(null, rest, null);
+                    } else {
+                        throw new Error("[Elemental] " + definition.name + " has no definition " + type + ".");
+                    }
+                }
                 self.____construct();
                 $(self).find('*').each(function() {
                     if(this.____construct) {
@@ -1093,11 +1098,13 @@ var elm;
                         __selector__.properties.forEach(function (p) {
                             var val = p.value;
                             var fn = '(function() { return ' + val + '; }).call(__el__)';
+                            //console.log(p.prop,eval(fn));
                             __el__[p.prop] = eval(fn);
                         });
                     } else {
                         __selector__.properties.forEach(function(p) {
                             var val = eval(p.value);
+                            //console.log('*',p.prop,val);
                             __frame__[p.prop] = val;
                         });
                     }
@@ -1112,6 +1119,68 @@ var elm;
             if(elm.verbose) console.log.apply(console,arguments);
         }
     };
+
+    function JSBuilder() {
+        this.buffer = [];
+        this.indentLevel = 0;
+    }
+
+    JSBuilder.prototype.indent = function(n) {
+        if(n === undefined) {
+            this.indentLevel++;
+        } else {
+            this.indentLevel = n;
+        }
+    }
+
+    JSBuilder.prototype.deindent = function() {
+        if(this.indentLevel == 0) {
+            throw new Error('Attempt to indent at level < 0!');
+        } else {
+            this.indentLevel--;
+        }
+    }
+
+    JSBuilder.prototype.getIndent = function() {
+        var tab = '\t'
+            res = '';
+        for(var i=0;i<this.indentLevel;i++) {
+            res += tab;
+        }
+        return res;
+    }
+
+    JSBuilder.prototype.addLine = function(s) {
+        s = s || '';
+        this.buffer.push(this.getIndent() + s);
+    }
+
+    JSBuilder.prototype.add = function(s) {
+        this.buffer[this.buffer.length - 1] += s;
+    }
+
+    JSBuilder.prototype.concat = function(arr) {
+        if(!(arr instanceof Array)) {
+            arr = arr.split('\n');
+        }
+        var self = this;
+        arr.forEach(function(item) {
+            self.addLine(item);
+        });
+    }
+
+    JSBuilder.prototype.func = function(name,args,callback) {
+        this.addLine();
+        this.addLine('function ' + name + '(' + args.join(',') + ') {');
+        this.indent();
+        callback();
+        this.deindent();
+        this.addLine('}');
+    }
+
+    JSBuilder.prototype.get = function() {
+        return this.buffer.join('\n');
+    }
 
     var seeIfLoaded = function () {
         if ($('head').length > 0) {

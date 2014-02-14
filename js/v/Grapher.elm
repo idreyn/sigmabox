@@ -6,7 +6,7 @@ def GrapherView {
 	constructor {
 		this.colors = ['#696','#A33','#0A4766','#B6DB49','#50C0E9','#FB3'];
 		this.transition = 'easeInOutQuart';
-		this.addView(elm.create('GraphListView').named('equations-list'));
+		this.addView(elm.create('GrapherListView').named('equations-list'));
 		this.addView(elm.create('GraphWindow').named('graph-window'));
 		// Event handlers
 		this.@equations-list.$graph-button.on('invoke',this.#showGraph);
@@ -243,7 +243,9 @@ def GraphWindow {
 		this.xmax = this._xmax - Math.round(e.gesture.center.pageX - this.dragOriginX) / this.x_scale;
 		this.ymin = this._ymin + Math.round(e.gesture.center.pageY - this.dragOriginY) / this.y_scale;
 		this.ymax = this._ymax + Math.round(e.gesture.center.pageY - this.dragOriginY) / this.y_scale;
-		this.render(true);
+		window.requestAnimationFrame(function() {
+			self.render(true);
+		})
 	}
 
 	method cursorDragEnd(e) {
@@ -311,6 +313,7 @@ def GraphWindow {
 	method rangeDragStart(e) {
 		this.@trace-readouts.hide();
 		this.$range.show();
+		console.log(this.$.offset().left);
 		var p = this.canvasToPlane({
 			x: e.gesture.center.pageX - this.$.offset().left,
 			y: e.gesture.center.pageY
@@ -319,7 +322,7 @@ def GraphWindow {
 		this.@trace-handle.flyIn();
 		this.@range.setColor(this.@equation-choice.selected.equation.color || '#000');
 		this.@range-readouts.showDynamic();
-		this._rangeStartX = e.gesture.center.pageX;
+		this._rangeStartX = e.gesture.center.pageX - this.$.offset().left;
 	}
 
 	method rangeDragged(e) {;
@@ -502,15 +505,26 @@ def GraphWindow {
 				type = item.type,
 				color = item.color;
 			if(type == 'function') {
-				var frame = new Frame({x:0});
 				var points = [];
-				var step = renderEquations? 1 : 10;
+				var step = 2;
 				Frac.grapherMode = true;
+				if(!data.cache) {
+					// Slap a cache onto the evaluable objects
+					data.cache = {};
+					data.getValue = function(planeX) {
+						if(data.cache[planeX] !== undefined) {
+							return data.cache[planeX];
+						} else {
+							var res = data.valueOf(new Frame({x: planeX})).toFloat();
+							data.cache[planeX] = res;
+							return res;
+						}
+					}
+				}
 				for(var i = 0; i < width; i += step) {
 					var planeX = canvasToPlane({x:i,y:0}).x;
 					try {
-						frame.set('x',planeX);
-						var planeY = 0 - data.valueOf(frame).toFloat();
+						var planeY = 0 - data.getValue(planeX);
 					} catch(e) {
 						var planeY = null;
 					};
@@ -582,7 +596,7 @@ def GraphWindow {
 	}
 }
 
-def GraphListView {
+def GrapherListView {
 	extends {
 		ListView
 	}
@@ -1055,8 +1069,11 @@ def TraceReadouts {
 	method update(x,y,func) {
 		this.@point.setContents('(' + x.toPrecision(4) + ',' + (0 - y).toPrecision(4) + ')');
 		if(func) {
-			var derivative = new Derivative(func);
-			this.@derivative.setContents('d/dx = ' + derivative.at(x).toString());
+			var d;
+			app.storage.trigForceRadians(function() {
+				d = new Derivative(func);
+			});
+			self.@derivative.setContents('d/dx = ' + d.at(x).toString());
 		} else {
 			this.@derivative.setContents('d/dx = 0');
 		}
@@ -1159,11 +1176,13 @@ def RangeReadouts {
 		});
 		this.@min.setContents('min &#8776; (' + minX.toPrecision(4) + ',' + minY.toPrecision(4) + ')');
 		this.@max.setContents('max &#8776; (' + maxX.toPrecision(4) + ',' + maxY.toPrecision(4) + ')');
-
-		var integral = new Integral(new Value(start),new Value(end),func),
-			int = integral.valueOf(null,10000,3);
-		this.@integral.setContents('∫ &#8776; ' + int.toPrecision(4));
-		this.@average.setContents('average &#8776; ' + (int / Math.abs(end-start)).toPrecision(4));
+		var integral = new Integral(new Value(start),new Value(end),func);
+		var ir;
+		app.storage.trigForceRadians(function() {
+			ir = integral.valueOf(null,10000,3);
+		});
+		this.@integral.setContents('∫ &#8776; ' + ir.toPrecision(4));
+		this.@average.setContents('average &#8776; ' + (ir / Math.abs(end-start)).toPrecision(4));
 	}
 
 	css {

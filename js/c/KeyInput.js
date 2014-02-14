@@ -49,7 +49,7 @@ KeyInput.prototype.bindings = [
 	new SoftKeyBinding('left-arrow',37),
 	new SoftKeyBinding('right-arrow',39),
 	new CallbackBinding(function() {
-		app.root.showMenu();
+		app.root.toggleMenu();
 	},27)
 ];
 
