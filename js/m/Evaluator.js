@@ -136,7 +136,7 @@ Value.prototype.add = function(other) {
 	other = other.valueOf();
 	if(other instanceof Frac) {
 		return new Frac(
-			this.mult(other.bottom),
+			this,
 			new Value(1)
 		).add(other);
 	} else if(other instanceof Value) {
