@@ -1,6 +1,6 @@
 function Application() {
 	this.r = new Resource();
-	this.storage = new Storage();
+	this.data = new Data();
 	this.utils = new Utils();
 	this.sound = new Sound();
 	this.parser = new Parser();
@@ -12,9 +12,11 @@ function Application() {
 
 Application.prototype.initLayout = function(wrapper) {
 
+	this.res = new Resource();
+
 	this.nullInput = elm.create('MathTextField');
 	this.nullInput.$.addClass('null-input');
-	this.storage.init();
+	this.data.init();
 
 	var self = this;
 	this.wrapper = wrapper;
@@ -39,13 +41,13 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.modes = [this.eval,this.grapher,this.functions,this.stats];
 	this.root.menu.build();
-	this.setMode(this.storage.mode || 'eval');
+	this.setMode(this.data.mode || 'eval');
 
 	// Testing only
 
 	$(window).on('resize',$.proxy(this.resize,this));
 	this.resize();
-	this.storage.uiSyncReady();
+	this.data.uiSyncReady();
 	this.mode.init();
 }
 
@@ -128,9 +130,9 @@ Application.prototype.setMode = function(mode) {
 		this.hideKeyboard();
 	}
 	this.mode.size(this.modeHeight);
-	this.storage.mode = mstring;
+	this.data.mode = mstring;
 	this.root.menu.setMode(mstring);
-	this.storage.serialize();
+	this.data.serialize();
 }
 
 Application.prototype.useKeyboard = function(name,forceMain) {
@@ -138,7 +140,7 @@ Application.prototype.useKeyboard = function(name,forceMain) {
 		if(this.keyboard == this.keyboards.main) return;
 		this.keyboard.slideDown();
 		this.keyboard = this.keyboards.main;
-		this.storage.cancelVariableSave();
+		this.data.cancelVariableSave();
 	} else {
 		var k = this.keyboards[name];
 		this.keyboard = k;
@@ -169,15 +171,15 @@ Application.prototype.popNotification = function(text) {
 	});
 }
 
-Application.prototype.prompt = function(name,callback,defaultVal) {
-	var p = elm.create('Prompt',name,callback,defaultVal);
+Application.prototype.prompt = function(title,callback,defaultVal) {
+	var p = elm.create('Prompt',title,callback,defaultVal);
 	$('body').append(p);
 	return p;
 }
 
-Application.prototype.mathPrompt = function(name,callback,fm) {
-	var p = elm.create('MathPrompt',name,callback,fm);
-	$('body').append(p);
+Application.prototype.mathPrompt = function(title,callback,fm) {
+	var p = elm.create('MathPrompt',title,callback,fm);
+	app.mode.$.append(p);
 	return p;
 }
 
@@ -190,12 +192,10 @@ Application.prototype.confirm = function(title,contents,callback,okayLabel,cance
 Application.prototype.setVariablePrompt = function(variable,silent,callback) {
 	var self = this;
 	var originalInput = app.mode.currentInput();
-	var prompt = app.mathPrompt(variable + ' = ?',function() {
+	var prompt = app.mathPrompt(variable + ' = ?',function(res,close,tryAgain) {
 		if(originalInput.focusManager) originalInput.focusManager.setFocus(originalInput);
-		var c = prompt.my('input').contents();
-		var p = new Parser();
-		var res = p.parse(c).valueOf(new Frame());
-		self.storage.setVariable(variable,res,silent);
+		self.data.setVariable(variable,res,silent);
+		close();
 		if(callback) callback();
 	},originalInput.focusManager);
 	prompt.cancelCallback = function() {

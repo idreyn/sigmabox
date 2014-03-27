@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 2.15.2014.1
+#version 3.26.2014.1
 
 CACHE:
 
@@ -38,6 +38,8 @@ res/img/background.png
 #javascript files
 js/lib/jquery.js
 js/lib/jquery.easing.js
+js/lib/jquery.etc.js
+js/lib/jquery.requestAnimationFrame.js
 js/lib/mathquill/mathquill.js
 js/lib/iscroll.js
 js/lib/qtransform.js
@@ -58,7 +60,7 @@ js/v/Functions.elm
 
 js/c/Application.js
 js/c/Resource.js
-js/c/Storage.js
+js/c/Data.js
 js/c/Utils.js
 js/c/KeyInput.js
 js/c/Sound.js

@@ -41,4 +41,7 @@
 	<key name='stdev' row='4' col='3'>
 		<primary close='close' name='sort' text-label='stdev' action='input: left'>\stdev()</primary>
 	</key>
+	<key name='reverse' row='5' col='3'>
+		<primary close='close' name='reverse' text-label='reverse' action='input: left'>\reverse()</primary>
+	</key>
 </keyboard>

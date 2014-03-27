@@ -97,7 +97,7 @@ Solver.prototype.guess = function(guess) {
 			// If we got a negative root with a corresponding positive root it makes more sense to give the positive one
 			guess = abs_guess;
 		}
-		var normalized_guess = Functions.normalize(guess,app.storage.trigUseRadians);
+		var normalized_guess = Functions.normalize(guess,app.data.trigUseRadians);
 		if(this.f(guess) == this.f(normalized_guess)) {
 			// If it's an angle we should try to normalize it
 			guess = normalized_guess;

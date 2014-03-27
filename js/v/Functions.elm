@@ -6,20 +6,63 @@ def FunctionListView {
 	properties {
 		fieldType: 'FunctionField',
 		addFieldToTop: true,
+		autoAddField: false,
 		defaultText: 'Custom functions you create will appear here.'
 	}
 
 	constructor {
-		this.$top-bar-container.hide();
 		this.$title.html('Functions');
 		this.load();
 	}
 
 	method load {
-		for(var k in app.storage.customFunctions) {
-			var func = app.storage.customFunctions[k];
+		for(var k in app.data.customFunctions) {
+			var func = app.data.customFunctions[k];
 			var field = this.addField();
 			field.load(func);
+		}
+	}
+
+	method createField {
+		var l = self.addField();
+		l.setName();
+	}
+
+	method sortOn(field,invert) {
+		var n = 1 * (invert? -1 : 1);
+		if(field == this._lastSortField) {
+			n *= -1;
+			this._lastSortField = null;
+		} else {
+			this._lastSortField = field;
+		}
+		this.$FunctionField.sortElements(function(a,b) {
+			return a[field] > b[field] ? n  : (0 - n)
+		});
+	}
+
+	my toolbar {
+		contents {
+			[[sort-az-button:ToolbarButton 'A&rarr;Z']]
+			[[add-button:ToolbarButtonImportant 'Add']]
+		}
+	}
+
+	my add-button {
+		on invoke {
+			root.createField();
+		}
+	}
+
+	my sort-az-button {
+		on invoke {
+			root.sortOn('functionName');
+		}
+	}
+
+	my sort-date-button {
+		on invoke {
+			root.sortOn('dateCreated',true);
 		}
 	}
 }
@@ -27,10 +70,16 @@ def FunctionListView {
 def FunctionField(focusManager) {
 	extends {
 		MathTextField
+		PullHoriz
 	}
 
 	css {
 		position: relative;
+	}
+
+	properties {
+		pullMaxWidth: 120,
+		pullConstant: 50
 	}
 
 	constructor {
@@ -45,27 +94,39 @@ def FunctionField(focusManager) {
 		}
 		Hammer(this).on('dragleft',this.#swipeLeft);
 		Hammer(this).on('tap',this.#tapped);
+		var options = [
+			{color: '#0a4766', event: 'rename', label: app.res.image('pen')},
+			{color: '#a33', event: 'delete', label: app.res.image('close')}
+		];
+		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}
 
 	method load(func) {
 		this.functionName = func.name;
+		this.dateCreated = func.date;
 		this.setContents(
 			'\\' + func.name + '(' + func.parameters.join(',') + ')=' + func.body
 		);
-		this.$name-overlay.hide();
 	}
 
 	contents {
-		<div class='name-overlay'></div>
-		<div class='options-overlay'></div>
+
 	}
 
 	on update {
-		app.storage.updateFunction(
+		app.data.updateFunction(
 			self.functionName,
 			self.getParameters(),
 			self.getBody()
 		);
+	}
+
+	on delete {
+		this.askForDelete();
+	}
+
+	on rename {
+		this.setName(true);
 	}
 
 	method getParameters {
@@ -86,10 +147,10 @@ def FunctionField(focusManager) {
 			function(name,closePrompt,renameAndTryAgain) {
 				name = StringUtil.trim(name);
 				if(name.match(/^[A-Za-z][A-Za-z0-9]*$/)) {
-					if(app.storage.isFunctionNameAvailable(name)) {
+					if(app.data.isNameAvailable(name)) {
 						if(self.functionName) {
-							app.storage.unregisterFunction(self.functionName);
-							app.storage.registerFunction(name);
+							app.data.unregisterFunction(self.functionName);
+							app.data.registerFunction(name);
 							self.functionName = name;
 							self.setContents(
 								'\\' + self.functionName + '(' + self.getParameters().join(',') + ')=' + self.getBody()
@@ -97,7 +158,7 @@ def FunctionField(focusManager) {
 							self.takeFocus();
 							$this.trigger('update');
 						} else {
-							app.storage.registerFunction(name);
+							app.data.registerFunction(name);
 							self.$name-overlay.hide();
 							self.setContents('\\'+name+'(x)=');
 							self.functionName = name;
@@ -110,7 +171,8 @@ def FunctionField(focusManager) {
 				} else {
 					renameAndTryAgain("Invalid function name. Try again?");
 				}
-			}
+			},
+			self.functionName
 		);
 	}
 
@@ -125,133 +187,11 @@ def FunctionField(focusManager) {
 	}
 
 	method doDelete {
-		app.storage.unregisterFunction(self.functionName);
-		app.storage.serialize();
+		app.data.unregisterFunction(self.functionName);
+		app.data.serialize();
 		var par = self.parent('ListView');
 		$this.remove();
 		par.updateScroll();
-	}
-
-	on mouseenter {
-		this.showOptions();
-	}
-
-	on mouseleave {
-		this.hideOptions();
-	}
-
-	method swipeLeft(e) {
-		this.parent().$FunctionField.each(function() {
-			this.hideOptions();
-		});
-		this.showOptions();
-	}
-
-	method tapped(e) {
-		this.parent().$FunctionField.each(function() {
-			this.hideOptions();
-		});
-		this.hideOptions();
-	}
-
-
-	method showOptions {
-		this.$options-overlay.stop().fadeIn(50);
-	}
-
-	method hideOptions {
-		this.$options-overlay.fadeOut(50);
-	}
-
-	my name-overlay {
-		extends {
-			TouchInteractive
-		}
-
-		contents {
-			<img class='add-icon'/> Add function
-		}
-
-		css {
-			color: #BBB;
-			font-size: 25px;
-			padding-left: 10px;
-			position: absolute;
-			top: 0;
-			width: 100%;
-			height: 100%;
-			line-height: 70px;
-			background: #EEE;
-			cursor: pointer;
-			z-index: 10;
-		}
-
-		on invoke {
-			parent.setName();
-		}
-
-		my add-icon {
-			properties {
-				src: app.r.image('add')
-			}
-
-			css {
-				opacity: 0.4;
-				width: 30px;
-				margin-top: -5px;
-				vertical-align: middle
-			}
-		}
-	}
-
-	my options-overlay {
-		css {
-			display: none;
-			position: absolute;
-			top: 0;
-			right: 0;
-			background: #FFF;
-			height: calc(100% - 2px);
-			line-height: 70px;
-		}
-
-		method edit {
-			root.setName(true);
-		}
-
-		method remove {
-			root.askForDelete();
-		}
-
-		contents {
-			[[edit-button:IconButton 'pen', this.edit]] 
-			[[delete-button:IconButton 'close', this.remove]]
-		}
-
-		constructor {
-			Hammer(this).on('tap',this.#tapped);
-		}
-
-		method tapped(e) {
-			e.stopPropagation();
-		}
-
-		my add-icon {
-			properties {
-				src: app.r.image('add')
-			}
-
-			css {
-				opacity: 0.4;
-				width: 30px;
-				margin-top: -5px;
-				vertical-align: middle
-			}
-		}
-
-		contents {
-			&nbsp;
-		}
 	}
 
 	my MathInput {
@@ -282,7 +222,7 @@ def FunctionChoiceView(callback) {
 	}
 
 	method populate {
-		var funcs = app.storage.customFunctions;
+		var funcs = app.data.customFunctions;
 		for(var k in funcs) {
 			var func = funcs[k];
 			var f = this.addField();

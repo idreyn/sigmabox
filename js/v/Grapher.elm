@@ -104,7 +104,7 @@ def GraphWindow {
 			elm.create(
 				'GrapherButtonGroup',
 				[
-					elm.create('GrapherButton','-').named('zoom-out'),
+					elm.create('GrapherButton','&ndash;').named('zoom-out'),
 					elm.create('GrapherButton','+').named('zoom-in')
 				]
 			)
@@ -268,13 +268,13 @@ def GraphWindow {
 		var planeX = this.canvasToPlane({x: pageX}).x;
 		if(this.@equation-choice.selected) {
 			var tur = app.trigUseRadians;
-			app.storage.trigUseRadians = true;
+			app.data.trigUseRadians = true;
 			var planeY = 0 - this.@equation-choice.selected.equation.data.valueOf(
 				new Frame({
 					x: planeX
 				})
 			).toFloat();
-			app.storage.trigUseRadians = tur;
+			app.data.trigUseRadians = tur;
 			this.$trace-handle.show();
 		} else {
 			planeY = this.canvasToPlane({y: e.gesture.center.pageY}).y;
@@ -428,8 +428,8 @@ def GraphWindow {
 
 	method render(renderEquations) {
 
-		var trueTrigMode = app.storage.trigUseRadians;
-		app.storage.trigUseRadians = true;
+		var trueTrigMode = app.data.trigUseRadians;
+		app.data.trigUseRadians = true;
 
 		renderEquations = renderEquations === undefined ? true : renderEquations;
 
@@ -513,7 +513,7 @@ def GraphWindow {
 							return data.cache[planeX];
 						} else {
 							var res;
-							app.storage.trigForceRadians(function() {
+							app.data.trigForceRadians(function() {
 								res = data.valueOf(new Frame({x: planeX})).toFloat();
 								data.cache[planeX] = res;
 							});
@@ -591,7 +591,7 @@ def GraphWindow {
 			};
 		});	
 
-		app.storage.trigUseRadians = trueTrigMode;
+		app.data.trigUseRadians = trueTrigMode;
 		this.updateReadout();
 	}
 }
@@ -638,7 +638,7 @@ def GrapherListView {
 
 	method load {
 		var self = this;
-		if(app.storage.grapherEquations) app.storage.grapherEquations.map(function(eq) {
+		if(app.data.grapherEquations) app.data.grapherEquations.map(function(eq) {
 			self.addField().setContents(eq);
 		});
 	}
@@ -649,26 +649,36 @@ def GrapherListView {
 		}).toArray().filter(function(str) {
 			return str != 'y=' && str != '';
 		});
-		app.storage.grapherEquations = cl;
-		app.storage.serialize();
+		app.data.grapherEquations = cl;
+		app.data.serialize();
 	}
 }
 
 def GraphListField(focusManager) {
 	extends {
 		MathTextField
+		PullHoriz
+	}
+
+	properties {
+		pullMaxWidth: 120,
+		pullConstant: 50
 	}
 
 	constructor {
 		this.setContents('y=')
 		this.defaultText = 'Click to add equation';
 		$this.append(elm.create('GraphListFieldColorLabel').named('label'));
+		var options = [
+			{color: '#a33', event: 'delete', label: app.res.image('close')},
+		];
+		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}
 
 	method setColor(color) {
 		this.color = color;
-		this.$label.css('background',color);
-		this.$label.css('border-bottom-color',color);
+		this.@label.$.css('background',color);
+		this.@label.$.css('border-bottom-color',color);
 	}
 
 	on update {
@@ -681,6 +691,11 @@ def GraphListField(focusManager) {
 			}
 			this.setContents(c);
 		}
+	}
+
+	on delete {
+		this.setContents('');
+		this.$.trigger('lost-focus');
 	}
 	
 	css {
@@ -1070,9 +1085,11 @@ def TraceReadouts {
 		this.@point.setContents('(' + x.toPrecision(4) + ',' + (0 - y).toPrecision(4) + ')');
 		if(func) {
 			var d;
-			app.storage.trigForceRadians(function() {
+			Frac.grapherMode = true;
+			app.data.trigForceRadians(function() {
 				d = new Derivative(func).at(x).toString();
 			});
+			Frac.grapherMode = false;
 			self.@derivative.setContents('d/dx = ' + d);
 		} else {
 			this.@derivative.setContents('d/dx = 0');
@@ -1174,15 +1191,17 @@ def RangeReadouts {
 				minY = 0 - point.y;
 			}
 		});
+		Frac.grapherMode = true;
 		this.@min.setContents('min &#8776; (' + minX.toPrecision(4) + ',' + minY.toPrecision(4) + ')');
 		this.@max.setContents('max &#8776; (' + maxX.toPrecision(4) + ',' + maxY.toPrecision(4) + ')');
 		var integral = new Integral(new Value(start),new Value(end),func);
 		var ir;
-		app.storage.trigForceRadians(function() {
+		app.data.trigForceRadians(function() {
 			ir = integral.valueOf(null,10000,3);
 		});
 		this.@integral.setContents('∫ &#8776; ' + ir.toPrecision(4));
 		this.@average.setContents('average &#8776; ' + (ir / Math.abs(end-start)).toPrecision(4));
+		Frac.grapherMode = false;
 	}
 
 	css {

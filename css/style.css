@@ -196,7 +196,8 @@ html, body {
 	margin: 0;
 	min-width: 100%;
 	max-width: 100%;
-	font-family: 'RobotoRegular' sans-serif;
+	font-family: 'Helvetica Neue' sans-serif;
+    font-weight: 100;
     background: url(../res/img/background.png);
     overflow: hidden;
     top: 0;
@@ -230,6 +231,15 @@ html, body {
 
 .MathInput {
 	display: block;
+}
+
+.StatsView .StatsList:nth-child(odd) .top-bar {
+    background: #AAA !important;
+}
+
+
+.StatsView .StatsList:nth-child(even) .top-bar {
+    background: #999 !important;
 }
 
 canvas {

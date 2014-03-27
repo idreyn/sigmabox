@@ -29,6 +29,12 @@ Resource.prototype.image = function(imageName) {
 	return 'res/img/' + imageName + '.png';
 }
 
+Resource.prototype.imageEl = function(imageName) {
+	var i = new Image();
+	i.src = this.image(imageName);
+	return i;
+}
+
 Resource.prototype.thinIcon = function(iconName) {
 	return 'res/img/thin-icons/' + iconName + '.png';
 }

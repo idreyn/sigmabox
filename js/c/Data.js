@@ -1,8 +1,8 @@
-function Storage() {
+function Data() {
 	// this.init();
 }
 
-Storage.prototype.toSerialize = [
+Data.prototype.toSerialize = [
 	'mode',
 	'trigUseRadians',
 	'displayPolarVectors',
@@ -13,7 +13,7 @@ Storage.prototype.toSerialize = [
 	'grapherWindow',
 ];
 
-Storage.prototype.init = function() {
+Data.prototype.init = function() {
 	var self = this;
 	this.hasDeserialized = false;
 	this.lsNamespace = 'sigmabox';
@@ -51,6 +51,21 @@ Storage.prototype.init = function() {
 		'\\sigma_{sb}': new Value(5.670373e-8) // Stefan-Boltzmann constant
 	}
 
+	/**
+
+	for(var k in this.constants) {
+		this.registerFunction(k);
+	}
+
+	var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
+
+	for(var k in alphabet) {
+		this.registerFunction(alphabet[k]);
+		this.registerFunction(alphabet[k].toUpperCase());
+	}
+
+	**/
+
 	this.variables = {
 
 	};
@@ -75,6 +90,14 @@ Storage.prototype.init = function() {
 			}
 			return n;
 		},false),
+		'atan2': this.wrap(function(y,x) {
+			self.trigInCurrentExpression = true;
+			n = Math.atan2(y,x);
+			if(!self.trigUseRadians) {
+				n = Functions.r2d(n);
+			}
+			return n;
+		}),
 		'acos': this.wrap(function(n) {
 			self.trigInCurrentExpression = true;
 			n = Math.acos(n);
@@ -136,6 +159,7 @@ Storage.prototype.init = function() {
 			if(n <= 0) throw "Domain error (log)";
 			return Functions.round(Math.log(n) / Math.LN10,10);
 		},false),
+		// Matrix functions
 		'id': this.wrap(Functions.identityMatrix,false,true,false),
 		'det': this.wrap(function(m) {
 			Functions.expect(m,Matrix);
@@ -148,6 +172,14 @@ Storage.prototype.init = function() {
 		'inverse': this.wrap(function(m) {
 			Functions.expect(m,Matrix);
 			return m.inverse();
+		},false,false,false),
+		'ref': this.wrap(function(m) {
+			Functions.expect(m,Matrix);
+			return m.ref();
+		},false,false,false),
+		'rref': this.wrap(function(m) {
+			Functions.expect(m,Matrix);
+			return m.rref();
 		},false,false,false),
 		// Vector functions
 		'min': this.wrap(function(v) {
@@ -174,7 +206,7 @@ Storage.prototype.init = function() {
 			if(!step) step = 1;
 			var res = [];
 			for(var i=min;i<=max;i+=step) {
-				res.push(i);
+				res.push(new Value(i));
 			}
 			return new Vector(res);
 		}),
@@ -211,7 +243,11 @@ Storage.prototype.init = function() {
 		}),
 		'sort': this.wrap(function(v) {
 			Functions.expect(v,Vector);
-			return v.args.sort();
+			return new Vector(v.args.sort());
+		}),
+		'reverse': this.wrap(function(v) {
+			Functions.expect(v,Vector);
+			return new Vector(v.args.reverse());
 		}),
 		// Numerical stuff
 		'lcm': this.wrap(function(a,b) {
@@ -237,6 +273,9 @@ Storage.prototype.init = function() {
 		'round': this.wrap(Math.round),
 		'isprime': this.wrap(Functions.isPrime),
 		'prime': this.wrap(Functions.nthPrime),
+		'Im': this.wrap(Functions.Im,false,false),
+		'Re': this.wrap(Functions.Re),
+		'unity': this.wrap(Functions.unity),
 		// Probability shit
 		'normalpdf': this.wrap(Functions.normalpdf),
 		'normalcdf': this.wrap(Functions.normalcdf),
@@ -265,17 +304,21 @@ Storage.prototype.init = function() {
 
 	};
 
+	this.lists = {
+
+	}
+
 	this.deserialize();
 }
 
-Storage.prototype.trigForceRadians = function(f) {
+Data.prototype.trigForceRadians = function(f) {
 	var tt = this.trigUseRadians;
 	this.trigUseRadians = true;
 	f();
 	this.trigUseRadians = false;
 }
 
-Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
+Data.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
 	var self = this;
 	if(useNumber === undefined || useNumber === null) useNumber = true;
 	if(useNumberOut === undefined || useNumberOut === null) useNumberOut = true;
@@ -298,7 +341,7 @@ Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
 		if(isTrig) {
 			self.trigInCurrentExpression = true;
 		}
-		if(isTrig && !app.storage.trigUseRadians) {
+		if(isTrig && !app.data.trigUseRadians) {
 			 // Convert given degrees to required radians
 			args = args.map(Functions.d2r);
 		}
@@ -307,14 +350,14 @@ Storage.prototype.wrap = function(lambda,isTrig,useNumber,useNumberOut) {
 		 	res = Functions.round(res,15);
 		}
 		if(!useNumberOut) {
-			return toNumVal(res);
+			return toVal(res);
 		} else {
 			return res;
 		}
 	};
 }
 
-Storage.prototype.deserialize = function() {
+Data.prototype.deserialize = function() {
 	var s = JSON.parse(window.localStorage[this.lsNamespace] || '{}'),
 		self = this;
 	this.toSerialize.forEach(function(item) {
@@ -323,12 +366,13 @@ Storage.prototype.deserialize = function() {
 		}
 	});
 	this.variables = this.deserializeVariables(s.variables || {});
+	this.lists = this.deserializeLists(s.lists || []);
 	this.customFunctions = this.deserializeFunctions(s.functions || {});
 	this.inputHistory = this.inputHistory || [];
 	this.hasDeserialized = true;
 }
 
-Storage.prototype.serialize = function() {
+Data.prototype.serialize = function() {
 	if(!this.hasDeserialized) return;
 	var s = {},
 		self = this;
@@ -336,11 +380,12 @@ Storage.prototype.serialize = function() {
 		s[item] = self[item] instanceof Function ? self[item].call() : self[item];
 	});
 	s.variables = this.serializeVariables(this.variables);
+	s.lists = this.serializeLists(this.lists);
 	s.functions = this.serializeFunctions(this.customFunctions);
 	window.localStorage[this.lsNamespace] = JSON.stringify(s);
 }
 
-Storage.prototype.serializeVariables = function(obj) {
+Data.prototype.serializeVariables = function(obj) {
 	var res = {};
 	for(var k in obj) {
 		res[k] = obj[k].toString();
@@ -348,7 +393,7 @@ Storage.prototype.serializeVariables = function(obj) {
 	return res;
 }
 
-Storage.prototype.deserializeVariables = function(obj) {
+Data.prototype.deserializeVariables = function(obj) {
 	var p = new Parser(),
 		res = {};
 	for(var k in obj) {
@@ -357,28 +402,66 @@ Storage.prototype.deserializeVariables = function(obj) {
 	return res;
 }
 
-Storage.prototype.lookup = function(symbol) {
-	symbol = symbol.name || symbol;
-	return this.constants[symbol] || this.variables[symbol] || new Value(0);
+Data.prototype.serializeLists = function(obj) {
+	var res = [];
+	for(var i=0;i<obj.length;i++) {
+		var data = obj[i].data.concat();
+		for(var j=0;j<data.length;j++) {
+			data[j] = data[j].toString();
+		}
+		res.push({name: obj[i].name, data: data});
+	}
+	return res;
 }
 
-Storage.prototype.initVariableSave = function(m) {
+Data.prototype.deserializeLists = function(obj) {
+	var p = new Parser(),
+		res = [];
+	for(var i=0;i<obj.length;i++) {
+		var item = {name: obj[i].name}
+		var data = obj[i].data.concat();
+		this.registerFunction(obj[i].name);
+		for(var j=0;j<data.length;j++) {
+			data[j] = p.parse(data[j]).valueOf(new Frame({}));
+		}
+		item.data = data;
+		res.push(item);
+	}
+	return res;
+}
+
+Data.prototype.lookup = function(symbol) {
+	symbol = symbol.name || symbol;
+	return this.constants[symbol] || this.variables[symbol] || this.lookupList(symbol) || new Value(0);
+}
+
+Data.prototype.lookupList = function(name) {
+	for(var i=0;i<this.lists.length;i++) {
+		if(this.lists[i].name == name) {
+			return this.lists[i];
+		}
+	}
+	return false;
+}
+
+Data.prototype.initVariableSave = function(m) {
 	this.varSaveMode = m || 'store';
 }
 
-Storage.prototype.cancelVariableSave = function() {
+Data.prototype.cancelVariableSave = function() {
 	this.varSaveMode = false;
 }
 
-Storage.prototype.setVariable = function(k,v,silent) {
+Data.prototype.setVariable = function(k,v,silent) {
 	this.variables[k] = v;
 	if(!silent) app.popNotification(
 		'Set ' + k + ' to ' + v.toString()
 	);
+	this.uiSyncBroadcast('variable-update','variable-update');
 	this.serialize();
 }
 
-Storage.prototype.isFunctionNameAvailable = function(name) {
+Data.prototype.isNameAvailable = function(name) {
 	if(window.LatexCmds[name]) {
 		return false;
 	} else {
@@ -386,27 +469,28 @@ Storage.prototype.isFunctionNameAvailable = function(name) {
 	}
 }
 
-Storage.prototype.registerFunction = function(name) {
+Data.prototype.registerFunction = function(name) {
 	window.LatexCmds[name] = window.NonItalicizedFunction;
 }
 
-Storage.prototype.unregisterFunction = function(name) {
+Data.prototype.unregisterFunction = function(name) {
 	delete window.LatexCmds[name];
 	delete this.customFunctions[name];
 }
 
-Storage.prototype.updateFunction = function(name,parameters,body) {
+Data.prototype.updateFunction = function(name,parameters,body) {
 	var p = new Parser();
 	this.customFunctions[name] = {
 		name: name,
 		parameters: parameters,
 		body: body,
-		expression: p.parse(body)
+		expression: p.parse(body),
+		date: this.customFunctions[name] && this.customFunctions[name].date || new Date().valueOf()
 	};
 	this.serialize();
 }
 
-Storage.prototype.serializeFunctions = function(f) {
+Data.prototype.serializeFunctions = function(f) {
 	f = f || this.customFunctions;
 	var res = {};
 	for(var k in f) {
@@ -419,7 +503,7 @@ Storage.prototype.serializeFunctions = function(f) {
 	return res;
 }
 
-Storage.prototype.deserializeFunctions = function(f) {
+Data.prototype.deserializeFunctions = function(f) {
 	for(var k in f) {
 		this.registerFunction(f[k].name);
 		this.updateFunction(f[k].name,f[k].parameters,f[k].body);
@@ -427,7 +511,7 @@ Storage.prototype.deserializeFunctions = function(f) {
 	return this.customFunctions;
 }
 
-Storage.prototype.callFunction = function(name,args) {
+Data.prototype.callFunction = function(name,args) {
  	var func = this.functions[name];
  	if(func) {
  		return func.apply(null,args);
@@ -443,20 +527,24 @@ Storage.prototype.callFunction = function(name,args) {
  	throw 'No function called ' + name;
  }
 
- Storage.prototype.uiSyncSubscribe = function(el) {
+ Data.prototype.uiSyncSubscribe = function(el) {
  	$(el).addClass('sync-subscriber');
  }
 
- Storage.prototype.uiSyncReady = function() {
+ Data.prototype.uiSyncReady = function() {
  	$('.sync-subscriber').trigger('syncReady');
 	this.startSyncing();
  }
 
- Storage.prototype.uiSync = function() {
+ Data.prototype.uiSync = function() {
  	$('.sync-subscriber').trigger('sync');
  }
 
- Storage.prototype.startSyncing = function() {
+ Data.prototype.uiSyncBroadcast = function(cl,event) {
+ 	$('.sync-subscriber.subscribe-' + cl).trigger(event);
+ }
+
+ Data.prototype.startSyncing = function() {
 	var self = this;
 	return;
 	setTimeout(function() {
@@ -466,11 +554,11 @@ Storage.prototype.callFunction = function(name,args) {
 	},0);
 }
 
-Storage.prototype.clearHistory = function() {
+Data.prototype.clearHistory = function() {
 	this.inputHistory = [];
 }
 
-Storage.prototype.addHistoryItem = function(text) {
+Data.prototype.addHistoryItem = function(text) {
 	if(StringUtil.trim(text).length == 0 || /^[0-9.]+$/.test(text) || text == this.inputHistory.slice(-1).pop()) return;
 	this.inputHistory.push(text);
 	this.inputHistory = this.inputHistory.slice(-50);

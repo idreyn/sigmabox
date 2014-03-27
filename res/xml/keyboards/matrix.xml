@@ -2,6 +2,12 @@
 	<key name='close' row='1' col='1' default-color='#333'>
 		<primary close='close' text-label='close'/>
 	</key>
+	<key name='ref' row='2' col='1'>
+		<primary close='close' action='input: left' text-label='ref'>\ref()</primary>
+	</key>
+	<key name='rref' row='3' col='1'>
+		<primary close='close' action='input: left' text-label='rref'>\rref()</primary>
+	</key>
 	<key name='1x1' row='1' col='2'>
 		<primary close='close' action='input: left' text-label='[ • ]'>\matrixOneOne{}</primary>
 	</key>
@@ -42,7 +48,7 @@
 		<primary close='close' action='input:left' text-label='inv'>\inverse()</primary>
 	</key>
 	<key name='brackets' row='5' col='3'>
-		<primary close='close' action='input:left' text-label='[ ]'>\left[\right]</primary>
+		<primary close='close' action='input:left' text-label='[ ]'>[]</primary>
 	</key>
 	<key name='bar' row='5' col='4'>
 		<primary close='close' text-label='|'>|</primary>

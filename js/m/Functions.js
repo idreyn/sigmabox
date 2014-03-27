@@ -223,6 +223,29 @@ Functions.acoth = function(x) {
 	return 0.5 * Math.log((x+1)/(x-1));
 }
 
+Functions.unity = function(n) {
+	// e^(2pi*i*k/n), k == 0...n-1
+	var roots = [];
+	for(var k=0;k<n;k++) {
+		roots.push(Functions.complexRaise(Math.E,new Value(0, 2 * Math.PI * k/n)));
+	}
+	return new Vector(roots);
+}
+
+Functions.Re = function(n) {
+	if(n instanceof Value) {
+		return n.real;
+	}
+	return parseFloat(n); 
+}
+
+Functions.Im = function(n) {
+	if(n instanceof Value) {
+		return n.complex;
+	}
+	return 0;
+}
+
 Functions.identityMatrix = function(n) {
 	var res = [];
 	for(var i=0;i<n;i++) {
@@ -429,3 +452,5 @@ Functions.stdev = function(arr)
 	var mean = Functions.mean(arr);
 	return Math.sqrt(Functions.mean(arr.map(function(n){ return Math.pow(n - mean,2); })));
 }
+
+

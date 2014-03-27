@@ -59,12 +59,22 @@ def MathInput(owner) {
 	method acceptActionInput(type) {
 		var oldContents = this.contents();
 		type.split(',').forEach(function(t) {
+			self.$.trigger('action-input',type);
+			var c = self.mathSelf().cursor;
 			switch(t) {
 				case 'left':
-					if(!(self.preventCursorLeft && self.preventCursorLeft())) self.mathSelf().cursor.moveLeft();
+					if(!(self.preventCursorLeft && self.preventCursorLeft()) && (c.prev || c.parent != c.root)) {
+						self.mathSelf().cursor.moveLeft();
+					} else {
+						self.$.trigger('cursor-left');
+					}
 					break;
 				case 'right':
-					if(!(self.preventCursorRight && self.preventCursorRight())) self.mathSelf().cursor.moveRight();
+					if(!(self.preventCursorRight && self.preventCursorRight()) && (c.next || c.parent != c.root)) {
+						self.mathSelf().cursor.moveRight();
+					} else {
+						self.$.trigger('cursor-right');
+					}
 					break;
 				case 'backspace':
 					if(!(self.preventBackspace && self.preventBackspace())) self.mathSelf().cursor.backspace();
@@ -152,10 +162,6 @@ def MathTextField(focusManager) {
 		</div>
 	}
 
-	css {
-
-	}
-
 	constructor {
 		this.enabled = true;
 		this.input = elm.create('SmallMathInput').named('input');
@@ -196,6 +202,14 @@ def MathTextField(focusManager) {
 		return this.input.contents();
 	}
 
+	method setContents(c) {
+		return this.input.setContents(c);
+	}
+
+	method empty {
+		return this.input.empty();
+	}
+
 	method disable() {
 		var contents = this.contents();
 		this.enabled = false;
@@ -224,13 +238,5 @@ def MathTextField(focusManager) {
 
 	method loseFocus {
 		return this.input.loseFocus();
-	}
-
-	method setContents(c) {
-		return this.input.setContents(c);
-	}
-
-	method empty {
-		return this.input.empty();
 	}
 }

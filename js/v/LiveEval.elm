@@ -17,6 +17,13 @@ def LiveEvalCard(manager) {
 	extends {
 		TouchInteractive
 		Pull
+		SyncSubscriber
+	}
+
+	constructor {
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('dragend',this.#dragEnd);
+		this.subscribeEvent('variable-update');
 	}
 
 	properties {
@@ -38,17 +45,13 @@ def LiveEvalCard(manager) {
 		-webkit-transition: none;
 	}
 
-	constructor {
-
-	}
-
-	on touchmove(e) {
-		//e.preventDefault();
-	}
-
 	on invoke(e) {
 		if(e.target != e.currentTarget) return;
 		this.manager.setCurrentCard(this);
+	}
+
+	on variable-update {
+		self.refresh(true);
 	}
 	
 	method init {
@@ -84,11 +87,6 @@ def LiveEvalCard(manager) {
 				)
 			,40) + 'px'
 		);
-		this.$lower.css('font-size',
-			parseInt(this.$lower.height() / 2) + 'px'
-		).css('line-height',
-			parseInt(this.$lower.height() / 1) + 'px'
-		);
 		this.@toolbar.size();
 	}
 
@@ -99,8 +97,8 @@ def LiveEvalCard(manager) {
 
 	method refresh(b) {
 		this.update(this.spanInput.contents() || '',b);
-		app.storage.currentInput = this.spanInput.contents();
-		app.storage.serialize();
+		app.data.currentInput = this.spanInput.contents();
+		app.data.serialize();
 	}
 	
 	method update(str,force) {
@@ -108,8 +106,8 @@ def LiveEvalCard(manager) {
 		this.@toolbar.trigSwitch.hide();
 		this.@toolbar.vectorSwitch.hide();
 		this.@toolbar.fracSwitch.hide();
-		app.storage.trigInCurrentExpression = false;
-		app.storage.calcInCurrentExpression = false;
+		app.data.trigInCurrentExpression = false;
+		app.data.calcInCurrentExpression = false;
 		try {
 			var res = app.parser.parse(str,true);
 			if(res instanceof Solver) {
@@ -122,16 +120,16 @@ def LiveEvalCard(manager) {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
 				if(res instanceof Matrix) {
-					res = res.toString();
+					res = res.toString(true);
 				}
 				if(res instanceof Vector) {
 					if(res.args.length == 2) {
 						this.@toolbar.vectorSwitch.show();
-						if(!app.storage.displayPolarVectors) {
+						if(!app.data.displayPolarVectors) {
 							res = res.toString();
 						} else {
 							this.@toolbar.trigSwitch.show();
-							res = res.toStringPolar(app.storage.trigUseRadians);
+							res = res.toStringPolar(app.data.trigUseRadians);
 						}
 					} else {
 						if(res.args.length <= 10) {
@@ -142,7 +140,7 @@ def LiveEvalCard(manager) {
 					}
 				} else if(res instanceof Frac) {
 					this.@toolbar.fracSwitch.show();
-					if(!app.storage.displayDecimalizedFractions) {
+					if(!app.data.displayDecimalizedFractions) {
 						res = res.toString();
 					} else {
 						res = res.decimalize().toString();
@@ -161,57 +159,20 @@ def LiveEvalCard(manager) {
 			console.log(e);
 			var res = typeof e == 'string' ? e : 'Error';
 		}
-		if(app.storage.trigInCurrentExpression) {
+		if(app.data.trigInCurrentExpression) {
 			this.@toolbar.trigSwitch.show();
 		}
-		if(app.storage.calcInCurrentExpression) {
+		if(app.data.calcInCurrentExpression) {
 			this.@toolbar.trigSwitch.forceRadians();
 		} else {
 			this.@toolbar.trigSwitch.endForceRadians();
 		}
-		this.$lower.html(res);
+		this.@lower.setContents(res);
 		this.last = str;
 	}
 
 	method result {
 		return this._result;
-	}
-	
-	find .upper {
-		css {
-			height: 80;
-			width: 100%;
-			overflow-y: hidden;
-			overflow-x: hidden;
-		}
-	}
-	
-	find .input {
-		css {
-			outline: none;
-			width: 100%;
-			max-width: 100%;
-			border: 0px;
-			padding: 20px;
-			background: transparent;
-			font-size: 40pt;
-		}
-	}
-	
-	find .lower {
-		css {
-			background: rgba(0,0,0,0.05);
-			text-align: right;
-			padding-right: 2%;
-			font-size: 30pt;
-			color: #AAA;
-			line-height: 80px;
-		}
-	}
-
-	constructor {
-		Hammer(this).on('dragstart',this.#dragStart);
-		Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	method dragStart(e) {
@@ -246,6 +207,62 @@ def LiveEvalCard(manager) {
 		}
 	}
 
+	find .upper {
+		css {
+			height: 80;
+			width: 100%;
+			overflow-y: hidden;
+			overflow-x: hidden;
+		}
+	}
+	
+	find .input {
+		css {
+			outline: none;
+			width: 100%;
+			max-width: 100%;
+			border: 0px;
+			padding: 20px;
+			background: transparent;
+			font-size: 40pt;
+		}
+	}
+
+	my lower {
+		contents {
+			<div class='scroll'></div>
+		}
+
+		method setContents(s) {
+			if(s.length > 40) {
+				this.$.css('font-size','20');
+			} else {
+				this.$.css('font-size','40');
+			}
+			if(s == '') s = '0'
+			this.$scroll.html(s);
+			//if(!this.@scroll.scroll) this.@scroll.scroll = new IScroll(this,{mouseWheel: true, scrollX: true});
+ 	  		//this.@scroll.scroll.refresh();
+		}
+
+		my scroll {
+			css {
+				white-space: nowrap;
+				padding-left: 10px;
+				padding-right: 10px;
+			}
+		}
+
+		css {
+			background: rgba(0,0,0,0.05);
+			text-align: right;
+			font-size: 30pt;
+			color: #AAA;
+			line-height: 80px;
+			overflow: scroll;
+		}
+	}
+
 	my history-pull {
 		contents {
 			<img class='inner' src='res/img/clock.png'/> &nbsp;History
@@ -260,7 +277,7 @@ def LiveEvalCard(manager) {
 			font-size: 20px;
 			top: -100px;
 			color: #FFF;
-			background: #000;
+			background: #333;
 		}
 
 		my inner {
@@ -300,20 +317,20 @@ def LiveEvalCard(manager) {
 			// this.convertButton = elm.create('LiveEvalButton','A&rarr;B');
 			// this.$.append(this.convertButton);
 
-			this.fracSwitch = elm.create('Switch','DEC','FRC','app.storage.displayDecimalizedFractions');
+			this.fracSwitch = elm.create('Switch','DEC','FRC','app.data.displayDecimalizedFractions');
 			this.fracSwitch.$.on('flipped',function() {
 				root.refresh(true);
 			});
 			this.$.append(this.fracSwitch);
 
 
-			this.trigSwitch = elm.create('TrigSwitch','RAD','DEG','app.storage.trigUseRadians');			
+			this.trigSwitch = elm.create('TrigSwitch','RAD','DEG','app.data.trigUseRadians');			
 			this.trigSwitch.$.on('flipped',function() {
 				root.refresh(true);
 			});
 			this.$.append(this.trigSwitch);
 
-			this.vectorSwitch = elm.create('Switch','R\u2220\u03B8','< >','app.storage.displayPolarVectors');
+			this.vectorSwitch = elm.create('Switch','R\u2220\u03B8','< >','app.data.displayPolarVectors');
 			this.vectorSwitch.$.on('flipped',function() {
 				root.refresh(true);
 			});
@@ -321,8 +338,8 @@ def LiveEvalCard(manager) {
 
 			this.evalButton = elm.create('LiveEvalButton','SET');
 			this.evalButton.$.on('invoke',function() {
-				if(!app.storage.varSaveMode) {
-					app.storage.initVariableSave('set');
+				if(!app.data.varSaveMode) {
+					app.data.initVariableSave('set');
 					app.useKeyboard('variables');
 				}
 			});
@@ -331,8 +348,8 @@ def LiveEvalCard(manager) {
 
 			this.storeButton = elm.create('LiveEvalButton','STO');
 			this.storeButton.$.on('invoke',function() {
-				if(!app.storage.varSaveMode) {
-					app.storage.initVariableSave('store');
+				if(!app.data.varSaveMode) {
+					app.data.initVariableSave('store');
 					app.useKeyboard('variables');
 				}
 			});
@@ -340,7 +357,7 @@ def LiveEvalCard(manager) {
 
 			this.clearButton = elm.create('LiveEvalButton','CLR');
 			this.clearButton.$.on('invoke',function() {
-				app.storage.addHistoryItem(app.mode.currentInput().contents());
+				app.data.addHistoryItem(app.mode.currentInput().contents());
 				app.mode.currentInput().acceptActionInput('clear');
 			});
 			this.$.append(this.clearButton);
@@ -422,7 +439,7 @@ def LiveEvalManager {
 	}
 
 	on syncReady {
-		this.addCard(app.storage.currentInput || '');
+		this.addCard(app.data.currentInput || '');
 		this.setupScroll();
 		this.size();
 	//	this.@indicator.build(this.$LiveEvalCard.length);
@@ -555,7 +572,7 @@ def LiveEvalHistoryOverlay(callback) {
 
 	method populate {
 		this.$MathTextField.remove();
-		app.storage.inputHistory.reverse().forEach(function(item) {
+		app.data.inputHistory.reverse().forEach(function(item) {
 			var f = self.addField();
 			f.disable();
 			f.setContents(item);
@@ -570,8 +587,8 @@ def LiveEvalHistoryOverlay(callback) {
 	}
 
 	method clearHistory {
-		app.storage.clearHistory();
-		app.storage.serialize();
+		app.data.clearHistory();
+		app.data.serialize();
 		self.populate();
 	}
 
