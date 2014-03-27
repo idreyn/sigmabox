@@ -23,10 +23,19 @@
 	<key name='lcm' row='3' col='2'>
 		<primary close='close' action='input: left,left' text-label='lcm'>\lcm(,)</primary>
 	</key>
-	<key name='lcm' row='4' col='2'>
+	<key name='round' row='4' col='2'>
 		<primary close='close' action='input: left' text-label='round'>\round()</primary>
 	</key>
-	<key name='lcm' row='5' col='2'>
+	<key name='isprime' row='5' col='2'>
 		<primary close='close' action='input: left' text-label='isprime'>\isprime()</primary>
+	</key>
+	<key name='Re' row='1' col='3'>
+		<primary close='close' action='input: left' text-label='Re'>\Re()</primary>
+	</key>
+	<key name='Im' row='2' col='3'>
+		<primary close='close' action='input: left' text-label='Im'>\Im()</primary>
+	</key>
+	<key name='unity' row='3' col='3'>
+		<primary close='close' action='input: left' text-label='unity'>\unity()</primary>
 	</key>
 </keyboard>

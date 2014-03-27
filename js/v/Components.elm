@@ -238,7 +238,7 @@ def PageView(title) {
 	}
 
 	method updateScroll(horiz) {
-		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{mouseWheel: true, scrollX: horiz});
+		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: true, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
 		self.scroll.refresh();
 	}
 
@@ -271,24 +271,30 @@ def ListView {
 		this.updateScroll();
 	}
 
-	method addField {
+	method addField(el,update) {
 		var self = this;
 		var field = elm.create(this.fieldType,this.focusManager);
 		field.$.on('lost-focus',$.proxy(this.onFieldBlur,this));
 		field.$.on('gain-focus',$.proxy(this.onFieldFocus,this));
 		field.$.on('update',$.proxy(this.onFieldUpdate,this));
-		if(this.addFieldToTop) {
-			this.$items-list.prepend(field);
+		if(el) {
+			$(el).after(field);
 		} else {
-			this.$items-list.append(field);
+			if(this.addFieldToTop) {
+				this.$items-list.prepend(field);
+			} else {
+				this.$items-list.append(field);
+			}
 		}
-		this.updateScroll();
+		if(update) setTimeout(function() {
+			this.updateScroll();
+		},0);
 		this.$.trigger('update');
 		return field;
 	}
 
 	method needsField {
-		return this.$items-list.children().toArray().filter(function(field) {
+		return this.autoAddField && this.$items-list.children().toArray().filter(function(field) {
 			return field.empty && field.empty();
 		}).length == 0;
 	}
@@ -590,7 +596,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	css {
 		overflow: visible;
-		z-index: 2000;
+		z-index: 1001;
 	}
 
 	my container {
@@ -942,26 +948,26 @@ def ToolbarButton(label,callback) {
 	}
 
 	css {
-		font-size: 16px;
+		font-size: 14px;
 		display: inline;
 		padding: 8px;
 		padding-left: 10px;
 		padding-right: 10px;
 		cursor: pointer;
 		color: #EEE;
-		border-radius: 3px;
+		border-radius: 20px;
 		text-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 		margin-right: 10px;
 	}
 
 	style default {
-		background: #AAA;
-		box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
+		background: #333;
+		// box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 	}
 
 	style active {
-		background: #BBB;
-		box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+		background: #444;
+		// box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 	}
 
 	extends {
@@ -1360,10 +1366,11 @@ def Prompt(title,callback,defaultValue) {
 
 	my contents {
 		contents {
-			[[input:TextInput this.defaultValue || '']]
+			[[input:TextInput]]
 		}
 
 		constructor {
+			this.$input.val(root.defaultValue);
 			this.$input.focus();
 		}
 	}
@@ -1386,7 +1393,7 @@ def Prompt(title,callback,defaultValue) {
 	}
 }
 
-def MathPrompt(title,callback,fm) {
+def MathPrompt(title,callback,focusManager) {
 	extends {
 		Dialog
 	}
@@ -1429,13 +1436,15 @@ def MathPrompt(title,callback,fm) {
 
 	css {
 		height: 50%;
+		z-index: 1000;
 	}
 
 	method okay {
-		self.fadeOut();
-		if(self.callback) {
-			self.callback.call();
-		}
+		var p = new Parser(),
+			res = p.parse(self.@input.contents()).valueOf(new Frame);
+		if(self.callback) self.callback(res,self.fadeOut,function(s) {
+			self.$title.html(s);
+		});
 	}
 
 	my toolbar {
@@ -1563,7 +1572,7 @@ def Pull {
 		if(e.gesture.direction != this.pullDirection) {
 			this.pullCancel = true;
 		}
-		if(!this.pullCancel) this.$.trigger('pullStart',{originY:this._dragOrigin});
+		if(!this.pullCancel) this.$.trigger('pullStart',{originY: this._dragOrigin});
 	}
 
 	method _dragged(e) {
@@ -1581,7 +1590,7 @@ def Pull {
 		);
 		this.pullY = y;
 		this.pullTranslateY = translateY;
-		this.$.trigger('pullUpdate',{y:y,translateY:translateY});
+		this.$.trigger('pullUpdate',{y: y,translateY: translateY});
 	}
 
 	method _dragEnd(e) {
@@ -1590,6 +1599,231 @@ def Pull {
 			'translateY',
 			0
 		);
-		this.$.trigger('pullEnd',{y:this.pullY,translateY:this.pullTranslateY});
+		this.$.trigger('pullEnd',{y: this.pullY,translateY: this.pullTranslateY});
+	}
+}
+
+def PullHoriz {
+	properties {
+		pullDirection: 'left',
+		pullMaxWidth: 200,
+		pullConstant: 250
+	}
+
+	constructor {
+		Hammer(this).on('dragstart',this.#_dragStart);
+		Hammer(this).on('drag',this.#_dragged);
+		Hammer(this).on('dragend',this.#_dragEnd);
+	}
+
+	method _dragStart(e) {
+		this._dragOrigin = e.gesture.center.pageX;
+		this.pullCancel = false;
+		if(e.gesture.direction != this.pullDirection) {
+			this.pullCancel = true;
+		}
+		if(!this.pullCancel) this.$.trigger('pullStart',{originX: this._dragOrigin});
+	}
+
+	method _dragged(e) {
+		if(this.pullCancel) return;
+		if(this.pullDirection == 'right') {
+			var x = Math.abs(Math.max(e.gesture.center.pageX - self._dragOrigin,0));
+		} else {
+			var x = Math.abs(Math.min(e.gesture.center.pageX - self._dragOrigin,0));
+		}
+		var k = this.pullConstant;
+		var translateX = (this.pullDirection == 'right' ? 1 : -1 ) * Math.round(this.pullMaxWidth * (1 - Math.exp(-x/k)));
+		$this.css(
+			'translateX',
+			translateX
+		);
+		this.pullX = x
+		this.pullTranslateX = translateX;
+		this.$.trigger('pullUpdate',{x: x,translateX: translateX});
+	}
+
+	method _dragEnd(e) {
+		if(this.pullCancel) return;
+		$this.css(
+			'translateX',
+			0
+		);
+		this.$.trigger('pullEnd',{x: this.pullX,translateX: this.pullTranslateX});
+	}
+}
+
+def PullIndicator(src,owner) {
+	html {
+		<div>
+			<div class='inner'>
+				<div class='label'></div>
+			</div>
+		</div>
+	}
+
+	properties {
+		pullMin: 35
+	}
+
+	css {
+		width: 100%;
+		background: #CCC;
+		position: absolute;
+		top: 0;
+		text-align: center;
+		-webkit-transition: background-color 0.05s;
+	}
+
+	my inner {
+		css {
+			position: relative;
+			width : 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+	}
+
+	my label {
+		css {
+			position: absolute;
+			width: 100%;
+			left: 0px;
+			text-align: center;
+			font-size: 20px;
+			color: #FFF;
+			display: none;
+		}
+	}
+
+	constructor {
+		this.owner.$.on('pullUpdate',this.#indPullUpdated);
+		this.owner.$.on('pullEnd',this.#indPullEnded);
+		this.$.css('background-color',this.src[0].color);
+		// Inverts the function mapping the actual pull distance to the displacment for Pulls
+		// maxY is how far you have to pull the thing to get it (1 - 0.01) = 99% of the way there.
+		this.pullMax = -this.owner.pullConstant * Math.log(0.01);
+		this.size();
+	}
+
+	method setColorTransitionSpeed(s) {
+		this.$.css('-webkit-transition','background-color ' + s.toString() + 's')	
+	}
+
+	method indPullUpdated(e,data) {
+		var l = this.$label;
+		l.css('bottom', (data.translateY / 2) - 10);
+		if(Math.abs(data.translateY) > this.pullMin) {
+			l.show();
+		} else {
+			l.hide();
+		}
+		var index = Math.min(this.src.length - 1,Math.round(this.src.length * (data.y - this.pullMin) / this.pullMax));
+		if(index >= 0 && index < this.src.length) {
+			this.current = this.src[index];
+			l.html(this.current.label);
+			this.$.css('background-color',this.current.color);
+		} else {
+			this.current = null;
+		}
+	}
+
+	method indPullEnded(e,data) {
+		if(this.current) {
+			this.owner.$.trigger(this.current.event);
+		}
+	}
+
+	method size {
+		this.$.css('height',this.owner.pullMaxHeight)
+		this.$.css('top',0 - this.owner.pullMaxHeight);
+	}
+}
+
+def PullIndicatorHoriz(src,owner) {
+	html {
+		<div>
+			<div class='inner'>
+				<div class='label'></div>
+			</div>
+		</div>
+	}
+
+	properties {
+		pullMin: 40
+	}
+
+	css {
+		height: 100%;
+		background: #CCC;
+		position: absolute;
+		top: 0;
+		-webkit-transition: background-color 0.5s;
+	}
+
+	my inner {
+		css {
+			position: relative;
+			width : 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+	}
+
+	my label {
+		css {
+			background-repeat: no-repeat;
+			background-position: center center;
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			left: 0px;
+			font-size: 16px;
+			color: #FFF;
+		}
+	}
+
+	constructor {
+		this.owner.$.on('pullUpdate',this.#indPullUpdated);
+		this.owner.$.on('pullEnd',this.#indPullEnded);
+		this.$.css('background-color',this.src[0].color);
+		// Inverts the function mapping the actual pull distance to the displacment for Pulls
+		// maxY is how far you have to pull the thing to get it (1 - 0.01) = 99% of the way there.
+		this.pullMax = -this.owner.pullConstant * Math.log(0.01);
+		this.size();
+	}
+
+	method setColorTransitionSpeed(s) {
+		this.$.css('-webkit-transition','background-color ' + s.toString() + 's')	
+	}
+
+	method indPullUpdated(e,data) {
+		var l = this.$label;
+		l.css('width',Math.abs(data.translateX));
+		if(Math.abs(data.translateX) > this.pullMin) {
+			l.show();
+		} else {
+			l.hide();
+		}
+		var index = Math.min(this.src.length - 1,Math.round(this.src.length * (data.x - this.pullMin) / this.pullMax));
+		if(Math.abs(data.translateX) > this.pullMin && index >= 0 && index < this.src.length) {
+			this.current = this.src[index];
+			l.css('background-image', 'url(' + this.current.label + ')')
+			l.css('background-repeat','no-repeat').css('background-position','center center').css('background-size',Math.min($this.height()/2,30));
+			this.$.css('background-color',this.current.color);
+		} else {
+			this.current = null;
+		}
+	}
+
+	method indPullEnded(e,data) {
+		if(this.current) {
+			this.owner.$.trigger(this.current.event);
+		}
+	}
+
+	method size {
+		this.$.css('width',this.owner.pullMaxWidth)
+		this.$.css('right',0 - this.owner.pullMaxWidth);
 	}
 }

@@ -23,4 +23,7 @@
 	<key name='acoth' row='4' col='2'>
 		<primary close='close' action='input:left' text-label='acoth'>\acoth()</primary>
 	</key>
+	<key name='atan2' row='5' col='1'>
+		<primary close='close' action='input:left,left' text-label='atan2'>\atan2(,)</primary>
+	</key>
 </keyboard>

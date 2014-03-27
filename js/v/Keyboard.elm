@@ -14,7 +14,6 @@ def Keyboard(keyboardSource) {
 			width: 100%;
 			height: 100%;
 			position: relative;
-			overflow: hidden;
 		}
 	}
 	
@@ -23,7 +22,6 @@ def Keyboard(keyboardSource) {
 			width: 100%;
 			height: 100%;
 			position: relative;
-			overflow: hidden;
 		}
 	}
 	
@@ -41,7 +39,7 @@ def Keyboard(keyboardSource) {
 		bottom: 0px;
 		width: 100%;
 		background: #1b1b1b;
-		z-index: 1000;
+		z-index: 1001;
 		transform: translate3d(0,0,0);
 		-webkit-transform: translate3d(0,0,0);
 		-webkit-overflow-scrolling: touch;
@@ -190,7 +188,7 @@ def DragKeyboard(keyboardSource) {
 		Hammer(this).on('dragstart',this.#dragStart);
 		Hammer(this).on('drag',this.#dragged);
 		Hammer(this).on('dragend',this.#dragEnd);
-		this.$.append(elm.create('DragIndicator'));
+		this.$.append(elm.create('KeyboardPullIndicator'));
 	}
 
 	method dragStart(e) {
@@ -200,7 +198,7 @@ def DragKeyboard(keyboardSource) {
 	on pullUpdate(e,data) {
 		var y = data.y,
 			translateY = data.translateY;
-		self.@DragIndicator.setHeight(Math.abs(translateY));
+		self.@KeyboardPullIndicator.setHeight(Math.abs(translateY));
 		// Stop keys from being pressed
 		if(y > 30 && !self.disabled) {
 			self.disabled = true;
@@ -216,16 +214,16 @@ def DragKeyboard(keyboardSource) {
 		},500);
 		this.animated();
 		this.slideUp();
-		this.@DragIndicator.invoke();
+		this.@KeyboardPullIndicator.invoke();
 	}
 
 
 	on invalidate {
-		this.$DragIndicator.css('top',$this.height());
+		this.$KeyboardPullIndicator.css('top',$this.height());
 	}
 }
 
-def DragIndicator {
+def KeyboardPullIndicator {
 	html {
 		<div></div>
 	}
@@ -233,7 +231,7 @@ def DragIndicator {
 	constructor {
 		this.maxHeight = 300;
 		this.options = [
-			{label: ''},
+			{label: '', color: '#000'},
 			{label: 'Numerical', action: 'keyboard numerical'},
 			{label: 'Matrix', action: 'keyboard matrix'},
 			{label: 'List', action: 'keyboard list'},
@@ -248,15 +246,14 @@ def DragIndicator {
 		text-align: center;
 		color: #FFF;
 		font-size: 40px;
+		-webkit-transition: background-color 0.1s;
 	}
 
 	method setHeight(y) {
 		y = Math.round(y);
 		var index = Math.max(0,Math.floor(y / (this.maxHeight / this.options.length)));
-		var color = 27 + index * 25;
-		var rgbString = 'rgb(' + color.toString() + ',' + color.toString() + ',' + color.toString() + ')';
-		$this.css('line-height',y + 'px')
 		this.current = this.options[index];
+		$this.css('line-height',y + 'px');
 		$this.html(this.current.label);
 	}
 
@@ -284,19 +281,20 @@ def Key(_keyData,keyboard) {
 		if(this.cannotInvoke) return;
 		try {
 			if(this.activeSubkey().attr('variable')) {
-				if(app.storage.varSaveMode) {
-					if(app.storage.varSaveMode == 'store') {
-						app.storage.setVariable(
+				if(app.data.varSaveMode) {
+					if(app.data.varSaveMode == 'store') {
+						app.data.setVariable(
 							this.activeSubkey().attr('variable'),
 							app.mode.result()
 						);
 					}
-					if(app.storage.varSaveMode == 'set') {
+					if(app.data.varSaveMode == 'set') {
 						app.setVariablePrompt(
 							this.activeSubkey().attr('variable')
 						);
+					} else {
 					}
-					app.storage.cancelVariableSave();
+					app.data.cancelVariableSave();
 				} else {
 					app.mode.currentInput().acceptLatexInput(
 						this.activeSubkey().attr('variable')
@@ -315,7 +313,6 @@ def Key(_keyData,keyboard) {
 					split = attr.split(':'),
 					target = StringUtil.trim(split[0]),
 					action = StringUtil.trim(split[1]);
-					////console.log(target,action);
 					if(target == 'input') {
 						app.mode.currentInput().acceptActionInput(action);
 					}
@@ -417,18 +414,20 @@ def Key(_keyData,keyboard) {
 		return !!this.keyData().find('alternate').length;
 	}
 	
-	method setAlt() {
+	method setAlt {
 		//console.log('setAlt');
 		if(this.hasAlt()) {
+			if(this.$.width() < 100) this.$.css('translateY',0 - this.$.height() * (3/4));
 			this.altMode = true;
 			this.label();
 			this.position();
 		}
 	}
 	
-	method setPrimary() {
+	method setPrimary {
 		//console.log('setPrimary');
 		if(!!this.keyData().find('primary').length) {
+			this.$.css('translateY',0);
 			this.altMode = false;
 			this.label();
 			this.position();
@@ -491,6 +490,7 @@ def Key(_keyData,keyboard) {
 		padding: 0;
 		outline: none;
 		-webkit-border-radius: 0px;
+		-webkit-transition: -webkit-transform ease-out 0.05s;
 		border-radius: 0px;
 		overflow: hidden;
 	}

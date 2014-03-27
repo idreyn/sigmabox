@@ -17,11 +17,19 @@ def SigmaboxAppFrame {
 
 def SyncSubscriber {
 	constructor {
-		app.storage.uiSyncSubscribe(this);
+		app.data.uiSyncSubscribe(this);
 	}
 
 	method syncTo(val) {
 		this.willSyncTo = val;
+	}
+
+	method subscribeEvent(event) {
+		this.$.addClass('subscribe-' + event);
+	}
+
+	method unsubscribeEvent(event) {
+		this.$.removeClass('subscribe-' + event);
 	}
 
 	on sync {
@@ -38,7 +46,6 @@ def SigmaboxSideMenu {
 
 	contents {
 		<img src='res/img/logo-alpha.png' width='100%' />
-//		[[SigmaboxSideMenuItem 'calculator', 'repl']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'stats','stats']]
@@ -210,7 +217,7 @@ def TrigSwitch(left,right,willSyncTo) {
 
 	method forceRadians() {
 		if(this.realTrigMode === undefined) {
-			this.realTrigMode = app.storage.realTrigMode;
+			this.realTrigMode = app.data.realTrigMode;
 			this.flip(true);
 			this.disable();
 			this.applyStyle('disabled');
