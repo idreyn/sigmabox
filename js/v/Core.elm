@@ -46,6 +46,7 @@ def SigmaboxSideMenu {
 
 	contents {
 		<img src='res/img/logo-alpha.png' width='100%' />
+		[[SigmaboxSideMenuItem 'light-bulb', 'lab']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'stats','stats']]
@@ -235,68 +236,6 @@ def TrigSwitch(left,right,willSyncTo) {
 	}
 }
 
-def Overlay {
-	properties {
-		overlaySourceDirection: 'bottom'
-	}
-
-	css {
-		-webkit-transition: -webkit-transform 0.1s ease-out;
-		z-index: 1001;
-		background: url(res/img/background.png);
-	}
-
-	on ready {
-		this.flyOut();
-	}
-
-	method flyOut {
-		switch(this.overlaySourceDirection) {
-			case 'right':
-				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
-				$this.css('translateX',app.root.$.width());
-				break;
-			case 'left':
-				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
-				$this.css('translateX',-app.root.$.width());
-				break;
-			case 'top':
-				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
-				$this.css('translateY',-app.root.$.height());
-				break;
-			case 'bottom': 
-				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
-				$this.css('translateY',app.root.$.height());
-				break;
-		}
-	}
-
-	method flyIn {
-		switch(this.overlaySourceDirection) {
-			case 'right':
-				$this.css('translateX',0);
-				break;
-			case 'left':
-				$this.css('translateX',0);
-				break;
-			case 'top':
-				$this.css('translateY',0);
-				break;
-			case 'bottom': 
-				$this.css('translateY',0);
-				break;
-		}
-	}
-
-	on removed {
-		this.flyOut();
-		setTimeout(function() {
-			$this.hide().remove();
-			if(self.relinquish) self.relinquish.call(self);
-		},1000)
-	}
-}
-
 def Notification(text,duration) {
 
 	html {
@@ -307,11 +246,13 @@ def Notification(text,duration) {
 		position: fixed;
 		width: 100%;
 		top: 0;
-		height: 20px;
+		height: 30px;
+		line-height: 30px;
 		color: #999;
 		background: #EEE;
-		box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+		//box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 		padding: 10px;
+		z-index: 3000;
 	}
 
 	constructor {
@@ -328,5 +269,15 @@ def Notification(text,duration) {
 				$this.animate({top:-100},500,'easeInQuart');
 			},this.duration*1000);
 		});
+	}
+}
+
+def SigmaLabView {
+	extends {
+		StatsTestView
+	}
+
+	properties {
+		noKeyboard: true
 	}
 }

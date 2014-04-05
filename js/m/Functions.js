@@ -280,34 +280,34 @@ Functions.nthPrime = function(n) {
 	return i;
 };
 
-Functions.integral = function(a,b,lambda) {
-		var	n =  10000,
-			dx = Math.abs((a - b) / n),
-			sum = 0,
-			heights = [],
-			flip,
-			inter;
-		if(a > b) {
-			inter = a;
-			a = b;
-			b = inter;
-			flip = true;
-		}
-		if(dx == 0 || isNaN(dx)) return 0;
-		for(var i = a; i <= b; i += dx) {
-			var r = lambda(i);
-			heights.push(r);
-		}
-		sum = heights[0];
-		for(var i = 1; i < n; i++) {
-			sum += 2 * heights[i];
-		}
-		sum += heights[heights.length - 1];
-		// // console.log(heights[heights.length - 1]);
-		sum *= dx * 0.5;
-		if(flip) sum *= -1;
-		return Functions.round(sum,6);
-	},
+Functions.integral = function(a,b,lambda,n,noRound) {
+	n = n || 10000;
+	var dx = Math.abs((a - b) / n),
+		sum = 0,
+		heights = [],
+		flip,
+		inter;
+	if(a > b) {
+		inter = a;
+		a = b;
+		b = inter;
+		flip = true;
+	}
+	if(dx == 0 || isNaN(dx)) return 0;
+	for(var i = a; i <= b; i += dx) {
+		var r = lambda(i);
+		if(Math.abs(r) == Infinity) r = 0;
+		heights.push(r);
+	}
+	sum = heights[0];
+	for(var i = 1; i < n; i++) {
+		sum += 2 * heights[i];
+	}
+	sum += heights[heights.length - 1];
+	sum *= dx * 0.5;
+	if(flip) sum *= -1;
+	return noRound ?  sum : Functions.round(sum,6);
+}
 
 // Incomplete. Fuck
 
@@ -340,11 +340,11 @@ Functions.stdnormalcdf = function(z1,z2) {
 	z2 = Math.min(6,z2);
 	return Functions.integral(z1,z2,function(x) {
 		return Functions.stdnormalpdf(x);
-	});
+	},100000);
 }
 
 Functions.znormal = function(z) {
-	return Functions.stdnormalcdf(-6,z);
+	return Functions.stdnormalcdf(-12,z);
 }
 
 Functions.normalpdf = function(x,mu,sigma) {
@@ -395,6 +395,23 @@ Functions.poissoncdf = function(lambda,k) {
 	return sum;
 }
 
+Functions.range = function(min,max,step) {
+	if(!step) step = 1;
+	var res = [];
+	for(var i=min;i<=max;i+=step) {
+		res.push(new Value(i));
+	}
+	return new Vector(res);
+}
+
+Functions.sort = function(arr) {
+	// I can't believe this isn't the native behavior!
+	return arr.sort(function(a,b) { return a > b ? 1 : -1 });
+}
+
+Functions.sum = function(arr) {
+	return arr.reduce(function(a,b) { return a.add ? a.add(b) : a + b; });
+}
 
 Functions.mean = function(arr)
 {
@@ -409,13 +426,18 @@ Functions.mean = function(arr)
 
 Functions.median = function(arr)
 {
+	return Functions.quartile(arr,2);
+}
+
+Functions.quartile = function(arr,n) {
 	arr = arr.args || arr;
-	if(arr.length % 2 == 0)
-	{
-		return (arr[arr.length/2] + arr[arr.length/2 - 1]) / 2;
+	arr = Functions.sort(arr);
+	var index = ((n/4) * (arr.length + 1)) - 1;
+	if(Math.floor(index) == index) {
+		return arr[index];
 	} else {
-		return arr[Math.floor(arr.length/2)];
-	};
+		return (arr[Math.floor(index)] + arr[Math.ceil(index)]) / 2;
+	}
 }
 
 Functions.mode = function(arr)
@@ -427,7 +449,6 @@ Functions.mode = function(arr)
 		if(items[arr[i]] === undefined || items[arr[i]] === null) items[arr[i]] = 0;
 		items[arr[i]] ++;
 	};
-	////console.log(items);
 	var modes = [];
 	var max = 0;
 	for(var prop in items)
@@ -446,11 +467,339 @@ Functions.mode = function(arr)
 	return new Vector(modes);
 }
 
-Functions.stdev = function(arr)
+Functions.stdev = function(arr,pop)
 {
 	arr = arr.args || arr;
 	var mean = Functions.mean(arr);
-	return Math.sqrt(Functions.mean(arr.map(function(n){ return Math.pow(n - mean,2); })));
+	var factor = pop ? 1 / arr.length : 1 / (arr.length - 1);
+	return Math.sqrt(factor * Functions.sum(arr.map(function(n){ return Math.pow(n - mean,2); })));
 }
 
+Functions.min = function(arr) {
+	arr = Functions.numbers(arr);
+	var min = Infinity;
+	for(var i=0;i<arr.length;i++) {
+		if(arr[i] < min) {
+			min = arr[i];
+		}
+	}
+	return min;
+}
+
+Functions.max = function(arr) {
+	arr = Functions.numbers(arr);
+	var max = -Infinity;
+	for(var i=0;i<arr.length;i++) {
+		if(arr[i] > max) {
+			max = arr[i];
+		}
+	}
+	return max;
+}
+
+Functions.number = function(n) {
+	return n.toFloat ? n.toFloat() : parseFloat(n);
+}
+
+Functions.numbers = function(arr) {
+	return arr.map(function(a) { return a.toFloat ? a.toFloat() : parseFloat(a); });
+}
+
+Functions.buckets = function(arr,n) {
+	var max = Functions.max(arr),
+		min = Functions.min(arr),
+		range = max - min,
+		width = range / n,
+		buckets = [];
+	for(var i=0;i<arr.length;i++) {
+		var el = arr[i],
+			index = Math.min(Math.floor((el - min) / width),n - 1);
+		if(!buckets[index]) buckets[index] = [];
+		buckets[index].push(el);
+	}
+	for(var i=0;i<buckets.length;i++) {
+		if(!buckets[i]) {
+			buckets[i] = [];
+		}
+	}
+	return buckets;
+}
+
+Functions.histogram = function(arr,n) {
+	return Functions.buckets(arr,n).map(function(bucket) {
+		return bucket.length;
+	});
+}
+
+Functions.oneVarStats = function(arr) {
+	arr = Functions.numbers(arr);
+	var res = {};
+	res.numbers = arr;
+	res.mean = Functions.mean(arr);
+	res.sum = Functions.sum(arr);
+	res.sumSquares = Functions.sum(arr.map(function(a) { return a * a; }));
+	res.sampleStdev = Functions.stdev(arr,false);
+	res.popStdev = Functions.stdev(arr,true);
+	res.n = arr.length;
+	res.min = Functions.min(arr);
+	res.q1 = Functions.quartile(arr,1);
+	res.median = Functions.median(arr);
+	res.q3 = Functions.quartile(arr,3);
+	res.max = Functions.max(arr);
+	return res;
+}
+
+Functions.linearRegression = function(x,y) {
+	var res = {};
+	var xStats = Functions.oneVarStats(x);
+	var yStats = Functions.oneVarStats(y);
+	var sumXY = new Vector(x).dot(new Vector(y)).toFloat();
+	res.r = sumXY / Math.sqrt(xStats.sumSquares * yStats.sumSquares);
+	res.r2 = res.r * res.r;
+	res.b = res.r * (yStats.sampleStdev / xStats.sampleStdev);
+	res.a = yStats.mean - res.b * xStats.mean;
+	return res;
+}
+
+Functions.points = function(l1,l2) {
+	var res = [];
+	for(var i=0;i<Math.max(l1.length,l2.length);i++) {
+		res.push([
+			l1[i],
+			l2[i]
+		]);
+	}
+	return res;
+}
+
+Functions.zTest = function(m,s,n,h,x) {
+	var z = (x - m) / (s / Math.sqrt(n));
+	var score = Functions.znormal(z);
+	var p;
+	if(h == 0) {
+		p = 2 * (1 - score);
+	}
+	if(h == 1) {
+		if(z > 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	if(h == -1) {
+		if(z < 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	return {z: z, p: p};
+}
+
+Functions.twoSampleZTest = function(m1,m2,s1,s2,n1,n2,h) {
+	var z = (m2 - m1) / Math.sqrt( Math.pow(s1,2) / n1 + Math.pow(s2,2) / n2 );
+	var score = Functions.znormal(z);
+	var p;
+	if(h == 0) {
+		p = 2 * (1 - score);
+	}
+	if(h == 1) {
+		if(z > 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	if(h == -1) {
+		if(z < 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	return {z: z, p: p};
+}
+
+Functions.onePropZTest = function(p0,x,n,h) {
+	var pHat = x/n;
+	var stdev = Math.sqrt(p0 * (1 - p0) / n);
+	var z = (pHat - p0) / stdev;
+	var score = Functions.znormal(z);
+	var p;
+	if(h == 0) {
+		p = 2 * (1 - score);
+	}
+	if(h == 1) {
+		if(z > 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	if(h == -1) {
+		if(z < 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	return {pHat: pHat, z: z, p: p};
+}
+
+Functions.twoPropZTest = function(x1,x2,n1,n2) {
+	var pHat1 = x1/n1;
+	var pHat2 = x2/n2;
+	var pP = (x1 + x2) / (n1 + n2);
+	var stdev = Math.sqrt(pP * (1 - pP) * ((1/n1) + (1/n2)));
+	var z = Math.abs(pHat1 - pHat2) / stdev;
+	if(isNaN(z)) {
+		z = 0;
+	}
+	var score = Functions.znormal(z);
+	var p = 1 - score;
+	return {pHat1: pHat1, pHat2: pHat2, z: z, p: p};
+}
+
+Functions.tTest = function(m,s,n,h,x) {
+	var t = (x - m) / (s / Math.sqrt(n));
+	var score = Functions.tDistribution(t,n-1);
+	var p;
+	if(h == 0) {
+		p = 2 * (1 - score);
+	}
+	if(h == 1) {
+		if(t > 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	if(h == -1) {
+		if(t < 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	return {t: -t, p: p, df: n-1};
+}
+
+Functions.twoSampleTTest = function(m1,m2,s1,s2,n1,n2,h) {
+	var s1son = Math.pow(s1,2) / n1;
+	var s2son = Math.pow(s2,2) / n2;
+	var t = (m2 - m1) / Math.sqrt( s1son + s2son );
+	var df = Math.pow(s1son + s2son,2) / (Math.pow(s1son,2)/(n1 - 1) + Math.pow(s2son,2)/(n2 - 1));
+	var score = Functions.tDistribution(t,df);
+	var p;
+	if(h == 0) {
+		p = 2 * (1 - score);
+	}
+	if(h == 1) {
+		if(t > 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	if(h == -1) {
+		if(t < 0) {
+			p = 1 - score;
+		} else {
+			p = score;
+		}
+	}
+	return {t: -t, p: p, df: df};
+}
+
+Functions.incompleteBeta = function(x,a,b) {
+	var v = Functions.integral(0,x,function(t) {
+		return Math.pow(t,a-1) * Math.pow(1-t,b-1);
+	},1e4,true);
+	return v;
+}
+
+Functions.normalizedIncompleteBeta = function(x,a,b) {
+	return Functions.incompleteBeta(x,a,b) / Functions.incompleteBeta(1,a,b);
+}
+
+Functions.tDistribution = function(t,v) {
+	if(v > 500) return Functions.znormal(t);
+	var x = (t + Math.sqrt(Math.pow(t,2) + v)) / (2 * Math.sqrt(Math.pow(t,2) + v));
+	return Functions.normalizedIncompleteBeta(x,v/2,v/2);
+}
+
+Functions.logGamma = function(x) {
+	var tmp = (x - 0.5) * Math.log(x + 4.5) - (x + 4.5);
+	var ser = 1.0 + 76.18009173 / (x + 0) - 86.50532033 / (x + 1) + 24.01409822 / (x + 2) - 1.231739516 / (x + 3) + 0.00120858003 / (x + 4) - 0.00000536382 / (x + 5);
+	return tmp + Math.log(ser * Math.sqrt(2 * Math.PI));
+}
+
+Functions.gamma = function(x) { 
+	return Functions.round(Math.exp(Functions.logGamma(x)),4);
+}
+
+Functions.chisquaredpdf = function(x,k) {
+	if(x < 0) return 0;
+	return (Math.pow(x,k/2 - 1) * Math.exp(-x/2)) / (Math.pow(2,k/2)*Functions.gamma(k/2));
+}
+
+Functions.chisquaredcdf = function(x,k) {
+	return Functions.integral(0,x,function(t) {
+		return Functions.chisquaredpdf(t,k);
+	},1e5,false);
+}
+
+Functions.chiSquaredTest = function(o) {
+	var colTotals = [];
+	for(var i=0;i<o.numColumns();i++) {
+		var col = o.col(i + 1);
+		colTotals.push(Functions.sum(col));
+	}
+	colTotals = Functions.numbers(colTotals);
+
+	var rowTotals = [];
+	for(var i=0;i<o.numRows();i++) {
+		var row = o.row(i + 1);
+		rowTotals.push(Functions.sum(row));
+	}
+	rowTotals = Functions.numbers(rowTotals);
+	var total = 0;
+	o.map(function(i) {
+		total += i.toFloat();
+	});
+	var e = new Matrix([[]]);
+	for(var i=0;i<o.numRows();i++) {
+		for(j=0;j<o.numColumns();j++) {
+			var entry = rowTotals[i] * colTotals[j] / total;
+			e.set(i+1,j+1,entry);
+		}
+	}
+	e = e.copy();
+	var x2 = 0;
+	o.map(function(oi,r,c) {
+		var ei = e.select(r,c);
+		oi = oi.toFloat();
+		ei = ei.toFloat();
+		x2 += Math.pow(oi - ei,2) / ei;
+	});
+	var df = (o.numColumns() - 1) * (o.numRows() - 1);
+	var p = 1 - Functions.chisquaredcdf(x2,df);
+	return {x2: x2, df: df, p: p, expected: e};
+}
+
+Functions.chiSquaredGOFTest = function(e,o) {
+	if(e instanceof Vector) e = e.args;
+	if(o instanceof Vector) o = o.args;
+	e = Functions.numbers(e);
+	o = Functions.numbers(o);
+	var len = Math.max(e.length,o.length),
+		x2 = 0,
+		p = 0,
+		df = len - 1;
+	for(var i=0;i<len;i++) {
+		x2 += Math.pow(o[i] - e[i],2) / e[i];
+	}
+	p = 1 - Functions.chisquaredcdf(x2,df);
+	return {x2: x2, df: df, p: p};
+}
 

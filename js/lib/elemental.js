@@ -518,7 +518,7 @@ var elm;
                     warn('Braces are deprecated in favor of whitespace demarcation');
                     signature = signature.slice(0,-1);
                 }
-                var reg = /^([A-Za-z0-9_\-]*)(\([A-Za-z0-9_=\"\'\.\,\s]*\))?$/;
+                var reg = /^([@A-Za-z0-9_\-]*)(\([A-Za-z0-9_=\"\'\.\,\s]*\))?$/;
                 var res = signature.match(reg);
                 if(!res || !res[1]) {
                     error('"' + signature + '" is not a valid definition signature');
@@ -648,6 +648,10 @@ var elm;
                         res = elm.parse(newBody,filename,lineNumber,0,false);
                         res = res[0];
                         def.name = res.name;
+                        if(def.name.charAt(0) == '@') {
+                            def.name = def.name.slice(1);
+                            def.oneLevel = true;
+                        }
                         def.parameters = res.parameters;
                         res = res.body;
                 }
@@ -795,6 +799,8 @@ var elm;
                         rest = args.slice(1);
                     if (this.__definitions[type]) {
                         return this.__definitions[type].call(null, rest, null);
+                    } else if(elm._definitions[type]) {
+                        return elm._definitions[type].call(null, rest, null);
                     } else {
                         throw new Error("[Elemental] " + definition.name + " has no definition " + type + ".");
                     }
@@ -1019,7 +1025,7 @@ var elm;
                         ____func += 'try {';
                         ____func += __selector__.body;
                         ____func += '} catch(e) {';
-                        ____func += 'throw "Elemental.' + __selector__.definition.name + '#on:' + __selector__.event + ' <- " + e.valueOf();'; 
+                        ____func += 'throw "' + __selector__.definition.name + '#on:' + __selector__.event + ' <- " + e.valueOf();'; 
                         ____func += '}';
                         ____func += '}';
                         eval(____func);
@@ -1034,7 +1040,7 @@ var elm;
                     ____func += 'try {';
                     ____func += (__selector__.body && __selector__.body.length > 0) ? __selector__.body : '';
                     ____func += '} catch(e) {';
-                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#(constructor) <- " + e.valueOf();'; 
+                    ____func += 'throw "' + __selector__.definition.name + '#(constructor) <- " + e.valueOf();'; 
                     ____func += '}';
                     ____func += '}';
                     try {
@@ -1051,7 +1057,7 @@ var elm;
                     ____func += 'try {';
                     ____func += __selector__.body;
                     ____func += '} catch(e) {';
-                    ____func += 'throw "Elemental.' + __selector__.definition.name + '#' + __selector__.name + ' <- " + e.valueOf();'; 
+                    ____func += 'throw "' + __selector__.definition.name + '#' + __selector__.name + ' <- " + e.valueOf();'; 
                     ____func += '}';
                     ____func += '}';
                     eval(____func);
@@ -1077,7 +1083,8 @@ var elm;
                 case 'subdef':
                     if(!__el__.__definitions) __el__.__definitions = {};
                     var constructMe = __el__.__definitions[__selector__.name] = elm.createConstructor(__selector__, root);
-                    $(__el__).find('.' + __selector__.name).each(function (i, e) {
+                    var findFunc = __selector__.oneLevel ? 'children' : 'find';
+                    $(__el__)[findFunc]('.' + __selector__.name).each(function (i, e) {
                         __selector__.body.forEach(function (block) {
                             elm.applyBlockTo(e, block, __frame__, __el__, root);
                         });

@@ -676,6 +676,19 @@ Matrix.prototype.toString = function(frame,format) {
 	}).join(format? '&nbsp;|&nbsp;' : '|') + ']';
 }
 
+Matrix.prototype.toTable = function(frame,cl) {
+	var h = '<table class="' + cl + '">';
+	this.rows.forEach(function(r) {
+		h += '<tr>';
+		r.forEach(function(e) {
+			h += '<td>' + e.toString() + '</td>';
+		});
+		h += '</tr>';
+	});
+	h += '</table>';
+	return h;
+}
+
 Matrix.prototype.row = function(n) {
 	return this.rows[n-1];
 }
@@ -696,6 +709,11 @@ Matrix.prototype.numColumns = function() {
 
 Matrix.prototype.select = function(r,c) {
 	return this.rows[r-1][c-1];
+}
+
+Matrix.prototype.set = function(r,c,v) {
+	if(!this.rows[r-1]) this.rows[r-1] = [];
+	this.rows[r-1][c-1] = !isNaN(v) ? new Value(v) : v;
 }
 
 Matrix.prototype.add = function(other) {
@@ -900,6 +918,11 @@ Matrix.prototype.copy = function() {
 }
 
 function Vector(args) {
+	if(!isNaN(args[0])) {
+		args = args.map(function(i) {
+			return new Value(i);
+		});
+	}
 	this.args = args || [];
 }
 
@@ -984,6 +1007,10 @@ Vector.prototype.toStringPolar = function(rads) {
 
 Vector.prototype.map = function(func) {
 	return new Vector(this.args.map(func));
+}
+
+Vector.prototype.sort = function() {
+	return new Vector(this.args.sort(function(a,b) { return a > b ? 1 : -1; }));
 }
 
 Vector.prototype.serialize = function() {

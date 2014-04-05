@@ -12,8 +12,6 @@ function Application() {
 
 Application.prototype.initLayout = function(wrapper) {
 
-	this.res = new Resource();
-
 	this.nullInput = elm.create('MathTextField');
 	this.nullInput.$.addClass('null-input');
 	this.data.init();
@@ -35,20 +33,22 @@ Application.prototype.initLayout = function(wrapper) {
 	this.functions = elm.create('FunctionListView');
 	this.root.addChild(this.functions);
 
+	this.lab = elm.create('ChiSquaredView');
+	this.root.addChild(this.lab);
 
 	this.stats = elm.create('StatsView');
 	this.root.addChild(this.stats);
 
-	this.modes = [this.eval,this.grapher,this.functions,this.stats];
+	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab];
 	this.root.menu.build();
 	this.setMode(this.data.mode || 'eval');
-
-	// Testing only
 
 	$(window).on('resize',$.proxy(this.resize,this));
 	this.resize();
 	this.data.uiSyncReady();
 	this.mode.init();
+
+	$(window).trigger('app-ready');
 }
 
 Application.prototype.setModeHeight = function(n) {
@@ -104,7 +104,7 @@ Application.prototype.initKeyboards = function() {
 	this.root.addChild(this.keyboards.main);
 	this.keyboards.main.init();
 	var self = this;
-	var kb = ['constants','variables','advanced','sin','cos','tan','matrix','list','numerical','probability'];
+	var kb = ['constants','variables','advanced','sin','cos','tan','matrix','list','numerical','distributions'];
 	kb.forEach(function(k) {
 		self.keyboards[k] = elm.create('Keyboard','res/xml/keyboards/' + k + '.xml');
 		self.root.addChild(self.keyboards[k]);
@@ -137,8 +137,10 @@ Application.prototype.setMode = function(mode) {
 
 Application.prototype.useKeyboard = function(name,forceMain) {
 	if(name == 'main' && !forceMain) {
-		if(this.keyboard == this.keyboards.main) return;
-		this.keyboard.slideDown();
+		if(this.keyboard) {
+			this.keyboard.slideDown();
+		}
+		this.keyboards.main.slideUp();
 		this.keyboard = this.keyboards.main;
 		this.data.cancelVariableSave();
 	} else {

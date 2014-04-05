@@ -4,7 +4,7 @@ def GrapherView {
 	}
 
 	constructor {
-		this.colors = ['#696','#A33','#0A4766','#B6DB49','#50C0E9','#FB3'];
+		this.colors = app.utils.colors();
 		this.transition = 'easeInOutQuart';
 		this.addView(elm.create('GrapherListView').named('equations-list'));
 		this.addView(elm.create('GraphWindow').named('graph-window'));
@@ -12,6 +12,9 @@ def GrapherView {
 		this.@equations-list.$graph-button.on('invoke',this.#showGraph);
 		this.$equations-list.on('update',this.#updateColors);
 		this.@graph-window.$equations-button.on('invoke',this.#showEquations);
+		// Keyboard behavior
+		this.@equations-list.noKeyboard = false;
+		this.@graph-window.noKeyboard = true;
 		// Yum
 		this.updateColors();
 		this.setFragmentMode(this.@equations-list,this.@graph-window);
@@ -30,7 +33,6 @@ def GrapherView {
 				tbf = this.#toolbarFix,
 				eqns = this.@equations-list.collect();
 			if(eqns.length == 0) return;
-			app.hideKeyboard();
 			this.noKeyboard = true;
 			this.@graph-window.inputs = eqns;
 			this.@graph-window.buildEquationButtonSet();
@@ -50,7 +52,6 @@ def GrapherView {
 	method showEquations {
 		var self = this,
 			tbf = this.#toolbarFix;
-		app.showKeyboard();
 		this.noKeyboard = false;
 		self.slideTo(self.@equations-list,tbf);
 	}
@@ -96,6 +97,21 @@ def GraphWindow {
 
 	on invalidate {
 
+	}
+
+	method displayUI(b) {
+		var elements = [
+				self.$top-toolbar,
+				self.$bottom-toolbar,
+				self.$bounds-readout
+			];
+		elements.forEach(function(el) {
+			if(b) {
+				el.show();
+			} else {
+				el.hide();
+			}
+		});
 	}
 
 	method addButtons {
@@ -405,6 +421,13 @@ def GraphWindow {
 		if(render) this.render();
 	}
 
+	method setWindowExplicit(xmin,xmax,ymin,ymax) {
+		this.xmin = xmin;
+		this.xmax = xmax;
+		this.ymin = ymin;
+		this.ymax = ymax;
+	}
+
 	method homeWindow {
 		this.setWindow(10);
 		this.placeTraceHandle(this.traceHandlePlaneX,this.traceHandlePlaneY);
@@ -426,20 +449,48 @@ def GraphWindow {
 	}
 
 
-	method render(renderEquations) {
-
-		var trueTrigMode = app.data.trigUseRadians;
-		app.data.trigUseRadians = true;
-
-		renderEquations = renderEquations === undefined ? true : renderEquations;
-
-		var self = this;
+	method render() {
 
 		this.resolutionFactor = 1;
 
 		var c = this.context();
 		var width = $this.width();
 		var height = $this.height();
+
+		this.$draw.attr('width',width).attr('height',height);
+
+		var win_width = Math.abs(this.xmax - this.xmin);
+		var win_height = Math.abs(this.ymax - this.ymin);
+		
+		var x_scale = width / win_width; //Pixels per 1-increment
+		var y_scale;
+
+		if(this.freeScale) {
+			y_scale = height / win_height;
+		} else {
+			y_scale = x_scale;
+		}
+		
+		this.x_scale = x_scale;
+		this.y_scale = y_scale;
+
+		var origin = {x: x_scale*(0 - this.xmin), y: this.ymax*y_scale};	
+		this.origin = origin;
+
+		c.clearRect(0,0,this.$draw.width(),this.$draw.height());
+
+		this.draw(c,origin,width,height,x_scale,y_scale);
+	}
+
+	method draw(c,origin,width,height,x_scale,y_scale) {
+		this.drawEquations(c,origin,width,height,x_scale,y_scale);
+	}
+
+	method drawEquations(c,origin,width,height,x_scale,y_scale) {
+		var trueTrigMode = app.data.trigUseRadians,
+			renderEquations = true;
+
+		app.data.trigUseRadians = true;
 
 		var planeToCanvas = function(p) {
 			return { x: origin.x + (x_scale*p.x), y: (origin.y + (y_scale*p.y)) };
@@ -449,22 +500,6 @@ def GraphWindow {
 			return { x: (p.x - origin.x)/x_scale, y: (p.y - origin.y)/y_scale };
 		};
 
-		this.$draw.attr('width',width).attr('height',height);
-
-		var win_width = Math.abs(this.xmax - this.xmin);
-		var win_height = Math.abs(this.ymax - this.ymin);
-		
-		var x_scale = width / win_width; //Pixels per 1-increment
-		var y_scale = x_scale;
-		
-		this.x_scale = x_scale;
-		this.y_scale = y_scale;
-
-		var origin = {x: x_scale*(0 - this.xmin), y: this.ymax*y_scale};	
-		this.origin = origin;
-
-		c.clearRect(0,0,this.$draw.width(),this.$draw.height());
-	
 		c.strokeStyle = "#DDD";
 		for(var i = 0; false && i < x_tickcount; i++) {
 			var start = {x: x_tickoffset + (i * x_tickinterval * x_scale), y: 0};
@@ -503,7 +538,7 @@ def GraphWindow {
 				color = item.color;
 			if(type == 'function') {
 				var points = [];
-				var step = 2;
+				var step = 1;
 				Frac.grapherMode = true;
 				if(!data.cache) {
 					// Slap a cache onto the evaluable objects
@@ -512,12 +547,18 @@ def GraphWindow {
 						if(data.cache[planeX] !== undefined) {
 							return data.cache[planeX];
 						} else {
-							var res;
-							app.data.trigForceRadians(function() {
-								res = data.valueOf(new Frame({x: planeX})).toFloat();
+							if(typeof data == 'function') {
+								var res = parseFloat(data(planeX));
 								data.cache[planeX] = res;
-							});
-							return res;
+								return res;
+							} else {
+								var res;
+								app.data.trigForceRadians(function() {
+									res = data.valueOf(new Frame({x: planeX})).toFloat();
+									data.cache[planeX] = res;
+								});
+								return res;
+							}
 						}
 					}
 				}
@@ -545,7 +586,7 @@ def GraphWindow {
 				points.forEach(function(p) {
 					var currentPlane = p;
 					p = planeToCanvas(p);
-					if( // All the reasons we might not want a line here
+					if( // All of the reasons we might not want a line here
 						isNaN(currentPlane.y) ||
 						p.y === null || 
 						(lastPlane.y > self.ymax && currentPlane.y < self.ymin) || 
@@ -568,7 +609,7 @@ def GraphWindow {
 			};
 			
 			if(type == 'points') {
-				c.fillStyle = "#FF1C0A";
+				c.fillStyle = color || "#669966";
 				data = data.map(function(d) { 
 					if(d instanceof Array) {
 						return {x: d[0], y: 0-d[1]};
@@ -580,11 +621,11 @@ def GraphWindow {
 				if(data.length == 2 && !isNaN(data[0]) && !isNaN(data[1])) {
 					data = [data];
 				};
-				
+
 				data.forEach(function(d) {
 					c.beginPath();
 					d = planeToCanvas(d);
-					c.arc(d.x, d.y, 3, 0, Math.PI*2, true);
+					c.arc(d.x, d.y, item.radius || 3, 0, Math.PI*2, true);
 					c.closePath();
 					c.fill();
 				});		
@@ -670,7 +711,7 @@ def GraphListField(focusManager) {
 		this.defaultText = 'Click to add equation';
 		$this.append(elm.create('GraphListFieldColorLabel').named('label'));
 		var options = [
-			{color: '#a33', event: 'delete', label: app.res.image('close')},
+			{color: '#a33', event: 'delete', label: app.r.image('close')},
 		];
 		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}

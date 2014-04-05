@@ -2,10 +2,11 @@
 
 def TouchInteractive {
 	constructor {
-		Hammer(this).on('tap',this.#tapped);
-		Hammer(this).on('touch',this.#touched);
-		Hammer(this).on('release',this.#released);
-		Hammer(this).on('dragged',this.#dragged);
+		this._hammer = Hammer(this);
+		this._hammer.on('tap',this.#tapped);
+		this._hammer.on('touch',this.#touched);
+		this._hammer.on('release',this.#released);
+		this._hammer.on('dragged',this.#dragged);
 		this.enabled = true;
 	}
 
@@ -118,7 +119,13 @@ def View {
 
 	method size(i) {
 		if(this.maxWidth) $this.css('width',this.maxWidth.toString() + '%');
-		i = i || this.screenFraction || 1;
+		if(i === undefined) {
+			if(this.screenFraction === undefined) {
+				i = 1;
+			} else {
+				i = this.screenFraction;
+			}
+		}
 		$this.css(
 			'height',
 			$this.parent().height() * i
@@ -159,6 +166,12 @@ def View {
 	method setMaxWidth(m) {
 		this.maxWidth = m;
 		this.size();
+	}
+}
+
+def Stackable {
+	css {
+		position: relative;
 	}
 }
 
@@ -232,6 +245,14 @@ def PageView(title) {
 		}
 	}
 
+	constructor {
+
+	}
+
+	on invalidate {
+		this.updateScroll();
+	}
+
 	method setContents(el) {
 		this.$contents.html('');
 		this.$contents.append(el);
@@ -273,7 +294,7 @@ def ListView {
 
 	method addField(el,update) {
 		var self = this;
-		var field = elm.create(this.fieldType,this.focusManager);
+		var field = self.create(this.fieldType,this.focusManager);
 		field.$.on('lost-focus',$.proxy(this.onFieldBlur,this));
 		field.$.on('gain-focus',$.proxy(this.onFieldFocus,this));
 		field.$.on('update',$.proxy(this.onFieldUpdate,this));
@@ -516,16 +537,43 @@ def SlideView {
 	}
 
 	method addView(view) {
-		if(this.$container.children().length == 0) {
+		if(this.@container.$.children().length == 0) {
 			this.delegateFocus(view);
 		}
-		this.$container.append(view);
+		this.@container.$.append(view);
 		this.alignViews();
 		return view;
 	}
 
+	method removeView(view) {
+		if(!isNaN(view)) {
+			view = self.views()[view];
+		}
+		if(!self.$.has(view)) return;
+		var target;
+		if(view.$.prev().length) {
+			target = view.$.prev().get(0);
+		} else if(view.$.next().length) {
+			target = view.$.next().get(0);
+		} else {
+			finalize();
+		}
+		if(target) {
+			self.slideTo(target,finalize);
+		} else {
+			finalize();
+		}
+
+		function finalize() {
+			if(target) {
+				self.delegateFocus(target);
+			}
+			view.$.remove();
+		}
+	}
+
 	method views {
-		return this.$container.children().toArray();
+		return this.@container.$.children().toArray();
 	}
 
 	method alignViews {
@@ -540,17 +588,17 @@ def SlideView {
 
 	on invalidate {
 		if(this.horizontal) {
-			this.$container.css('translateX', 0 - this.horizontalOffset(this.currentIndex));
+			this.@container.$.css('translateX', 0 - this.horizontalOffset(this.currentIndex));
 		} else {
-			this.$container.css('translateY', 0 - this.verticalOffset(this.currentIndex));
+			this.@container.$.css('translateY', 0 - this.verticalOffset(this.currentIndex));
 		}
 	}
 
 	method viewByIndex(index) {
-		return this.$container.children().get(index);
+		return this.@container.$.children().get(index);
 	}
 
-	method slideTo(index,callback) {
+	method slideTo(index,callback,time) {
 		var offset = 0;
 		if(isNaN(index)) {
 			// Must be a child rather than an index. Find the index.
@@ -560,9 +608,16 @@ def SlideView {
 		offset = this.horizontal? this.horizontalOffset(index) : this.verticalOffset(index);
 		var animObject = {};
 		animObject[this.horizontal? 'translateX' : 'translateY'] = 0 - offset;
-		this.$container.animate(animObject,this.transitionTime,this.transition,function() {
+		this.@container.$.animate(animObject,time !== undefined? time : this.transitionTime,this.transition,function() {
 			if(callback) callback();
 		});
+		if(this.viewByIndex(index).noKeyboard) {
+			this.noKeyboard = true;
+			app.hideKeyboard();
+		} else {
+			this.noKeyboard = false;
+			app.showKeyboard();
+		}
 		this.delegateFocus(this.viewByIndex(index));
 		this.currentIndex = index;
 	}
@@ -597,6 +652,15 @@ def SideMenuAppView(menuClass='SideMenu') {
 	css {
 		overflow: visible;
 		z-index: 1001;
+		-webkit-transition: -webkit-transform 0.2s;
+	}
+
+	style no-animate {
+		-webkit-transition: none;
+	}
+
+	style animate {
+		-webkit-transition: -webkit-transform 0.2s;	
 	}
 
 	my container {
@@ -633,9 +697,9 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(this.menu);
 		Hammer(this.@touch-shield).on('tap',this.#tapped);
 		Hammer(this).on('swiperight',this.#swipeRight);
-		// Hammer(this).on('dragstart',this.#dragStart);
-		// Hammer(this).on('drag',this.#dragged);
-		// Hammer(this).on('dragend',this.#dragEnd);
+		//Hammer(this).on('dragstart',this.#dragStart);
+		//Hammer(this).on('drag',this.#dragged);
+		//Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	method addChild(x) {
@@ -692,6 +756,8 @@ def SideMenuAppView(menuClass='SideMenu') {
 		} else {
 			if(tx > this.menuSwipeThreshold) {
 				e.gesture.stopDetect();
+			} else {
+				this.applyStyle('no-animate');
 			}
 		}
 	}
@@ -715,6 +781,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 		} else {
 			this.hideMenu();
 		}
+		this.applyStyle('animate');
 		this._dragOrigin = null;
 	}
 
@@ -724,29 +791,19 @@ def SideMenuAppView(menuClass='SideMenu') {
 		this.$touch-shield.show();
 		this.menuShown = true;
 		duration = duration || 300;
-		$this.animate(
-		{
-			'translateX': this.menu.$.width()
-		}, duration, 'easeInOutQuart', function() {
-
-		});
-
+		$this.css('translateX',this.menu.$.width());
 	}
 
 	method hideMenu(duration) {
 		if(utils.tabletMode()) return;
 		var self = this;
 		duration = duration || 300;
-		$this.animate(
-		{
-			'translateX': 0
-		}, duration, 'easeInOutQuart', function() {
+		$this.css('translateX',0);
+		setTimeout(function() {
 			self.menuShown = false;
 			self.touchShieldForceShow = true;
-			setTimeout(function() {
-				self.$touch-shield.hide();
-			},100);
-		});	
+			self.$touch-shield.hide();
+		},100);
 	}
 
 	method toggleMenu {
@@ -762,7 +819,13 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method size(i) {
-		i = i || this.screenFraction || 1;
+		if(i === undefined) {
+			if(this.screenFraction === undefined) {
+				i = 1;
+			} else {
+				i = this.screenFraction;
+			}
+		}
 		$this.height(utils.viewport().y * i);
 		if(utils.tabletMode()) {
 			this.isTabletMode = true;
@@ -790,8 +853,6 @@ def SideMenuAppView(menuClass='SideMenu') {
 			}
 		});
 	}
-
-
 }
 
 def SideMenu {
@@ -988,6 +1049,21 @@ def ToolbarButtonImportant(label,callback) {
 	style active {
 		background: #D55;
 		box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
+	}
+}
+
+
+def ToolbarButtonTransparent(label,callback) {
+	extends {
+		ToolbarButton
+	}
+
+	style default {
+		background: rgba(0,0,0,0.1);
+	}
+
+	style active {
+		background: rgba(0,0,0,0.2);
 	}
 }
 
@@ -1258,7 +1334,7 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeOut {
-		var bullshit = false
+		var bullshit = false;
 		if(bullshit) {
 			self.$overlay.css('opacity',0.8).delay(500).animate({
 				'opacity': 0
@@ -1272,15 +1348,14 @@ def Dialog(title,buttons,contents) {
 		} else {
 			$this.hide().remove().trigger('removed');
 		}
+		if(app.mode.noKeyboard) {
+			app.hideKeyboard();
+		}
 	}
 
 	method cancel {
 		if(self.cancelCallback) self.cancelCallback();
 		self.fadeOut();
-	}
-
-	method buttonInvoked {p
-
 	}
 
 	my overlay {
@@ -1408,6 +1483,7 @@ def MathPrompt(title,callback,focusManager) {
 		}
 
 		constructor {
+			app.useKeyboard('main');
 			this.@input.focusManager = root.focusManager;
 			this.@input.takeFocus();
 		}
@@ -1530,6 +1606,69 @@ def TextInput(defaultValue) {
 		padding-top: 9px;
 		padding-bottom: 9px;
 		padding-left: 14px;
+	}
+}
+
+def Overlay {
+	properties {
+		overlaySourceDirection: 'bottom'
+	}
+
+	css {
+		-webkit-transition: -webkit-transform 0.1s ease-out;
+		z-index: 1001;
+		background: url(res/img/background.png);
+	}
+
+	on ready {
+		this.flyOut();
+	}
+
+	method flyOut {
+		app.root.overlay = null;
+		switch(this.overlaySourceDirection) {
+			case 'right':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
+				$this.css('translateX',app.root.$.width());
+				break;
+			case 'left':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
+				$this.css('translateX',-app.root.$.width());
+				break;
+			case 'top':
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
+				$this.css('translateY',-app.root.$.height());
+				break;
+			case 'bottom': 
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
+				$this.css('translateY',app.root.$.height());
+				break;
+		}
+	}
+
+	method flyIn {
+		switch(this.overlaySourceDirection) {
+			case 'right':
+				$this.css('translateX',0);
+				break;
+			case 'left':
+				$this.css('translateX',0);
+				break;
+			case 'top':
+				$this.css('translateY',0);
+				break;
+			case 'bottom': 
+				$this.css('translateY',0);
+				break;
+		}
+	}
+
+	on removed {
+		this.flyOut();
+		setTimeout(function() {
+			$this.hide().remove();
+			if(self.relinquish) self.relinquish.call(self);
+		},1000)
 	}
 }
 
@@ -1825,5 +1964,343 @@ def PullIndicatorHoriz(src,owner) {
 	method size {
 		this.$.css('width',this.owner.pullMaxWidth)
 		this.$.css('right',0 - this.owner.pullMaxWidth);
+	}
+}
+
+def SelectBox(fullWidth) {
+	html {
+		<div class='shadow'>
+			<div class='display'>Selected</div>
+			<div class='dots'>...</div>
+		</div>
+	}
+
+	properties {
+		fillWidth: 1
+		maxWidth: Infinity
+	}
+
+	css {
+		display: inline-block;
+		margin: 10px;
+		background: #FFF;
+		cursor: pointer;
+		border-radius: 20px;
+		height: 60px;
+		overflow: hidden;
+	}
+
+	my display {
+		css {
+			height: 100%;
+			display: inline-block;
+			padding-left: 10px;
+			height: 100%;
+			line-height: 60px;
+		}
+	}
+
+	my dots {
+		extends {
+			Button
+		}
+
+		css {
+			text-align: center;
+			color: #FFF;
+			float: right;
+			background: #696;
+			height: 100%;
+			line-height: 60px;
+			padding-left: 10px;
+			padding-right: 10px;
+		}
+
+		style default {
+			background: #696;
+		}
+
+		style active {
+			background: #6a6;
+		}
+	}
+
+	method size {
+		var w;
+		if(this.fullWidth) {
+			this.$.css('margin',0);
+			w = this.$.parent().width();
+
+		} else {
+			w = (this.$.parent().width() * this.fillWidth) - parseFloat($this.css('margin-left')) - parseFloat(this.$display.css('padding-left'));
+		}
+		var h = this.$.height();
+		var mainWidth;
+		w = Math.min(w,this.maxWidth);
+		mainWidth = w - h;
+		this.$.css('width',w);
+		this.$dots.css('width',h/2);
+	}
+}
+
+def InlineInteractive(text) {
+	extends {
+		Button
+	}
+
+	css {
+		font-weight: 200;
+		font-style: italic;
+		display: inline-block;
+		padding: 5px;
+		line-height: 30px;
+		border-radius: 1000px;
+	}
+
+	constructor {
+		this.$.trigger('ready');
+	}
+
+	style default {
+		background-color: #CCF;
+	}
+
+	style active {
+		background-color: #DDF;
+	}
+}
+
+def InlineNumber(text) {
+	extends {
+		InlineInteractive
+	}
+
+	style default {
+		background-color: #DB8;
+	}
+
+	style active {
+		background-color: #EC9;
+	}	
+
+	constructor {
+		this.applyStyle('default');
+	}
+
+	method display(n) {
+		n = Functions.round(n,3);
+		this.$.html(n);
+		this.data = new Value(n);
+	}
+
+	on invoke {
+		app.data.initVariableSave('store',this.data);
+		app.useKeyboard('variables');
+	}
+}
+
+def InlineMatrix(text) {
+	extends {
+		InlineInteractive
+	}
+
+	css {
+		vertical-align: middle;
+		border-radius: 10px;
+	}
+
+	style default {
+		background-color: #DB8;
+	}
+
+	style active {
+		background-color: #EC9;
+	}	
+
+	constructor {
+		this.applyStyle('default');
+	}
+
+	method display(m) {
+		this.$.html(m.toTable());
+		this.data = m;
+	}
+
+	on invoke {
+		app.data.initVariableSave('store',this.data);
+		app.useKeyboard('variables');
+	}
+}
+
+def InlineNumberPicker(text) {
+	extends {
+		InlineInteractive
+	}
+
+	style default {
+		background-color: #BEA;
+	}
+
+	style active {
+		background-color: #CFB;
+	}	
+
+	constructor {
+		this.applyStyle('default');
+		this.data = null;
+	}
+
+	method choose(n) {
+		this.$.html(n);
+		this.data = new Value(n);
+		this.$.trigger('choose',n);
+	}
+
+	on invoke {
+		app.mathPrompt(this.messageText || 'Input a number',function(res,close,tryAgain) {
+			if(self.filter) {
+				var fres = self.filter(res);
+				if(fres === true) {
+					close();
+					self.choose(res);
+				} else {
+					tryAgain(fres);
+				}
+			} else {
+				close();
+				self.choose(res.toFloat());
+			}
+		},app.mode.focusManager);
+	}
+}
+
+def InlineMatrixPicker(text) {
+	extends {
+		InlineInteractive
+	}
+
+	css {
+		vertical-align: middle;
+		border-radius: 10px;
+	}
+
+	style default {
+		background-color: #BEA;
+	}
+
+	style active {
+		background-color: #CFB;
+	}	
+
+	constructor {
+		this.applyStyle('default');
+		this.data = null;
+	}
+
+	method choose(n) {
+		this.$.html(n.toTable());
+		this.data = n;
+		this.$.trigger('choose',n);
+	}
+
+	properties {
+		messageText: 'Input a matrix. It may be easier to save it in a variable first.'
+	}
+
+	method filter(x) {
+		if(x instanceof Matrix) {
+			return true;
+		} else {
+			return "That's not a matrix.";
+		}
+	}
+
+
+	on invoke {
+		app.mathPrompt('Input a matrix. You may want to use [brackets] or a stored variable.',function(res,close,tryAgain) {
+			if(self.filter) {
+				var fres = self.filter(res);
+				if(fres === true) {
+					close();
+					self.choose(res);
+				} else {
+					tryAgain(fres);
+				}
+			} else {
+				close();
+				self.choose(res);
+			}
+		},app.mode.focusManager);
+	}
+}
+
+
+def InlineListPicker {
+	extends {
+		InlineInteractive
+	}
+
+	on invoke {
+		app.overlay(elm.create('ListChoiceView',function(res) {
+			self.choose(res);
+		}));
+	}
+
+	method choose(list) {
+		this.$.html(list.name);
+		this.data = list;
+		this.$.trigger('choose',list);
+	}
+}
+
+def InlineChoice {
+	constructor {
+		if(this.defaultSelect) this.select(this.$item.get(0));
+	}
+
+	method select(el) {
+		if(this.selected) {
+			this.selected.deselect();
+		}
+		this.selected = el;
+		this.selected.select();
+		this.$.trigger('choice');
+	}
+
+	css {
+		margin-top: 1em;
+	}
+
+	my item {
+		extends {
+			InlineInteractive
+		}
+
+		on invoke {
+			root.select(this);
+			this.$.trigger('choose',this);
+		}
+
+		method select {
+			this.setStyle('default','background','#DDD');
+			this.applyStyle('default');
+		}
+
+		method deselect {
+			this.setStyle('default','background','#F5F5F5');
+			this.applyStyle('default');
+		}
+
+		style default {
+			background: #F5F5F5;
+		}
+
+		style active {
+			background: #DDD;
+		}
+
+		constructor {
+			this.applyStyle('default');
+		}
 	}
 }
