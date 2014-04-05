@@ -142,7 +142,6 @@ Application.prototype.useKeyboard = function(name,forceMain) {
 		}
 		this.keyboards.main.slideUp();
 		this.keyboard = this.keyboards.main;
-		this.data.cancelVariableSave();
 	} else {
 		var k = this.keyboards[name];
 		this.keyboard = k;
