@@ -38,4 +38,13 @@
 	<key name='unity' row='3' col='3'>
 		<primary close='close' action='input: left' text-label='unity'>\unity()</primary>
 	</key>
+	<key name='gamma' row='4' col='3'>
+		<primary close='close' action='input: left' text-label='gamma'>\gamma()</primary>
+	</key>
+	<key name='nCr' row='1' col='4'>
+		<primary close='close' action='input: left,left' text-label='nCr'>\nCr(,)</primary>
+	</key>
+	<key name='nPr' row='2' col='4'>
+		<primary close='close' action='input: left,left' text-label='nPr'>\nPr(,)</primary>
+	</key>
 </keyboard>

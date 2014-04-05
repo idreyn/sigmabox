@@ -8,11 +8,11 @@
 	<key name='stdnormalpcf' row='4' col='3'>
 		<primary close='close' action='input: left,left' text-label='stdnrmlcdf'>\stdnormalcdf(,)</primary>
 	</key>
-	<key name='nCr' row='1' col='3'>
-		<primary close='close' action='input: left,left' text-label='nCr'>\nCr(,)</primary>
+	<key name='chi2cdf' row='1' col='3'>
+		<primary close='close' action='input: left,left' text-label='chi2pdf'>\chi2pdf(,)</primary>
 	</key>
-	<key name='nPr' row='2' col='3'>
-		<primary close='close' action='input: left,left' text-label='nPr'>\nPr(,)</primary>
+	<key name='chi2cdf' row='2' col='3'>
+		<primary close='close' action='input: left,left' text-label='chi2cdf'>\chi2cdf(,)</primary>
 	</key>
 	<key name='znormal' row='1' col='2'>
 		<primary close='close' action='input: left' text-label='znormal'>\znormal()</primary>
@@ -40,5 +40,8 @@
 	</key>
 	<key name='poissoncdf' row='5' col='2'>
 		<primary close='close' action='input: left,left' text-label='poissoncdf'>\poissoncdf(,)</primary>
+	</key>
+	<key name='tdist' row='5' col='3'>
+		<primary close='close' action='input: left,left' text-label='tdist'>\tdist(,)</primary>
 	</key>
 </keyboard>

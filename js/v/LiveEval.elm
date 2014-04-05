@@ -349,7 +349,7 @@ def LiveEvalCard(manager) {
 			this.storeButton = elm.create('LiveEvalButton','STO');
 			this.storeButton.$.on('invoke',function() {
 				if(!app.data.varSaveMode) {
-					app.data.initVariableSave('store');
+					app.data.initVariableSave('store',root.result());
 					app.useKeyboard('variables');
 				}
 			});

@@ -95,8 +95,8 @@ def FunctionField(focusManager) {
 		Hammer(this).on('dragleft',this.#swipeLeft);
 		Hammer(this).on('tap',this.#tapped);
 		var options = [
-			{color: '#0a4766', event: 'rename', label: app.res.image('pen')},
-			{color: '#a33', event: 'delete', label: app.res.image('close')}
+			{color: '#0a4766', event: 'rename', label: app.r.image('pen')},
+			{color: '#a33', event: 'delete', label: app.r.image('close')}
 		];
 		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}

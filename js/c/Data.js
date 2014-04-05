@@ -184,31 +184,15 @@ Data.prototype.init = function() {
 		// Vector functions
 		'min': this.wrap(function(v) {
 			Functions.expect(v,Vector);
-			var min = Infinity;
-			for(var i=0;i<v.args.length;i++) {
-				if(v.args[i] < min) {
-					min = v.args[i];
-				}
-			}
-			return min;
+			return Functions.min(v.args);
 		}),
 		'max': this.wrap(function(v) {
 			Functions.expect(v,Vector);
 			var max = -Infinity;
-			for(var i=0;i<v.args.length;i++) {
-				if(v.args[i] > max) {
-					max = v.args[i];
-				}
-			}
-			return max;
+			return Functions.max(v.args);
 		}),
 		'range': this.wrap(function(min,max,step) {
-			if(!step) step = 1;
-			var res = [];
-			for(var i=min;i<=max;i+=step) {
-				res.push(new Value(i));
-			}
-			return new Vector(res);
+			return Functions.range(min,max,step);
 		}),
 		'lsum': this.wrap(function(v) {
 			Functions.expect(v,Vector);
@@ -243,7 +227,7 @@ Data.prototype.init = function() {
 		}),
 		'sort': this.wrap(function(v) {
 			Functions.expect(v,Vector);
-			return new Vector(v.args.sort());
+			return v.sort();
 		}),
 		'reverse': this.wrap(function(v) {
 			Functions.expect(v,Vector);
@@ -276,7 +260,8 @@ Data.prototype.init = function() {
 		'Im': this.wrap(Functions.Im,false,false),
 		'Re': this.wrap(Functions.Re),
 		'unity': this.wrap(Functions.unity),
-		// Probability shit
+		'gamma': this.wrap(Functions.unity),
+		// Distributions shit
 		'normalpdf': this.wrap(Functions.normalpdf),
 		'normalcdf': this.wrap(Functions.normalcdf),
 		'stdnormalpdf': this.wrap(Functions.stdnormalpdf),
@@ -288,12 +273,15 @@ Data.prototype.init = function() {
 		'geomcdf': this.wrap(Functions.geomcdf),
 		'poissonpdf': this.wrap(Functions.poissonpdf),
 		'poissoncdf': this.wrap(Functions.poissoncdf),
+		'chi2pdf': this.wrap(Functions.chisquaredpdf),
+		'chi2cdf': this.wrap(Functions.chisquaredcdf),
 		// Stats stuff
 		'mean': this.wrap(Functions.mean),
 		'median': this.wrap(Functions.median),
 		'mode': this.wrap(Functions.mode),
 		'stdev': this.wrap(Functions.stdev),
-		'rand': this.wrap(Math.random)
+		'rand': this.wrap(Math.random),
+		'tdist': this.wrap(Functions.tDistribution)
 	}
 
 	for(var k in this.functions) {
@@ -444,8 +432,9 @@ Data.prototype.lookupList = function(name) {
 	return false;
 }
 
-Data.prototype.initVariableSave = function(m) {
+Data.prototype.initVariableSave = function(m,v) {
 	this.varSaveMode = m || 'store';
+	this.valToSave = v;
 }
 
 Data.prototype.cancelVariableSave = function() {
@@ -453,6 +442,7 @@ Data.prototype.cancelVariableSave = function() {
 }
 
 Data.prototype.setVariable = function(k,v,silent) {
+	this.valToSave = null;
 	this.variables[k] = v;
 	if(!silent) app.popNotification(
 		'Set ' + k + ' to ' + v.toString()

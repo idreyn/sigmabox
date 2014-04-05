@@ -235,7 +235,7 @@ def KeyboardPullIndicator {
 			{label: 'Numerical', action: 'keyboard numerical'},
 			{label: 'Matrix', action: 'keyboard matrix'},
 			{label: 'List', action: 'keyboard list'},
-			{label: 'Probability', action: 'keyboard probability'},
+			{label: 'Distributions', action: 'keyboard distributions'},
 		];
 	}
 
@@ -285,14 +285,13 @@ def Key(_keyData,keyboard) {
 					if(app.data.varSaveMode == 'store') {
 						app.data.setVariable(
 							this.activeSubkey().attr('variable'),
-							app.mode.result()
+							app.data.valToSave
 						);
 					}
 					if(app.data.varSaveMode == 'set') {
 						app.setVariablePrompt(
 							this.activeSubkey().attr('variable')
 						);
-					} else {
 					}
 					app.data.cancelVariableSave();
 				} else {
@@ -306,7 +305,8 @@ def Key(_keyData,keyboard) {
 				app.mode.currentInput().acceptLatexInput(latex);
 			}
 			if(this.activeSubkey().attr('close')) {
-				app.useKeyboard('main');
+				this.parent('Keyboard').slideDown();
+				app.keyboard = app.keyboards.main;
 			}
 			if(this.activeSubkey().attr('action')) {
 				this.activeSubkey().attr('action').split('|').forEach(function(attr) {
@@ -489,7 +489,6 @@ def Key(_keyData,keyboard) {
 		color: #FFF;
 		padding: 0;
 		outline: none;
-		-webkit-border-radius: 0px;
 		-webkit-transition: -webkit-transform ease-out 0.05s;
 		border-radius: 0px;
 		overflow: hidden;

@@ -26,6 +26,10 @@ Utils.prototype.viewport = function() {
 	);
 }
 
+Utils.prototype.colors = function() {
+	return ['#696','#A33','#0A4766','#B6DB49','#50C0E9','#FB3'];
+}
+
 Utils.prototype.hitTest = function(touch, elemposition, width, height) {
     var left = elemposition.left,
         right = left + width,
@@ -297,6 +301,7 @@ FocusManager.prototype.setFocus = function(c) {
 		this.current.$.trigger('lost-focus');
 	}
 	this.current = c;
+	if(!this.current) return;
 	this.current.mathSelf().cursor.show();
 	this.current.$.trigger('gain-focus');
 }
