@@ -306,6 +306,7 @@ def Key(_keyData,keyboard) {
 			}
 			if(this.activeSubkey().attr('close')) {
 				this.parent('Keyboard').slideDown();
+				app.data.cancelVariableSave();
 				app.keyboard = app.keyboards.main;
 			}
 			if(this.activeSubkey().attr('action')) {
