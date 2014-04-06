@@ -372,11 +372,12 @@
   padding: 5px;
 }
 
-.LiveEvalcard .mathquill-rendered-math span:not(.cursor), .LiveEvalcard .mathquill-rendered-math var, .LiveEvalcard .mathquill-rendered-math big, .LiveEvalcard .mathquill-rendered-math table {
+
+/*.LiveEvalcard .mathquill-rendered-math span:not(.cursor), .LiveEvalcard .mathquill-rendered-math var, .LiveEvalcard .mathquill-rendered-math big, .LiveEvalcard .mathquill-rendered-math table {
   -webkit-animation-name: fadeIn !important;
   -webkit-animation-duration: 0.1s;
   -webkit-transition: all 0.1s;
-}
+}*/
 
 .LiveEvalcard .mathquill-rendered-math .selection, .mathquill-rendered-math .selection * {
   -webkit-animation: none !important;

@@ -30,6 +30,7 @@ def StatsView {
 def StatsListsManager {
 	extends {
 		PageView
+		NoSwipe
 	}
 
 	properties {
@@ -37,7 +38,6 @@ def StatsListsManager {
 	}
 
 	constructor {
-		Hammer(this).on('swiperight',this.#swiped);
 		Hammer(this).on('dragstart',this.#dragStarted);
 		Hammer(this).on('dragend',this.#dragEnded);
 		this.@title.$.html('Statistics');
@@ -49,10 +49,6 @@ def StatsListsManager {
 			var item = self.addList();
 			item.setData(list);
 		});
-	}
-
-	method swiped(e) {
-		e.stopPropagation();
 	}
 
 	method dragStarted(e) {
@@ -73,7 +69,7 @@ def StatsListsManager {
 
 	my toolbar {
 		contents {
-			[[tests-button:ToolbarButton 'Tools and tests']]
+			[[tests-button:ToolbarButton 'Tools']]
 			[[back-button:ToolbarButton '&larr;']]
 			[[next-button:ToolbarButton '&rarr;']]
 			[[add-button:ToolbarButtonImportant 'Add']]
@@ -650,6 +646,10 @@ def StatsTestSummary {
 				},300,'easeInOutBack');
 			},i * 10);
 		});
+
+		setTimeout(function() {
+			self.$.trigger('invalidate');
+		},this.$line-item.length * 10 + 10);
 	}
 
 	my top-bar-container {
