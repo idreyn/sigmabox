@@ -229,20 +229,29 @@ def LiveEvalCard(manager) {
 	}
 
 	my lower {
+		extends {
+			NoSwipe
+		}
+		
 		contents {
 			<div class='scroll'></div>
 		}
 
 		method setContents(s) {
-			if(s.length > 40) {
+			var approxChars = this.parent().$.width() / 20 - 3;
+			if(s.length > approxChars) {
 				this.$.css('font-size','20');
 			} else {
 				this.$.css('font-size','40');
 			}
 			if(s == '') s = '0'
 			this.$scroll.html(s);
-			//if(!this.@scroll.scroll) this.@scroll.scroll = new IScroll(this,{mouseWheel: true, scrollX: true});
- 	  		//this.@scroll.scroll.refresh();
+			this.$.css('line-height',this.$.height() + 'px');
+			if(!self.scroll) self.scroll = new IScroll(self,{mouseWheel: true, scrollX: true});
+			setTimeout(function() {
+				self.scroll.refresh();
+			},0);
+			this.$.css('show');
 		}
 
 		my scroll {
@@ -250,16 +259,23 @@ def LiveEvalCard(manager) {
 				white-space: nowrap;
 				padding-left: 10px;
 				padding-right: 10px;
+				display: inline-block;
+			}
+
+			method size {
+
 			}
 		}
 
 		css {
+			display: none;
 			background: rgba(0,0,0,0.05);
 			text-align: right;
 			font-size: 30pt;
 			color: #AAA;
 			line-height: 80px;
-			overflow: scroll;
+			overflow: hidden;
+			width: 100%:
 		}
 	}
 

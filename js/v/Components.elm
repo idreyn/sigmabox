@@ -2304,3 +2304,13 @@ def InlineChoice {
 		}
 	}
 }
+
+def NoSwipe {
+	constructor {
+		Hammer(this).on('swiperight',this.#swiped);
+	}
+
+	method swiped(e) {
+		e.stopPropagation();
+	}
+}
