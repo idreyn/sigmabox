@@ -76,6 +76,7 @@ def LiveEvalCard(manager) {
 		$this.css('height',$this.parent().parent().height());
 		this.$upper.css('height','80%');
 		this.$lower.css('height','20%');
+		this.@lower.size();
 		this.$toolbar.css('height','10%');
 		this.$MathInput.css('width',
 			parseInt($this.css('width')) - 2 * parseInt(this.$MathInput.css('padding'))
@@ -251,7 +252,11 @@ def LiveEvalCard(manager) {
 			setTimeout(function() {
 				self.scroll.refresh();
 			},0);
-			this.$.css('show');
+			this.$.show();
+		}
+
+		method size {
+			this.$.css('line-height',this.$.height() + 'px');
 		}
 
 		my scroll {
@@ -458,8 +463,6 @@ def LiveEvalManager {
 		this.addCard(app.data.currentInput || '');
 		this.setupScroll();
 		this.size();
-	//	this.@indicator.build(this.$LiveEvalCard.length);
-	//	this.@indicator.select(0);	
 	}
 	
 	method size(i) {
@@ -592,7 +595,7 @@ def LiveEvalHistoryOverlay(callback) {
 			var f = self.addField();
 			f.disable();
 			f.setContents(item);
-			f.$.on('invoke',self.choose)
+			f.$.on('invoke',self.choose);
 		});
 	}
 

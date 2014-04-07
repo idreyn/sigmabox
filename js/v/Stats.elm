@@ -102,8 +102,9 @@ def StatsListsManager {
 
 	my add-button {
 		on invoke {
-			var n = 1;
-			while(!app.data.isNameAvailable('List' + n.toString())) n++;
+			var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+			var n = 0;
+			while(!app.data.isNameAvailable('List' + alphabet[n]) && alphabet[n]) n++;
 			app.prompt('Name?',function(name,close,tryAgain) {
 				if(app.data.isNameAvailable(name)) {
 					close();
@@ -111,7 +112,7 @@ def StatsListsManager {
 				} else {
 					tryAgain('That name is in use. Why not pick another?');
 				}
-			},'List' + n);
+			},'List' + (alphabet[n] || ''));
 		}
 	}
 
@@ -180,6 +181,7 @@ def StatsListsManager {
 			ind = app.data.lists.indexOf(l);
 		app.data.lists = app.data.lists.slice(0,ind).concat(app.data.lists.slice(ind+1));
 		app.data.serialize();
+		app.data.unregisterFunction(l.name);
 		element.$.remove();
 		self.orderLists();
 	}
@@ -362,7 +364,7 @@ def StatsListField(focusManager) {
 	}
 
 	properties {
-		pullMaxWidth: 80,
+		pullMaxWidth: 20,
 		pullConstant: 50
 	}
 
@@ -460,6 +462,21 @@ def ListChoiceView(callback) {
 		Overlay
 	}
 
+	contents {
+		<div class='empty-notice'>Head over to the Statistics module to create some lists.</div>
+	}
+
+	my empty-notice {
+		css {
+			position: absolute;
+			width: 100%;
+			text-align: center;
+			top: 50%;
+			color: #999;
+			display: none;
+		}
+	}
+
 	properties {
 		fieldType: 'SimpleListItem',
 		autoAddField: false
@@ -478,6 +495,9 @@ def ListChoiceView(callback) {
 			f.$.on('invoke',self.choose);
 			f.list= l;
 		});
+		if(lists.length == 0) {
+			this.$empty-notice.show();
+		}
 	}
 
 	method choose(e) {
