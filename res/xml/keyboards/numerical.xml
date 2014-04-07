@@ -35,16 +35,28 @@
 	<key name='Im' row='2' col='3'>
 		<primary close='close' action='input: left' text-label='Im'>\Im()</primary>
 	</key>
-	<key name='unity' row='3' col='3'>
+	<key name='unity' row='5' col='3'>
 		<primary close='close' action='input: left' text-label='unity'>\unity()</primary>
 	</key>
-	<key name='gamma' row='4' col='3'>
+	<key name='gamma' row='1' col='4'>
 		<primary close='close' action='input: left' text-label='gamma'>\gamma()</primary>
 	</key>
-	<key name='nCr' row='1' col='4'>
+	<key name='nCr' row='3' col='3'>
 		<primary close='close' action='input: left,left' text-label='nCr'>\nCr(,)</primary>
 	</key>
-	<key name='nPr' row='2' col='4'>
+	<key name='nPr' row='4' col='3'>
 		<primary close='close' action='input: left,left' text-label='nPr'>\nPr(,)</primary>
+	</key>
+	<key name='integral' row='3' col='4'>
+		<primary close='close' text-label='∫' action='input: left,left,left,left,left,left,left'>\int_{}^{}({})dx</primary>
+	</key>
+	<key name='derivative' row='2' col='4'>
+		<primary close='close' text-label='d/dx' action='input: left,left,left,left,left'>\frac{d}{dx}({})_{x={}}</primary>
+	</key>
+	<key name='sum' row='4' col='4'>
+		<primary close='close' action='input: left,left,left,left,left' text-label='∑'>\sum_{x=}^{}()</primary>
+	</key>
+	<key name='product' row='5' col='4'>
+		<primary close='close' action='input: left,left,left,left,left' text-label='∏'>\prod_{x=}^{}()</primary>
 	</key>
 </keyboard>

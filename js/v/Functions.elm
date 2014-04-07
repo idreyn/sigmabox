@@ -221,14 +221,34 @@ def FunctionChoiceView(callback) {
 		this.populate();
 	}
 
+	contents {
+		<div class='empty-notice'>You can define custom functions in the Functions module.</div>
+	}
+
+	my empty-notice {
+		css {
+			position: absolute;
+			width: 100%;
+			text-align: center;
+			top: 50%;
+			color: #999;
+			display: none;
+		}
+	}
+
 	method populate {
 		var funcs = app.data.customFunctions;
+		var any = false;
 		for(var k in funcs) {
+			any = true;
 			var func = funcs[k];
 			var f = this.addField();
 			f.$.html(func.name + '(' + func.parameters.join(',') + ')');
 			f.$.on('invoke',self.choose)
 			f.myFunction = func;
+		}
+		if(!any) {
+			this.$empty-notice.show();
 		}
 	}
 

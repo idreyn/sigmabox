@@ -596,6 +596,7 @@ Func.prototype.valueOf = function(frame) {
 }
 
 function Symbol(name) {
+	if(name.charAt(0) == '\\') name = name.slice(1);
 	this.name = name;
 }
 
@@ -987,6 +988,10 @@ Vector.prototype.dot = function(v2) {
 
 Vector.prototype.toString = function() {
 	return '{' + this.valueOf().args.join(', ') + '}';
+}
+
+Vector.prototype.toStoreString = function() {
+	return '<' + this.valueOf().args.join(', ') + '>';
 }
 
 Vector.prototype.toStringPolar = function(rads) {

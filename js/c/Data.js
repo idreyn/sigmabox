@@ -376,7 +376,7 @@ Data.prototype.serialize = function() {
 Data.prototype.serializeVariables = function(obj) {
 	var res = {};
 	for(var k in obj) {
-		res[k] = obj[k].toString();
+		res[k] = obj[k].toStoreString ? obj[k].toStoreString() : obj[k].toString();
 	}
 	return res;
 }
@@ -426,7 +426,7 @@ Data.prototype.lookup = function(symbol) {
 Data.prototype.lookupList = function(name) {
 	for(var i=0;i<this.lists.length;i++) {
 		if(this.lists[i].name == name) {
-			return this.lists[i];
+			return new Vector(this.lists[i].data);
 		}
 	}
 	return false;
@@ -452,7 +452,7 @@ Data.prototype.setVariable = function(k,v,silent) {
 }
 
 Data.prototype.isNameAvailable = function(name) {
-	if(window.LatexCmds[name]) {
+	if(window.LatexCmds[name] || name.indexOf(' ') > -1 || /\d/.test(name)) {
 		return false;
 	} else {
 		return true;

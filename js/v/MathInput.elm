@@ -96,6 +96,11 @@ def MathInput(owner) {
 						}
 					}));
 					break;
+				case 'list':
+					app.overlay(elm.create('ListChoiceView',function(list) {
+						self.acceptLatexInput('\\' + list.name);
+					}));
+					break;
 			}
 		});
 		if(self.afterInput) self.afterInput(oldContents,this.contents());
