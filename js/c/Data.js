@@ -424,6 +424,7 @@ Data.prototype.lookup = function(symbol) {
 }
 
 Data.prototype.lookupList = function(name) {
+	if(name.charAt(0) == '\\') name = name.slice(1);
 	for(var i=0;i<this.lists.length;i++) {
 		if(this.lists[i].name == name) {
 			return new Vector(this.lists[i].data);
@@ -536,12 +537,9 @@ Data.prototype.callFunction = function(name,args) {
 
  Data.prototype.startSyncing = function() {
 	var self = this;
-	return;
-	setTimeout(function() {
-		setInterval(function() {
-			self.uiSync();
-		},500);
-	},0);
+	setInterval(function() {
+		self.uiSync();
+	},500);
 }
 
 Data.prototype.clearHistory = function() {

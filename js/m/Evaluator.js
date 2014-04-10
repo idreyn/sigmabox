@@ -156,7 +156,7 @@ Value.prototype.subtract = function(other) {
 	if(!isNaN(other)) {
 		other = new Value(other);
 	}
-	return this.add(other.mult(-1));
+	return this.add(other.mult(new Value(-1)));
 }
 
 Value.prototype.mult = function(other) {
@@ -538,7 +538,7 @@ Pow.prototype.valueOf = function(frame) {
 	if(!isNaN(p)) p = new Value(p);
 
 	if(b instanceof Value) {
-		if(!b.complex && !p.complex && (b.real > 0 || p.real >= 1)) {
+		if(!b.complex && !p.complex && (b.real >= 0 || p.real >= 1)) {
 			return new Value(Math.pow(b.real,p.real));
 		} else {
 			var c = Functions.complexRaise(b,p);
@@ -596,7 +596,7 @@ Func.prototype.valueOf = function(frame) {
 }
 
 function Symbol(name) {
-	if(name.charAt(0) == '\\') name = name.slice(1);
+	//if(name.charAt(0) == '\\') name = name.slice(1);
 	this.name = name;
 }
 

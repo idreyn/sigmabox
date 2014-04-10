@@ -167,3 +167,71 @@ QuadraticSolver.prototype.solve = function() {
 QuadraticSolver.prototype.toString = function() {
 	return 'x = {'+this.solve().map(function(s){ return new Value(s.decimalize()).round(4); }).join(',') + '}';
 }
+
+function PolySolver(coeffs) {
+	this.coeffs = Functions.values(coeffs.reverse());
+	this.func = function(x) {
+		var res = new Value(0);
+		for(var i=0;i<this.coeffs.length;i++) {
+			res = res.add(
+				this.coeffs[i].mult(
+					new Pow(x,i).valueOf()
+				)
+			);
+		}
+		return res;
+	}
+	this.degree = this.coeffs.length - 1;
+}
+
+PolySolver.prototype.solve = function() {
+	var hasAnswer = false;
+	while(!hasAnswer) {
+		var r0 = new Value(0.4,0.9);
+		var roots = [];
+		var prev = [];
+		for(var i=0;i<this.degree;i++) {
+			roots.push(
+				new Pow(r0,i).valueOf()
+			);
+			prev.push(new Value(0));
+		}
+		var precision = 0.001,
+			maxDev = Infinity,
+			iter = 0,
+			maxIter = 100;
+		while(maxDev > precision && iter < maxIter) {
+			iter++;
+			prev = roots.concat();
+			for(var i=0;i<roots.length;i++) {
+				var currentRoot = roots[i],
+					numerator = this.func(currentRoot),
+					denominatorFactors = [];
+				for(var j=0;j<roots.length;j++) {
+					if(i == j) continue;
+					var factor = currentRoot.subtract(roots[j]);
+					denominatorFactors.push(factor);
+				}
+				debugger;
+				var denominator = denominatorFactors.reduce(function(a,b) {
+					return a.mult(b);
+				});
+				var frac = new Frac(
+					numerator,
+					denominator
+				).valueOf();
+				var newRoot = currentRoot.subtract(frac);
+				roots[i] = newRoot; 
+			}
+			var maxDev = roots.map(function(root,index) {
+				var prevRoot = prev[index];
+				return Math.sqrt(root.subtract(prevRoot).toComplexTrigForm().modulus);
+			}).sort(function(a,b) {
+				return a > b ? 1 : -1;
+			}).pop();
+		}
+		hasAnswer = true;
+		console.log('done');
+	}
+	return roots;
+};

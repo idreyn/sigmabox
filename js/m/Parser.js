@@ -190,7 +190,6 @@ Parser.prototype.pow = function(s) {
 					pow
 				);
 			}
-			console.log('AAAAAAH',s,after,rest);
 			if(rest.length > 0) {
 				return new Mult([
 					new Factor(res),
