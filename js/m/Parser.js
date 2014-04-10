@@ -55,8 +55,8 @@ Parser.prototype.parse = function(s,topLevel) {
 			p.product,
 			p.integral,
 			p.derivative,
-			p.func,
 			p.pow,
+			p.func,
 			p.symbol,
 			p.matrix,
 			p.brackets,
@@ -161,8 +161,9 @@ Parser.prototype.pow = function(s) {
 	var self = this;
 	var index = ParseUtil.nextIndexOf('^',s);
 	if(index != -1) {
-		var split = ParseUtil.split(s,'^'),
-			before = self.parse(split[0]),
+		var split = ParseUtil.split(s,'^');
+		split = [split[0]].concat(split.slice(1).join('^'));
+		var	before = self.parse(split[0]),
 			after = StringUtil.trim(split[1]),
 			base,
 			pow,
@@ -178,7 +179,8 @@ Parser.prototype.pow = function(s) {
 				base = before.args.pop();
 				res = new Pow(
 					base,
-					pow);
+					pow
+				);
 				before.args.push(res);
 				res = before;
 			} else {
@@ -188,7 +190,7 @@ Parser.prototype.pow = function(s) {
 					pow
 				);
 			}
-			
+			console.log('AAAAAAH',s,after,rest);
 			if(rest.length > 0) {
 				return new Mult([
 					new Factor(res),
