@@ -505,6 +505,12 @@ Functions.numbers = function(arr) {
 	return arr.map(function(a) { return a.toFloat ? a.toFloat() : parseFloat(a); });
 }
 
+Functions.values = function(arr) {
+	return arr.map(function(n) {
+		return new Value(n);
+	});
+}
+
 Functions.buckets = function(arr,n) {
 	var max = Functions.max(arr),
 		min = Functions.min(arr),

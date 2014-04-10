@@ -1,5 +1,3 @@
-// Components that are difficult to separate from Sigmabox
-
 def SigmaboxAppFrame {
 	properties {
 		menuClass: 'SigmaboxSideMenu'
