@@ -71,6 +71,7 @@ Parser.prototype.parse = function(s,topLevel) {
 		// // console.log(s);
 		throw 'Mismatched parentheses';
 	}
+	//var t = PolySolver.match(s);
 	var quadratic = /^((?:\-)?[0-9\.]*)x\^\{2\}(\+|\-)([0-9\.]*?)x(\+|\-)([0-9\.]*)=0$/
 	if(topLevel && quadratic.test(s)) {
 		var m = s.match(quadratic);
@@ -89,6 +90,12 @@ Parser.prototype.parse = function(s,topLevel) {
 	if(ParseUtil.nextIndexOf('=',s) != -1) {
 		var split = ParseUtil.split(s,'=');
 		if(topLevel) {
+			if(StringUtil.trim(split[1]) == '0') {
+				var p = PolySolver.solveString(split[0]);
+				if(p) {
+					return new Vector(p);
+				}
+			}
 			return Solver.parse(split[0],split[1]);
 		} else {
 			throw "Can't solve here!";

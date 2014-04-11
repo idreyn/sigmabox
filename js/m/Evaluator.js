@@ -125,6 +125,10 @@ Value.prototype.inverse = function() {
 	return invMe.mult(complex).reduce();
 }	
 
+Value.prototype.negative = function() {
+	return new Value(0).subtract(this);
+}
+
 Value.prototype.reduce = function() {
 	return this;
 } 
@@ -596,7 +600,6 @@ Func.prototype.valueOf = function(frame) {
 }
 
 function Symbol(name) {
-	//if(name.charAt(0) == '\\') name = name.slice(1);
 	this.name = name;
 }
 
