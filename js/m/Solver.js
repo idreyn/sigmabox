@@ -43,7 +43,7 @@ Solver.prototype.guess = function(guess) {
 		epsilon = 1e-20,
 		ddx_steadyCount = 0,
 		repeat = 100;
-	// Some asshole is going to try and solve N/x = 0 and we just don't like to see that...
+	// Some assclown is going to try and solve N/x = 0 and we just don't like to see that...
 	try {
 		var left0 = this.leftAt(0);
 	} catch(e) {
@@ -169,7 +169,16 @@ QuadraticSolver.prototype.toString = function() {
 }
 
 function PolySolver(coeffs) {
-	this.coeffs = Functions.values(coeffs.reverse());
+	var self = this;
+	this.coeffs = Functions.values(coeffs);
+	if(!this.coeffs[this.coeffs.length - 1].equals(new Value(1))) {
+		this.coeffs = this.coeffs.map(function(c) {
+			return new Frac(
+					c,
+					self.coeffs[self.coeffs.length - 1]
+			).decimalize();
+		});
+	}
 	this.func = function(x) {
 		var res = new Value(0);
 		for(var i=0;i<this.coeffs.length;i++) {
@@ -184,8 +193,93 @@ function PolySolver(coeffs) {
 	this.degree = this.coeffs.length - 1;
 }
 
+PolySolver.solveString = function(s) {
+	var s = PolySolver.match(s);
+	if(s) {
+		return new PolySolver(s).solve();
+	} else {
+		return false;
+	}
+}
+
+PolySolver.match = function(s) {
+	var s = StringUtil.trim(s),
+		signs = [];
+	if(s.charAt(0) == '-') {
+		// Leading negative, that's okay.
+		s = s.slice(1);
+		signs.push('-');
+	} else {
+		signs.push('+');
+	}
+	signs = signs.concat(ParseUtil.findEachClear(s,['+','-']).map(function(index) {
+		return s.charAt(index);
+	}));
+	var terms = ParseUtil.split(s,['+','-']),
+		coeffs = [],
+		termTemplate = /^([0-9i\.\+\-]*|\([0-9i\.\+\-]*\))x(?:\^\{([0-9]*)\})?$/,
+		constTemplate = /^[0-9.i]+$/;
+	for(var i=0;i<terms.length;i++) {
+		var order,
+			val,
+			t = StringUtil.trim(terms[i]),
+			tMatch = t.match(termTemplate),
+			cMatch = t.match(constTemplate);
+		if(!tMatch && !cMatch) {
+			// This term doesn't fit the pattern!
+			return false;
+		}
+		if(cMatch) {
+			coeff = t;
+			order = 0;
+		}
+		if(tMatch) {
+			var coeff = tMatch[1];
+			var order = tMatch[2];
+			if(order === undefined) {
+				order = 1;
+			}
+			if(coeff === '') {
+				coeff = '1';
+			}
+		}
+		order = parseInt(order);
+		coeff = new Parser().parse(coeff).valueOf(new Frame);
+		if(!coeffs[order]) {
+			coeffs[order] = new Value(0);
+		}
+		if(signs[i] == '+') {
+			coeffs[order] = coeffs[order].add(coeff);
+		} else {
+			coeffs[order] = coeffs[order].subtract(coeff);
+		}
+	}
+	for(var i=0;i<coeffs.length;i++) {
+		if(!coeffs[i]) {
+			coeffs[i] = new Value(0);
+		}
+	}
+	return coeffs;
+}
+
 PolySolver.prototype.solve = function() {
 	var hasAnswer = false;
+	if(this.coeffs.length == 1) {
+		return [];
+	}
+	if(this.coeffs.length == 2) {
+		if(this.coeffs[0] && this.coeffs[1]) {
+			var a = this.coeffs[1];
+			var b = this.coeffs[0];
+			return [
+				new Frac(b.negative(),a).decimalize()
+			];
+		} else {
+			return [
+				new Value(0)
+			];
+		}
+	}
 	while(!hasAnswer) {
 		var r0 = new Value(0.4,0.9);
 		var roots = [];
@@ -196,7 +290,7 @@ PolySolver.prototype.solve = function() {
 			);
 			prev.push(new Value(0));
 		}
-		var precision = 0.001,
+		var precision = 0.000001,
 			maxDev = Infinity,
 			iter = 0,
 			maxIter = 100;
@@ -212,26 +306,27 @@ PolySolver.prototype.solve = function() {
 					var factor = currentRoot.subtract(roots[j]);
 					denominatorFactors.push(factor);
 				}
-				debugger;
 				var denominator = denominatorFactors.reduce(function(a,b) {
 					return a.mult(b);
 				});
 				var frac = new Frac(
 					numerator,
 					denominator
-				).valueOf();
+				).decimalize();
 				var newRoot = currentRoot.subtract(frac);
 				roots[i] = newRoot; 
 			}
 			var maxDev = roots.map(function(root,index) {
 				var prevRoot = prev[index];
-				return Math.sqrt(root.subtract(prevRoot).toComplexTrigForm().modulus);
+				var r = root.subtract(prevRoot);
+				return Math.max(r.real,r.complex);
 			}).sort(function(a,b) {
 				return a > b ? 1 : -1;
 			}).pop();
 		}
 		hasAnswer = true;
-		console.log('done');
 	}
-	return roots;
+	return roots.map(function(n) {
+		return n.round(4);
+	});
 };
