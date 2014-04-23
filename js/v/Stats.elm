@@ -1242,7 +1242,7 @@ def ZTestView {
 
 		my stats-stdev {
 			method filter(r) {
-				if(r.imaginary === 0 && r.real > 0) {
+				if(r.complex === 0 && r.real > 0) {
 					return true;
 				} else {
 					return 'The standard deviation must be a positive real number';
@@ -1396,7 +1396,7 @@ def TTestView {
 
 		my stats-stdev {
 			method filter(r) {
-				if(r.imaginary === 0 && r.real > 0) {
+				if(r.complex === 0 && r.real > 0) {
 					return true;
 				} else {
 					return 'The standard deviation must be a positive real number';
@@ -1582,7 +1582,7 @@ def TwoSampleZTestView {
 
 		my stats-stdev {
 			method filter(r) {
-				if(r.imaginary === 0 && r.real > 0) {
+				if(r.complex === 0 && r.real > 0) {
 					return true;
 				} else {
 					return 'The standard deviation must be a positive real number';
@@ -1768,7 +1768,7 @@ def TwoSampleTTestView {
 
 		my stats-stdev {
 			method filter(r) {
-				if(r.imaginary === 0 && r.real > 0) {
+				if(r.complex === 0 && r.real > 0) {
 					return true;
 				} else {
 					return 'The standard deviation must be a positive real number';

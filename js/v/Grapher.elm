@@ -1133,7 +1133,7 @@ def TraceReadouts {
 			Frac.grapherMode = false;
 			self.@derivative.setContents('d/dx = ' + d);
 		} else {
-			this.@derivative.setContents('d/dx = 0');
+			this.@derivative.setContents('d/dx = halp');
 		}
 	}
 
