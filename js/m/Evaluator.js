@@ -685,7 +685,7 @@ Matrix.prototype.toTable = function(frame,cl) {
 	this.rows.forEach(function(r) {
 		h += '<tr>';
 		r.forEach(function(e) {
-			h += '<td>' + e.toString() + '</td>';
+			h += '<td>' + e.round(4) + '</td>';
 		});
 		h += '</tr>';
 	});
