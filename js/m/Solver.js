@@ -91,16 +91,24 @@ Solver.prototype.guess = function(guess) {
 			this.result = false;
 		}
 	} else {
-		// A few more things we can try
+		// If it's an angle we should try to normalize it
+		if(app.data.trigUseRadians) {
+			var offsets = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+		} else {
+			var offsets = [0,90,180,270];
+		}
+		var new_guess = guess;
+		for(var i=0;i<offsets.length;i++) {
+			var normalized_guess = Functions.normalize(guess,app.data.trigUseRadians) - offsets[i];
+			if(Functions.aboutEquals(this.f(guess),this.f(normalized_guess))) {
+				if(normalized_guess > 0) new_guess = normalized_guess;
+			}
+		}
+		guess = new_guess;
+		// If we got a negative root with a corresponding positive root it makes more sense to give the positive one
 		var abs_guess = Math.abs(guess);
 		if(this.f(guess) == this.f(abs_guess)) {
-			// If we got a negative root with a corresponding positive root it makes more sense to give the positive one
 			guess = abs_guess;
-		}
-		var normalized_guess = Functions.normalize(guess,app.data.trigUseRadians);
-		if(this.f(guess) == this.f(normalized_guess)) {
-			// If it's an angle we should try to normalize it
-			guess = normalized_guess;
 		}
 		this.result = new Value(guess).round(3);
 	}
@@ -117,7 +125,7 @@ Solver.prototype.toString = function() {
 		if(s) {
 			return 'That is true';
 		} else {
-			return 'That is false'
+			return 'That is false';
 		}
 	} else {
 		if(true) {

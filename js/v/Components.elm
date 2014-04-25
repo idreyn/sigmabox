@@ -56,18 +56,6 @@ def TouchInteractive {
 		this._isTouchInBounds = true;
 	}
 
-	on touchmove(e) {
-		if(this.enabled) {
-			var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0];
-			this._touchDeltaX = Math.abs(touch.screenX - this._touchStartX);
-			if (utils.hitTest(touch, $this.offset(), $this.outerWidth(), $this.outerHeight())) {
-				this._isTouchInBounds = true;
-			} else {
-				this._isTouchInBounds = false;
-			}
-		}
-	}
-
 	method enable {
 		this.enabled = true;
 	}	
@@ -235,7 +223,7 @@ def PageView(title) {
 			line-height: 50px;
 			background-color: #222;
 			color: #EEE;
-			font-weight: 400;
+			font-weight: 400
 			box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
 			-webkit-transform: translate3d(0,0,0);
 			-webkit-backface-visibility: none;
