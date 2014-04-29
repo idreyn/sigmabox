@@ -1123,11 +1123,11 @@ function Sum(index,lower,upper,f) {
 }
 
 Sum.prototype.valueOf = function(frame) {
-	var a = this.lower.valueOf(frame),
-		b = this.upper.valueOf(frame),
+	var a = this.lower.valueOf(frame).toFloat(),
+		b = this.upper.valueOf(frame).toFloat(),
 		sum = new Value(0);
 		fr = new Frame({},frame);
-	if(a.toFloat() > b.toFloat()) {
+	if(a > b) {
 		throw "Invalid bounds";
 	}
 	for(var i=a;i<=b;i++) {
@@ -1148,11 +1148,11 @@ function Product(index,lower,upper,f) {
 }
 
 Product.prototype.valueOf = function(frame) {
-	var a = this.lower.valueOf(frame),
-		b = this.upper.valueOf(frame),
+	var a = this.lower.valueOf(frame).toFloat(),
+		b = this.upper.valueOf(frame).toFloat(),
 		prod = new Value(1);
 		fr = new Frame({},frame);
-	if(a.toFloat() > b.toFloat()) {
+	if(a > b) {
 		throw "Invalid bounds";
 	}
 	for(var i=a;i<=b;i++) {

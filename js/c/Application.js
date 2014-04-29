@@ -27,6 +27,9 @@ Application.prototype.initLayout = function(wrapper) {
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
+	this.repl = elm.create('REPL');
+	this.root.addChild(this.repl);
+
 	this.grapher = elm.create('GrapherView');
 	this.root.addChild(this.grapher);
 
@@ -39,7 +42,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.stats = elm.create('StatsView');
 	this.root.addChild(this.stats);
 
-	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab];
+	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl];
 	this.root.menu.build();
 	this.setMode(this.data.mode || 'eval');
 

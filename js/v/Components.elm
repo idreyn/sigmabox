@@ -4,6 +4,7 @@ def TouchInteractive {
 	constructor {
 		this._hammer = Hammer(this);
 		this._hammer.on('tap',this.#tapped);
+		this._hammer.on('hold',this.#held);
 		this._hammer.on('touch',this.#touched);
 		this._hammer.on('release',this.#released);
 		this._hammer.on('dragged',this.#dragged);
@@ -22,6 +23,10 @@ def TouchInteractive {
 		this._isTouchInBounds = false;
 	}
 
+	method held(e) {
+		this._held = true;
+	}
+
 	method touched(e) {
 		if(!this.enabled) return;
 		this.$.trigger('begin');
@@ -34,6 +39,7 @@ def TouchInteractive {
 		this.$.trigger('end');
 		this.$.trigger('endactive');
 		this._isTouchInBounds = false;
+		this._held = false;
 	}
 
 	on touchmove(e) {

@@ -36,7 +36,6 @@ def SyncSubscriber {
 	}
 }
 
-
 def SigmaboxSideMenu {
 	extends {
 		SideMenu
@@ -44,7 +43,7 @@ def SigmaboxSideMenu {
 
 	contents {
 		<img src='res/img/logo-alpha.png' width='100%' />
-		//[[SigmaboxSideMenuItem 'light-bulb', 'lab']]
+		[[SigmaboxSideMenuItem 'light-bulb', 'repl']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'stats','stats']]

@@ -278,7 +278,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on invoke {
-		if(this.cannotInvoke) return;
+		if(this.cannotInvoke || this.parentKeyboard.disabled) return;
 		try {
 			if(this.activeSubkey().attr('variable')) {
 				if(app.data.varSaveMode) {

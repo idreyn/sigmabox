@@ -1,5 +1,10 @@
 var Functions = {};
 
+Functions.aboutEquals = function(a,b,precision) {
+	if(!precision) precision = 6;
+	return new Value(a).round(precision).equals(new Value(b).round(precision));
+}
+
 Functions.expect = function(arg,type) {
 	if(!(arg instanceof type)) {
 		throw type.name + ' expected';
@@ -71,6 +76,7 @@ Functions.r2d = function(n) {
 }
 
 Functions.normalize = function(v,r) {
+	if(isNaN(v)) throw "What is this shit?"
 	var min = 0;
 	var max = r? 2*Math.PI : 360;
 	while(!(v >= min && v <= max)) {

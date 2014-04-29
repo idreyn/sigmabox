@@ -3,6 +3,10 @@ def REPL {
 		PageView
 	}
 
+	css {
+		background: #FFF;
+	}
+
 	constructor {
 		this.addInput();
 	}
@@ -32,10 +36,11 @@ def REPL {
 	}
 }
 
-def REPLInput(fm,repl) {
+def REPLInput(focusManager,repl) {
 	extends {
 		MathTextField
 	}
+
 
 	my MathInput {
 		css {
@@ -53,8 +58,8 @@ def REPLInput(fm,repl) {
 
 		on update {
 			var c = this.contents();
-			if(c.indexOf('=') != -1) {
-				c = c.split('=').join('')
+			if(c.slice(-1) == '=') {
+				c = c.slice(0,-1)
 				this.setContents(c);
 				this.parent('REPL').evaluate(root.contents());
 			}

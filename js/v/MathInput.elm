@@ -144,6 +144,7 @@ def SmallMathInput {
 
 	css {
 		width: 100%;
+		display: table;
 		line-height: 30px;
 		min-height: 30px;
 		background: #FFF;
