@@ -281,7 +281,6 @@
 .mathquill-rendered-math .sqrt-prefix {
   padding-top: 0;
   position: relative;
-  top: -0.1em;
   vertical-align: top;
   -webkit-transform-origin: top;
   -moz-transform-origin: top;
