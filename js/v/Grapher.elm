@@ -81,6 +81,10 @@ def GraphWindow {
 		[[range:GrapherRange]]
 	}
 
+	css {
+		font-weight: 400;
+	}
+
 	constructor {
 		this.zoomFactor = 2;
 

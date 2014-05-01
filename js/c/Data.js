@@ -453,7 +453,7 @@ Data.prototype.setVariable = function(k,v,silent) {
 }
 
 Data.prototype.isNameAvailable = function(name) {
-	if(window.LatexCmds[name] || name.indexOf(' ') > -1 || /\d/.test(name)) {
+	if(window.LatexCmds[name] || name.indexOf(' ') > -1 || /\d/.test(name) || this.constants[name]) {
 		return false;
 	} else {
 		return true;

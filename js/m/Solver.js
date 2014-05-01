@@ -126,12 +126,30 @@ Solver.prototype.guess = function(guess) {
 		if(this.f(guess) == this.f(abs_guess)) {
 			guess = abs_guess;
 		}
-		this.result = new Value(guess).round(3);
 	}
+	this.lr = this.leftAt(guess) - this.rightAt(guess);
+	this.result = new Value(guess).round(3);
 	if(Functions.aboutEquals(this.leftAt(this.result),this.rightAt(this.result),5) || true) {
 		return this.result;
 	} else {
 		this.cannotSolve();
+	}
+}
+
+Solver.prototype.pickBestSolution = function(poss) {
+	var self = this;
+	poss = poss.filter(function(a) {
+		return a !== false
+	}).map(function(a) {
+		return {x: a, f: self.f(new Value(a).toFloat())};
+	}).sort(function(a,b) {
+		return Math.abs(a.f) > Math.abs(b.f) ? 1 : -1;
+	});
+	var res =  poss[0];
+	if(res) {
+		return res.x;
+	} else {
+		return false;
 	}
 }
 
@@ -140,7 +158,6 @@ Solver.prototype.cannotSolve = function() {
 }
 
 Solver.prototype.solve  = function() {
-	var self = this;
 	this.solveMode = 'linear';
 	try {
 		var lin = this.guess(0.01);
@@ -161,16 +178,9 @@ Solver.prototype.solve  = function() {
 	}
 	this.solveMode = 'linear';
 	var poss = [lin,exp,log];
-	poss = poss.filter(function(a) {
-		return a !== false
-	}).map(function(a) {
-		return {x: a, f: self.f(new Value(a).toFloat())};
-	}).sort(function(a,b) {
-		return Math.abs(a.f) > Math.abs(b.f) ? 1 : -1;
-	});
-	var res =  poss[0];
+	var res = this.pickBestSolution(poss);
 	if(res) {
-		return res.x;
+		return res;
 	} else {
 		this.cannotSolve();
 	}

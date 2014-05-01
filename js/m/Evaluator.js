@@ -345,12 +345,14 @@ Frac.grapherMode = false;
 
 Frac.prototype.valueOf = function(frame) {
 
+	//debugger;
+
 	if(Frac.grapherMode) {
 		return this.grapherEval(frame);
 	}
 
-	var top = new Value(this.top.valueOf(frame));
-	var bottom = new Value(this.bottom.valueOf(frame));
+	var top = this.top.valueOf(frame);
+	var bottom = this.bottom.valueOf(frame);
 
 	if(bottom instanceof Vector) {
 		throw "Invalid denominator";

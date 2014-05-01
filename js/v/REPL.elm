@@ -14,14 +14,18 @@ def REPL {
 	method addInput {
 		if(this.current) this.current.disable();
 		this.current = elm.create('REPLInput',this.focusManager,this);
+		if(this.$REPLInput.length == 0) {
+			this.current.$.css('padding-top','10px');
+		}
 		this.$contents-container.append(this.current);
 		this.current.takeFocus();
 		this.updateScroll();
 	}
 
 	method addOutput(o) {
+		this.current.$.css('padding-bottom','0px');
 		var output = elm.create('REPLOutput',this.focusManager,this);
-		output.setContents(o);
+		output.$.html(o);
 		this.$contents-container.append(output);
 	}
 
@@ -34,11 +38,28 @@ def REPL {
 		this.scroll.refresh();
 		this.scroll.scrollTo(0,this.scroll.maxScrollY,200);
 	}
+
+	my top-bar-container {
+		css {
+			display: none;
+		}
+	}
+
+	method doUpdateScroll {
+		this.updateScroll();
+		setTimeout(function() {
+			self.scroll.scrollTo(0,self.scroll.maxScrollY,200);
+		},10);
+	}
 }
 
 def REPLInput(focusManager,repl) {
 	extends {
 		MathTextField
+	}
+
+	css {
+		padding-bottom: 10px;
 	}
 
 
@@ -47,7 +68,8 @@ def REPLInput(focusManager,repl) {
 			border: none;
 			background: none;
 			box-shadow: none;
-			height: 40px;
+			padding: 10px;
+			padding-left: 20px;
 		}
 
 		on keydown(e) {
@@ -63,20 +85,27 @@ def REPLInput(focusManager,repl) {
 				this.setContents(c);
 				this.parent('REPL').evaluate(root.contents());
 			}
+			this.parent('REPL').doUpdateScroll();
 		}
 	}
 }
 
 def REPLOutput(fm,repl) {
 	extends {
-		REPLInput
+		SimpleListItem
 	}
 
 	constructor {
-		this.disable();
+
+	}
+
+	style active {
+		background: 
 	}
 
 	css {
 		background: rgba(0,255,0,0.1);
+		padding: 10px;
+		padding-left: 20px;
 	}
 }

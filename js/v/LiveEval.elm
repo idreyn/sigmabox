@@ -3,7 +3,6 @@ def LiveEvalCard(manager) {
 		<div> 
 			<div class='history-pull'></div>
 			<div class='upper'> 
-
 			</div>
 			<div class='toolbar'>
 
