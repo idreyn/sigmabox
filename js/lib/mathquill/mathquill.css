@@ -225,7 +225,7 @@
 }
 .mathquill-rendered-math .paren {
   padding: 0 .1em;
-  vertical-align: bottom;
+  vertical-align: initial;
   -webkit-transform-origin: bottom center;
   -moz-transform-origin: bottom center;
   -ms-transform-origin: bottom center;

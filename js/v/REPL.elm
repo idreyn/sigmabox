@@ -60,6 +60,7 @@ def REPLInput(focusManager,repl) {
 
 	css {
 		padding-bottom: 10px;
+		padding-right: 10px;
 	}
 
 
@@ -99,12 +100,12 @@ def REPLOutput(fm,repl) {
 
 	}
 
-	style active {
-		background: 
+	style default {
+		background: #F00;
 	}
 
 	css {
-		background: rgba(0,255,0,0.1);
+		background: #F00;
 		padding: 10px;
 		padding-left: 20px;
 	}

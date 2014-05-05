@@ -101,10 +101,10 @@ Solver.prototype.guess = function(guess) {
 		// If the derivative never changed, that's probably because both sides are constant
 		if(this.leftAt(guess) == this.rightAt(guess)) {
 			// Yep, left == right.
-			this.result = true;
+			throw {steady: true, value: true};
 		} else {
 			// No, left != right.
-			this.result = false;
+			throw {steady: true, value: false};
 		}
 	} else {
 		// If it's an angle we should try to normalize it
@@ -157,27 +157,41 @@ Solver.prototype.cannotSolve = function() {
 	throw "Can't solve";
 }
 
+Solver.prototype.steady = function(val) {
+	throw 'That is ' + val.toString();
+}
+
 Solver.prototype.solve  = function() {
 	this.solveMode = 'linear';
 	try {
 		var lin = this.guess(0.01);
 	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
 		lin = false;
 	}
 	this.solveMode = 'exponential';
 	try {
 		var exp = this.guess(0.01);
 	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
 		exp = false;
 	}
 	this.solveMode = 'logarithmic';
 	try {
 		var log = this.guess(0.01);
 	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
 		log = false;
 	}
 	this.solveMode = 'linear';
 	var poss = [lin,exp,log];
+	console.log(poss);
 	var res = this.pickBestSolution(poss);
 	if(res) {
 		return res;
