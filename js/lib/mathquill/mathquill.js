@@ -3931,6 +3931,17 @@ $.fn.mathquill = function(cmd, latex) {
         }(rootBlock));
       }
     });
+   case 'respace':
+    return this.each(function() {
+      var blockId = $(this).attr(mqBlockId),
+        rootBlock = blockId && MathElement[blockId];
+      if (rootBlock) {
+        (function postOrderRedraw(el) {
+          el.eachChild(postOrderRedraw);
+          if (el.respace) el.respace();
+        }(rootBlock));
+      }
+    });
   case 'revert':
     return this.each(function() {
       var blockId = $(this).attr(mqBlockId),

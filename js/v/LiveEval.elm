@@ -473,7 +473,7 @@ def LiveEvalManager {
 			'top',
 			0
 		);
-//		this.@indicator.size();
+		$this.find('.MathInput').each(function() { this.size(); });
 		$this.find('.LiveEvalCard').each(function() { this.size(); });
 		this.screenFraction = i;
 		if(this.scroll) this.scroll.refresh();

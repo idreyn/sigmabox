@@ -366,7 +366,11 @@ Functions.normalcdf = function(z1,z2,mu,sigma) {
 }
 
 Functions.binompdf = function(n,p,k) {
-	return Functions.nCr(n,k) * Functions.power(p,k) * Functions.power(1-p,n-k);
+	if(k > n || k < 0) {
+		return 0;
+	} else {
+		return Functions.nCr(n,k) * Functions.power(p,k) * Functions.power(1-p,n-k);
+	}
 }
 
 Functions.binomcdf = function(n,p,k) {

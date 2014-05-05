@@ -74,7 +74,7 @@
 .mathquill-rendered-math {
   font-variant: normal;
   font-weight: normal;
-  font-style: normal;
+  font-style: normal !important;
   font-size: 115%;
   line-height: 1;
   display: -moz-inline-box;
@@ -107,8 +107,6 @@
 
 .mathquill-rendered-math sub, .mathquill-rendered-math sup {
   font-size: 0.75em !important;
-  padding-left: 0px;
-  padding-right: 3px;
 }
 
 .mathquill-rendered-math sup {
@@ -138,7 +136,7 @@
 .mathquill-rendered-math var,
 .mathquill-rendered-math i,
 .mathquill-rendered-math i.font {
-  font-syle: italic;
+  font-style: normal !important;
 }
 .mathquill-rendered-math var.florin {
   margin: 0 -0.1em;

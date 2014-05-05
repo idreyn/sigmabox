@@ -35,7 +35,12 @@ def MathInput(owner) {
 	method takeFocus {
 		
 	}
-	
+
+	method size {
+		var c = this.contents();
+		if(c.indexOf('\\int') > -1 || c.indexOf('\\sum') > -1 || c.indexOf('\\prod') > -1) $this.mathquill('respace');
+	}
+
 	method contents {
 		return $this.mathquill('latex');
 	}
