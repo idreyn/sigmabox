@@ -68,7 +68,7 @@
 		<alternate text-label='/'>/</alternate>
 	</key>
 	<key name='equals' row='5' col='4' default-color='#0a4766'>
-		<primary text-label='='>=</primary>
+		<primary text-label='=' action='input:equals' />
 	</key>
 
 	

@@ -51,21 +51,6 @@ Data.prototype.init = function() {
 		'\\sigma_{sb}': new Value(5.670373e-8) // Stefan-Boltzmann constant
 	}
 
-	/**
-
-	for(var k in this.constants) {
-		this.registerFunction(k);
-	}
-
-	var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
-
-	for(var k in alphabet) {
-		this.registerFunction(alphabet[k]);
-		this.registerFunction(alphabet[k].toUpperCase());
-	}
-
-	**/
-
 	this.variables = {
 
 	};
@@ -420,7 +405,13 @@ Data.prototype.deserializeLists = function(obj) {
 
 Data.prototype.lookup = function(symbol) {
 	symbol = symbol.name || symbol;
-	return this.constants[symbol] || this.variables[symbol] || this.lookupList(symbol) || new Value(0);
+	var res = this.constants[symbol] || this.variables[symbol] || this.lookupList(symbol);
+	if(res) return res;
+	if(!res && symbol.charAt(0) == '\\') {
+		return this.lookup(symbol.slice(1));
+	} else {
+		return new Value(0);
+	}
 }
 
 Data.prototype.lookupList = function(name) {

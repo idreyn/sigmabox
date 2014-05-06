@@ -7,49 +7,122 @@ def REPL {
 		background: #FFF;
 	}
 
-	constructor {
-		this.addInput();
+	my contents-container-wrapper {
+		contents {
+			
+		}
 	}
 
-	method addInput {
-		if(this.current) this.current.disable();
-		this.current = elm.create('REPLInput',this.focusManager,this);
-		if(this.$REPLInput.length == 0) {
-			this.current.$.css('padding-top','10px');
-		}
+	constructor {
+		this.addLine();
+	}
+
+	method addLine {
+		this.current = elm.create('REPLLine',this.focusManager,this);
 		this.$contents-container.append(this.current);
 		this.current.takeFocus();
 		this.updateScroll();
 	}
 
-	method addOutput(o) {
-		this.current.$.css('padding-bottom','0px');
-		var output = elm.create('REPLOutput',this.focusManager,this);
-		output.$.html(o);
-		this.$contents-container.append(output);
-	}
-
-	method evaluate(text) {
-		var p = new Parser();
-		var res = p.parse(text);
-		res = res.valueOf(new Frame({}));
-		this.addOutput(res.toString());
-		this.addInput();
-		this.scroll.refresh();
-		this.scroll.scrollTo(0,this.scroll.maxScrollY,200);
-	}
-
 	my top-bar-container {
 		css {
-			display: none;
+			position: absolute;
+			bottom: 0px;
+			background: rgb(27, 27, 27);
+			height: 40px;
+			text-align: right;
+		}
+	}
+
+	my title {
+		css {
+			display: none
+		}
+	}
+
+	my top-bar {
+		css {
+			margin-top: 5px;
+			height: 30px;
+		}
+
+		contents {
+			[[fracSwitch:Switch 'DEC','FRC','app.data.displayDecimalizedFractions']]
+			[[trigSwitch:Switch 'RAD','DEG','app.data.trigUseRadians']]
+			[[vectorSwitch:Switch 'R\u2220\u03B8','< >','app.data.displayPolarVectors']]
+		}
+
+		my Switch {
+			css {
+				background: #333;
+			}
+
+			my label {
+				css {
+					color: #FFF;
+				}
+			}
+		}
+
+		method size {
+			var self = this;
+			this.$.children().each(function() {
+				if(this.size) {
+					this.size(self.$.height());
+				}
+			});
 		}
 	}
 
 	method doUpdateScroll {
 		this.updateScroll();
 		setTimeout(function() {
-			self.scroll.scrollTo(0,self.scroll.maxScrollY,200);
+			self.scroll.scrollTo(0,self.scroll.maxScrollY,0);
 		},10);
+	}
+}
+
+def REPLLine(focusManager,repl) {
+	html {
+		<div></div>
+	}
+
+	css {
+
+	}
+
+	constructor {
+		this.$.append(elm.create('REPLInput',this.focusManager,this.repl).named('input'));
+		this.$.append(elm.create('REPLOutput').named('output'));
+		this.@output.$.hide();
+	}
+
+	method takeFocus {
+		this.@input.takeFocus();
+	}
+
+	method done {
+		this.parent('REPL').addLine();
+		this.@input.disable();
+		this.evaluate(this.@input.contents());
+	}
+
+	method evaluate(text) {
+		try {
+			var p = new Parser();
+			var res = p.parse(text);
+			res = res.valueOf(new Frame({}));
+			if(res instanceof Vector && app.data.displayPolarVectors) {
+				res = res.toStringPolar(app.data.trigUseRadians);
+			}
+			if(res instanceof Frac && app.data.displayDecimalizedFractions) {
+				res = res.decimalize();
+			}
+			this.@output.$.html(res.toString());
+		} catch(e) {
+			this.@output.$.html(e);
+		}
+		this.@output.$.show();
 	}
 }
 
@@ -59,10 +132,8 @@ def REPLInput(focusManager,repl) {
 	}
 
 	css {
-		padding-bottom: 10px;
 		padding-right: 10px;
 	}
-
 
 	my MathInput {
 		css {
@@ -73,25 +144,20 @@ def REPLInput(focusManager,repl) {
 			padding-left: 20px;
 		}
 
-		on keydown(e) {
-			if(e.keyCode == 13) {
-				this.parent('REPL').evaluate(root.contents());
+		method onEqualsSign {
+			if(this.contents().length > 0) {
+				this.parent('REPLLine').done();
 			}
 		}
 
 		on update {
-			var c = this.contents();
-			if(c.slice(-1) == '=') {
-				c = c.slice(0,-1)
-				this.setContents(c);
-				this.parent('REPL').evaluate(root.contents());
-			}
+			// this.parent('REPLLine').evaluate(this.contents());
 			this.parent('REPL').doUpdateScroll();
 		}
 	}
 }
 
-def REPLOutput(fm,repl) {
+def REPLOutput {
 	extends {
 		SimpleListItem
 	}
@@ -101,11 +167,10 @@ def REPLOutput(fm,repl) {
 	}
 
 	style default {
-		background: #F00;
+		background: #EEE;
 	}
 
 	css {
-		background: #F00;
 		padding: 10px;
 		padding-left: 20px;
 	}

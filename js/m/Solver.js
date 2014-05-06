@@ -191,7 +191,6 @@ Solver.prototype.solve  = function() {
 	}
 	this.solveMode = 'linear';
 	var poss = [lin,exp,log];
-	console.log(poss);
 	var res = this.pickBestSolution(poss);
 	if(res) {
 		return res;

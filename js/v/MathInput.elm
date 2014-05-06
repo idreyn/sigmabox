@@ -81,6 +81,13 @@ def MathInput(owner) {
 						self.$.trigger('cursor-right');
 					}
 					break;
+				case 'equals':
+					if(!self.onEqualsSign) {
+						self.acceptLatexInput('=');
+					} else {
+						self.onEqualsSign();
+					}
+					break;
 				case 'backspace':
 					if(!(self.preventBackspace && self.preventBackspace())) self.mathSelf().cursor.backspace();
 					break;
