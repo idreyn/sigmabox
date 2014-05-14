@@ -793,7 +793,8 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method dragged(e) {
-		if(!this._dragOrigin) this._dragOrigin = tx;
+		if(utils.tabletMode()) return;
+ 		if(!this._dragOrigin) this._dragOrigin = tx;
 		if(this.menuShown) return;
 		var tx = e.gesture.center.pageX - this._dragOrigin;
 		$this.css(
