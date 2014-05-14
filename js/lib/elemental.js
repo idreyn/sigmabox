@@ -673,6 +673,9 @@ var elm;
                     if(first.slice(0,2) == '//') {
                         continue;
                     }
+                    if(first.slice(0,4) == '<!--') {
+                        continue;
+                    }
                     if(depth < 2 && first == '}') {
                         warn_about_braces();
                         continue;
