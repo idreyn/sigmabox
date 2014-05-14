@@ -725,11 +725,13 @@ def SideMenuAppView(menuClass='SideMenu') {
 		this.menuSwipeThreshold = 25;
 		this.menu = elm.create(this.menuClass);
 		$this.append(this.menu);
-		Hammer(this.@touch-shield).on('tap',this.#tapped);
-		Hammer(this).on('swiperight',this.#swipeRight);
-		Hammer(this).on('dragstart',this.#dragStart);
-		Hammer(this).on('drag',this.#dragged);
-		Hammer(this).on('dragend',this.#dragEnd);
+		if(!utils.tabletMode()) {
+			Hammer(this.@touch-shield).on('tap',this.#tapped);
+			Hammer(this).on('swiperight',this.#swipeRight);
+			Hammer(this).on('dragstart',this.#dragStart);
+			Hammer(this).on('drag',this.#dragged);
+			Hammer(this).on('dragend',this.#dragEnd);
+		}
 	}
 
 	method addChild(x) {
@@ -737,7 +739,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method tapped(e) {
-		if(this.menuShown) {
+		if(this.menuShown && !utils.tabletMode()) {
 			this.hideMenu();
 		}
 	}
