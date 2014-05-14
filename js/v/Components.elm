@@ -223,7 +223,7 @@ def PageView(title) {
 		}
 
 		method size {
-			$this.css('height', $parent.height() - (parent.$top-bar-container.css('display') == 'none' ? 0 : parent.$top-bar-container.height()));
+			$this.css('height', $parent.height() - (parent.$top-bar-container.css('display') == 'none' || parent.sizeOverToolbar? 0 : parent.$top-bar-container.height()));
 		}
 	}
 
@@ -281,8 +281,16 @@ def PageView(title) {
 	}
 
 	method updateScroll(horiz) {
-		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: true, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
-		self.scroll.refresh();
+		if(!self.scroll) {
+			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: true, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
+			self.scroll.on('scroll',self._onScroll);
+		} else {
+			self.scroll.refresh();
+		}
+	}
+
+	method _onScroll(e) {
+		this.$.trigger('scroll');
 	}
 
 	extends {
@@ -719,9 +727,9 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(this.menu);
 		Hammer(this.@touch-shield).on('tap',this.#tapped);
 		Hammer(this).on('swiperight',this.#swipeRight);
-		//Hammer(this).on('dragstart',this.#dragStart);
-		//Hammer(this).on('drag',this.#dragged);
-		//Hammer(this).on('dragend',this.#dragEnd);
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('drag',this.#dragged);
+		Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	method addChild(x) {
@@ -753,8 +761,8 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(view);
 		view.relinquish = function() {
 			self.overlay = undefined;
-			this.$.remove();
 		}
+		view.$.trigger('ready');
 		if(utils.tabletMode()) {
 			view.$.width(this.viewWidth());
 			view.flyIn();
@@ -767,7 +775,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(e.gesture.direction == 'up') return;
+		if(e.gesture.direction == 'up' || e.gesture.direction == 'down') return;
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
 		if(this.menuShown || this.overlay) {
@@ -1671,24 +1679,29 @@ def Overlay {
 	method flyIn {
 		switch(this.overlaySourceDirection) {
 			case 'right':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
 				$this.css('translateX',0);
 				break;
 			case 'left':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
 				$this.css('translateX',0);
 				break;
 			case 'top':
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
 				$this.css('translateY',0);
 				break;
 			case 'bottom': 
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
 				$this.css('translateY',0);
 				break;
 		}
+		$this.show();
 	}
 
 	on removed {
 		this.flyOut();
 		setTimeout(function() {
-			$this.hide().remove();
+			if(!self.persist) $this.remove();
 			if(self.relinquish) self.relinquish.call(self);
 		},1000)
 	}

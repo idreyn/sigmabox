@@ -198,6 +198,7 @@ def DragKeyboard(keyboardSource) {
 	on pullUpdate(e,data) {
 		var y = data.y,
 			translateY = data.translateY;
+		self.pulling = true;
 		self.@KeyboardPullIndicator.setHeight(Math.abs(translateY));
 		// Stop keys from being pressed
 		if(y > 30 && !self.disabled) {
@@ -214,7 +215,8 @@ def DragKeyboard(keyboardSource) {
 		},500);
 		this.animated();
 		this.slideUp();
-		this.@KeyboardPullIndicator.invoke();
+		if(self.pulling) this.@KeyboardPullIndicator.invoke();
+		self.pulling = false;
 	}
 
 

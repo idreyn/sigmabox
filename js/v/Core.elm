@@ -43,13 +43,13 @@ def SigmaboxSideMenu {
 
 	contents {
 		<img src='res/img/logo-alpha.png' width='100%' />
-		[[SigmaboxSideMenuItem 'light-bulb', 'repl']]
 		[[SigmaboxSideMenuItem 'calculator','eval']]
+		[[SigmaboxSideMenuItem 'repl', 'repl']]
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'stats','stats']]
 		[[SigmaboxSideMenuItem 'functions','functions']]
-		[[SigmaboxSideMenuItem 'converter','converter']]
-		[[SigmaboxSideMenuItem 'settings','settings']]
+		//[[SigmaboxSideMenuItem 'converter','converter']]
+		//[[SigmaboxSideMenuItem 'settings','settings']]
 	}
 
 	method build {

@@ -303,6 +303,7 @@ var elm;
             }
             return n;
         },
+        debug: true,
         _definitions: {},
         def: function (n) {
             return elm._definitions[n];
@@ -1022,11 +1023,11 @@ var elm;
                     $(__el__).bind(__selector__.event, function () {
                         var __args__ = elm._argarr(arguments);
                         var ____func = 'var __func__ = function(' + __selector__.parameters.join(',') + ') { ';
-                        ____func += 'try {';
+                        if(!elm.debug) ____func += 'try {';
                         ____func += __selector__.body;
-                        ____func += '} catch(e) {';
-                        ____func += 'throw "' + __selector__.definition.name + '#on:' + __selector__.event + ' <- " + e.valueOf();'; 
-                        ____func += '}';
+                        if(!elm.debug)  ____func += '} catch(e) {';
+                        if(!elm.debug)  ____func += 'throw "' + __selector__.definition.name + '#on:' + __selector__.event + ' <- " + e.valueOf();'; 
+                        if(!elm.debug)  ____func += '}';
                         ____func += '}';
                         eval(____func);
                         __func__.apply(__el__, __args__);
@@ -1037,11 +1038,11 @@ var elm;
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __constructor__ = function() { ';
-                    ____func += 'try {';
+                    if(!elm.debug)  ____func += 'try {';
                     ____func += (__selector__.body && __selector__.body.length > 0) ? __selector__.body : '';
-                    ____func += '} catch(e) {';
-                    ____func += 'throw "' + __selector__.definition.name + '#(constructor) <- " + e.valueOf();'; 
-                    ____func += '}';
+                    if(!elm.debug)  ____func += '} catch(e) {';
+                    if(!elm.debug)  ____func += 'throw "' + __selector__.definition.name + '#(constructor) <- " + e.valueOf();'; 
+                    if(!elm.debug)  ____func += '}';
                     ____func += '}';
                     try {
                         eval(____func);
@@ -1054,11 +1055,11 @@ var elm;
                     var $parent = $(parent);
                     var $root = $(root);
                     var ____func = 'var __method__ = function(' + __selector__.parameters.join(',') + ') {';
-                    ____func += 'try {';
+                    if(!elm.debug)  ____func += 'try {';
                     ____func += __selector__.body;
-                    ____func += '} catch(e) {';
-                    ____func += 'throw "' + __selector__.definition.name + '#' + __selector__.name + ' <- " + e.valueOf();'; 
-                    ____func += '}';
+                    if(!elm.debug)  ____func += '} catch(e) {';
+                    if(!elm.debug)  ____func += 'throw "' + __selector__.definition.name + '#' + __selector__.name + ' <- " + e.valueOf();'; 
+                    if(!elm.debug)  ____func += '}';
                     ____func += '}';
                     eval(____func);
                     __el__[__selector__.name] = __method__;

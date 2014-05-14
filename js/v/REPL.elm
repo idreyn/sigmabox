@@ -3,34 +3,80 @@ def REPL {
 		PageView
 	}
 
-	css {
-		background: #FFF;
-	}
-
-	my contents-container-wrapper {
-		contents {
-			
-		}
+	properties {
+		sizeOverToolbar: true
 	}
 
 	constructor {
-		this.addLine();
+		this.load();
 	}
 
-	method addLine {
+	on active {
+		self.doUpdateScroll();
+	}
+
+	method load {
+		app.data.repl.slice(Math.max(app.data.repl.length - 20,0)).forEach(function(line) {
+			self.addLine(true,line.input,line.output);
+		});
+		self.addLine();
+		self.doUpdateScroll();
+	}
+
+	method addLine(quick,inp,out) {
+		this.setPrev(this.current);
 		this.current = elm.create('REPLLine',this.focusManager,this);
 		this.$contents-container.append(this.current);
-		this.current.takeFocus();
-		this.updateScroll();
+		if(!quick) {
+			this.current.takeFocus();
+			this.updateScroll();
+		}
+		if(inp) {
+			this.current.@input.setContents(inp);
+			this.current.@input.disable();
+		}
+		if(out) {
+			this.current.@output.$.html(out).show();
+		}
+	}
+
+	method storeLine(inp,out) {
+		app.data.repl.push({input: inp, output: out});
+		app.data.serialize();
+	}
+
+	method setPrev(e) {
+		if(this.prev) {
+			this.prev.@output.$.css('opacity','0.75');
+		}
+		if(e) {
+			this.prev = e;
+			this.prev.$.css('margin-bottom','0px');
+			this.prev.@output.$.css('opacity','1.0');
+			this.doUpdateScroll(100);
+		}
+	}
+
+	method clear {
+		this.$REPLLine.remove();
+		app.data.repl = [];
+		app.data.serialize();
+		this.addLine();
+		this.doUpdateScroll();
 	}
 
 	my top-bar-container {
 		css {
+			background: none;
 			position: absolute;
 			bottom: 0px;
-			background: rgb(27, 27, 27);
-			height: 40px;
+			opacity: 1;
+			height: 10%;
 			text-align: right;
+			font-weight: 200;
+			padding: 10px;
+			padding-left: 0px;
+			z-index: 1;
 		}
 	}
 
@@ -42,26 +88,28 @@ def REPL {
 
 	my top-bar {
 		css {
-			margin-top: 5px;
-			height: 30px;
+			height: 100%;
 		}
 
 		contents {
 			[[fracSwitch:Switch 'DEC','FRC','app.data.displayDecimalizedFractions']]
 			[[trigSwitch:Switch 'RAD','DEG','app.data.trigUseRadians']]
-			[[vectorSwitch:Switch 'R\u2220\u03B8','< >','app.data.displayPolarVectors']]
-		}
+			[[clearBtn:LiveEvalButton 'CLR']]
+		}		
 
-		my Switch {
-			css {
-				background: #333;
-			}
-
-			my label {
-				css {
-					color: #FFF;
+		constructor {
+			this.$Switch.on('flipped',function() {
+				if(root.prev) {
+					root.prev.evaluate();
+					root.doUpdateScroll();
 				}
-			}
+			});
+
+			this.@clearBtn.$.on('invoke',function() {
+				app.confirm('Really?','Clear all calculation history?',function() {
+					root.clear();
+				},'Clear','Cancel');
+			});
 		}
 
 		method size {
@@ -74,10 +122,11 @@ def REPL {
 		}
 	}
 
-	method doUpdateScroll {
+	method doUpdateScroll(n) {
+		n = n || 0;
 		this.updateScroll();
 		setTimeout(function() {
-			self.scroll.scrollTo(0,self.scroll.maxScrollY,0);
+			self.scroll.scrollTo(0,self.scroll.maxScrollY,n);
 		},10);
 	}
 }
@@ -88,7 +137,7 @@ def REPLLine(focusManager,repl) {
 	}
 
 	css {
-
+		margin-bottom: 40px;
 	}
 
 	constructor {
@@ -104,10 +153,12 @@ def REPLLine(focusManager,repl) {
 	method done {
 		this.parent('REPL').addLine();
 		this.@input.disable();
-		this.evaluate(this.@input.contents());
+		this.evaluate();
+		this.parent('REPL').storeLine(this.@input.contents(),this.@output.$.html());
 	}
 
-	method evaluate(text) {
+	method evaluate() {
+		var text = this.@input.contents();
 		try {
 			var p = new Parser();
 			var res = p.parse(text);
@@ -158,20 +209,17 @@ def REPLInput(focusManager,repl) {
 }
 
 def REPLOutput {
-	extends {
-		SimpleListItem
-	}
 
-	constructor {
-
-	}
-
-	style default {
-		background: #EEE;
+	html {
+		<div></div>
 	}
 
 	css {
+		font-size: 14pt;
 		padding: 10px;
+		color: #333;
+		background: #CCC;
+		opacity: 0.75;
 		padding-left: 20px;
 	}
 }

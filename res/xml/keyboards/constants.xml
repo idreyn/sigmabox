@@ -4,15 +4,15 @@
 	</key>
 
 	<key row='2' col='1'>
-		<primary close='close' text-label='G'>G</primary>
+		<primary close='close' text-label='G'>G_{grav}</primary>
 	</key>
 
 	<key row='3' col='1'>
-		<primary close='close' text-label='g'>g</primary>
+		<primary close='close' text-label='g'>g_{grav}</primary>
 	</key>
 
 	<key row='4' col='1'>
-		<primary close='close' text-label='c'>c_{light}</primary>
+		<primary close='close' text-label='c'>c_{L}</primary>
 	</key>
 
 	<key row='5' col='1'>

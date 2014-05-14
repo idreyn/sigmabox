@@ -201,9 +201,10 @@ def LiveEvalCard(manager) {
 
 	on pullEnd(e,data) {
 		if(data.translateY > 90) {
-			app.overlay(elm.create('LiveEvalHistoryOverlay', function(res) {
+			app.mode.historyOverlay = app.mode.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
 				self.setContents(res);
-			}));
+			});
+			app.overlay(app.mode.historyOverlay);
 		}
 	}
 
@@ -244,7 +245,7 @@ def LiveEvalCard(manager) {
 			} else {
 				this.$.css('font-size','40');
 			}
-			if(s == '') s = '0'
+			if(s == '') s = '0';
 			this.$scroll.html(s);
 			this.$.css('line-height',this.$.height() + 'px');
 			if(!self.scroll) self.scroll = new IScroll(self,{mouseWheel: true, scrollX: true});
@@ -576,7 +577,8 @@ def LiveEvalHistoryOverlay(callback) {
 
 	properties {
 		overlaySourceDirection: 'top',
-		autoAddField: false
+		autoAddField: false,
+		persist: true
 	}
 
 	constructor {

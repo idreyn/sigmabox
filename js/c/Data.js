@@ -11,6 +11,7 @@ Data.prototype.toSerialize = [
 	'currentInput',
 	'grapherEquations',
 	'grapherWindow',
+	'repl'
 ];
 
 Data.prototype.init = function() {
@@ -28,9 +29,9 @@ Data.prototype.init = function() {
 		'\\phi': new Value(1.6180339887), // Golden ratio
 		'\\varepsilon_{0}': new Value(8.854187817e-12), // Permittivity of free space
 		'\\mu_{0}': new Value(1.256637061e-6), // Permeability of free space
-		'g': new Value(9.80665), // Standard gravity
-		'G': new Value(6.67384e-11), // Gravitation constant
-		'c_{light}': new Value(299792458), // Speed of light
+		'g_{grav}': new Value(9.80665), // Standard gravity
+		'G_{grav}': new Value(6.67384e-11), // Gravitation constant
+		'c_{L}': new Value(299792458), // Speed of light
 		'k_{E}': new Value(8.98755179e9), // Electric constant
 		'\\alpha_{B}': new Value(5.2917721092e-11), // Bohr radius
 		'Z_{0}': new Value(376.730313461), // Characteristic impedance of vacuum
@@ -280,6 +281,8 @@ Data.prototype.init = function() {
 	this.lists = {
 
 	}
+
+	this.repl = [];
 
 	this.deserialize();
 }

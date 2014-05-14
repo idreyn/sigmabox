@@ -924,11 +924,6 @@ Matrix.prototype.copy = function() {
 }
 
 function Vector(args) {
-	if(!isNaN(args[0])) {
-		args = args.map(function(i) {
-			return new Value(i);
-		});
-	}
 	this.args = args || [];
 }
 
