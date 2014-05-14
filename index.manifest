@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 3.26.2014.1
+#version 5.13.14.1
 
 CACHE:
 
@@ -16,6 +16,7 @@ res/img/grapher.png
 res/img/home.png
 res/img/integral.png
 res/img/logo.png
+res/img/repl.png
 res/img/settings.png
 res/img/stats.png
 res/img/thin-icons/close.png
@@ -25,7 +26,7 @@ res/img/keys/left.png
 res/img/keys/right.png
 
 #internal HTML documents
-index.php
+index.html
 
 #style sheets
 css/lib/touchscroll.css
