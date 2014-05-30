@@ -175,8 +175,9 @@ Application.prototype.popNotification = function(text) {
 	});
 }
 
-Application.prototype.prompt = function(title,callback,defaultVal) {
+Application.prototype.prompt = function(title,callback,defaultVal,cancelCallback) {
 	var p = elm.create('Prompt',title,callback,defaultVal);
+	p.cancelCallback = cancelCallback;
 	$('body').append(p);
 	return p;
 }

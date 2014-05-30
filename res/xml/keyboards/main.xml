@@ -7,7 +7,7 @@
 		<primary text-label='8'>8</primary>
 	</key>
 	<key name='9' row='2' col='3' default-color='#595959'>
-		<primary text-label='9' action='input:bloop'>9</primary>
+		<primary text-label='9'>9</primary>
 	</key>
 	<key name='4' row='3' col='1' default-color='#595959'>
 		<primary text-label='4'>4</primary>
@@ -42,13 +42,16 @@
 	
 	<key name='delete' row='1' col='1' active-color='#ff5f5f'>
 		<primary image-label='delete' action='input:backspace' />
+		<alternate text-label='Clear' action='input:clear' />
 	</key>
 	<key name='left-arrow' image-label='left' row='1' col='2' action='input:left'>
 		<primary image-label='left' action='input:left' />
+		<alternate image-label='undo' action='input:undo' />
 	</key>
 	
 	<key name='right-arrow' image-label='right' row='1' col='3' action='input:right'>
 		<primary image-label='right' action='input:right' />
+		<alternate image-label='redo' action='input:redo' />
 	</key>
 	
 	

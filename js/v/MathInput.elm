@@ -5,6 +5,10 @@ def MathInput(owner) {
 	}
 	
 	constructor {
+		this._contents = '';
+		this._refresh = true;
+		this.history = [];
+		this.historyPointer = 0;
 		$this.mathquill('editable');
 		$this.find('textarea').attr('disabled','disabled');
 	}
@@ -32,8 +36,24 @@ def MathInput(owner) {
 		this.mathSelf().cursor.hide();
 	}
 
-	method takeFocus {
-		
+	method updateHistory {
+		if(self.historyPointer != 0) {
+			self.history = self.history.slice(0, self.history.length - self.historyPointer);
+			self.historyPointer = 0;
+		}
+		if(self.contents() != self.history[self.history.length - 1]) {
+			self.history.push(self.contents());
+		}
+	}
+
+	method undo {
+		self.historyPointer = Math.min(self.historyPointer + 1, self.history.length - 1);
+		self.setContents(self.history[self.history.length - 1 - self.historyPointer]);
+	}
+
+	method redo {
+		self.historyPointer = Math.max(self.historyPointer - 1, 0);
+		self.setContents(self.history[self.history.length - 1 - self.historyPointer]);
 	}
 
 	method size {
@@ -42,7 +62,12 @@ def MathInput(owner) {
 	}
 
 	method contents {
-		return $this.mathquill('latex');
+		if(self._refresh || true) {
+			var c = $this.mathquill('latex');
+			self._contents = c;
+			self._refresh = false;
+		}
+		return self._contents;
 	}
 	
 	method mathSelf {
@@ -52,13 +77,16 @@ def MathInput(owner) {
 	method acceptLatexInput(input,doUpdate) {
 		if(doUpdate === undefined) doUpdate = true;
 		if(!(self.preventInput && self.preventInput(input))) $this.mathquill('write',input);
-		this.mathSelf().cursor.show();
+		self.mathSelf().cursor.show();
+		self.updateHistory();
+		self._refresh = true;
 		if(doUpdate) $this.trigger('update');
 	}
 
 	method setContents(input) {
 		$this.html('',true);
 		$this.mathquill('latex',input);
+		self._contents = input;
 	}
 	
 	method acceptActionInput(type) {
@@ -66,6 +94,9 @@ def MathInput(owner) {
 		type.split(',').forEach(function(t) {
 			self.$.trigger('action-input',type);
 			var c = self.mathSelf().cursor;
+			if(t !== 'left' && t == 'right') {
+				self._refresh = true;
+			}
 			switch(t) {
 				case 'left':
 					if(!(self.preventCursorLeft && self.preventCursorLeft()) && (c.prev || c.parent != c.root)) {
@@ -92,7 +123,7 @@ def MathInput(owner) {
 					if(!(self.preventBackspace && self.preventBackspace())) self.mathSelf().cursor.backspace();
 					break;
 				case 'clear':
-					$this.mathquill('latex','');
+					self.setContents('');
 					break;
 				case 'function':
 					app.overlay(elm.create('FunctionChoiceView',function(func) {
@@ -113,8 +144,18 @@ def MathInput(owner) {
 						self.acceptLatexInput('\\' + list.name);
 					}));
 					break;
+				case 'undo':
+					self.undo();
+					break;
+				case 'redo':
+					self.redo();
+					break;
+			}
+			if(self.contents() != oldContents && t != 'undo' && t != 'redo') {
+				self.updateHistory();
 			}
 		});
+		this.mathSelf().cursor.show();
 		if(self.afterInput) self.afterInput(oldContents,this.contents());
 		$this.trigger('update');
 	}

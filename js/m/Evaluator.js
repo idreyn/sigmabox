@@ -506,7 +506,15 @@ Frac.prototype.toString = function() {
 		if(red.bottom.equals(1)) {
 			return red.top.toString();
 		} else {
-			return red.top.toString() + '/' + red.bottom.toString();
+			var top = red.top.toString();
+			if(red.top.complex) {
+				top = '(' + top + ')';
+			}
+			var bottom = red.bottom.toString();
+			if(red.bottom.complex) {
+				bottom = '(' + bottom + ')';
+			}
+			return top + '/' + bottom;
 		}
 	} else {
 		return red.toString();

@@ -364,8 +364,8 @@ def StatsListField(focusManager) {
 	}
 
 	properties {
-		pullMaxWidth: 20,
-		pullConstant: 50
+		pullMaxWidth: 100,
+		pullConstant: 30
 	}
 
 	contents {
@@ -661,9 +661,7 @@ def StatsTestSummary {
 	method displayResults {
 		this.$line-item.each(function(i,e) {
 			setTimeout(function() {
-				$(e).css('translateX',0 - root.$.width()).show().animate({
-					'translateX': 0,
-				},300,'easeInOutBack');
+				$(e).show();
 			},i * 10);
 		});
 
@@ -995,9 +993,7 @@ def StatsTestViewSimple {
 	method displayResults {
 		this.$line-item.each(function(i,e) {
 			setTimeout(function() {
-				$(e).css('translateX',0 - root.$.width()).show().animate({
-					'translateX': 0,
-				},300,'easeInOutBack');
+				$(e).show();
 			},i * 10);
 		});
 

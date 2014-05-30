@@ -214,6 +214,10 @@ def REPLOutput {
 		<div></div>
 	}
 
+	extends {
+		TouchInteractive
+	}
+
 	css {
 		font-size: 14pt;
 		padding: 10px;
@@ -221,5 +225,11 @@ def REPLOutput {
 		background: #CCC;
 		opacity: 0.75;
 		padding-left: 20px;
+	}
+
+	on invoke {
+		var res = new Parser().parse(self.$.html()).valueOf(new Frame());
+		app.data.initVariableSave('store',res);
+		app.useKeyboard('variables');
 	}
 }

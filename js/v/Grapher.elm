@@ -368,9 +368,9 @@ def GraphWindow {
 
 	method rangeDragEnd(e) {
 		var p = this.canvasToPlane({
-			x: e.gesture.center.pageX,
+			x: e.gesture.center.pageX - $this.offset().left,
 			y: e.gesture.center.pageY
-		});
+		})
 		this.placeTraceHandle(p.x,p.y);
 		this.@trace-handle.flyOut();
 		this.rangeStart = this.canvasToPlane({x: (this._rangeCurrentX > this._rangeStartX) ? this._rangeStartX : this._rangeCurrentX }).x;
@@ -539,6 +539,7 @@ def GraphWindow {
 		if(app.useGratuitousAnimations() || renderEquations) this.inputs.map(function(item) {
 			var data = item.data,
 				type = item.type,
+				interval = item.interval,
 				color = item.color;
 			if(type == 'function') {
 				var points = [];
@@ -591,6 +592,7 @@ def GraphWindow {
 					var currentPlane = p;
 					p = planeToCanvas(p);
 					if( // All of the reasons we might not want a line here
+						(interval && (currentPlane.x < interval[0] || currentPlane.x > interval[1])) || 
 						isNaN(currentPlane.y) ||
 						p.y === null || 
 						(lastPlane.y > self.ymax && currentPlane.y < self.ymin) || 
@@ -648,25 +650,26 @@ def GrapherListView {
 
 	constructor {
 		this.$title.html('Grapher');
-		this.fieldType = 'GraphListField';
+		this.fieldType = 'GrapherListField';
 		// Add buttons
 		this.$toolbar.append(elm.create('ToolbarButtonImportant','Graph &rsaquo;').named('graph-button'));
 		this.load();
 	}
 
 	method fields {
-		return this.$GraphListField;
+		return this.$GrapherListField;
 	}
 
 	method collect {
 		var res = [];
 		var p = new Parser();
-		this.$GraphListField.each(function() {
+		this.$GrapherListField.each(function() {
 			var field = this;
 			if(field.contents().length == 2) return;
 			res.push({
 				data: p.parse(field.contents().slice(2),false),
 				color: field.color,
+				interval: field.interval,
 				type: 'function'
 			});
 		});
@@ -683,15 +686,20 @@ def GrapherListView {
 
 	method load {
 		var self = this;
-		if(app.data.grapherEquations) app.data.grapherEquations.map(function(eq) {
-			self.addField().setContents(eq);
+		if(app.data.grapherEquations) app.data.grapherEquations.map(function(field) {
+			var f = self.addField();
+			f.setContents(field.contents);
+			if(field.interval) {
+				f.setInterval(field.interval,true);
+			}
 		});
 	}
 
 	method save {
 		var cl = this.fields().map(function(i,field) {
-			return field.contents();
-		}).toArray().filter(function(str) {
+			return {contents: field.contents(),interval: field.interval};
+		}).toArray().filter(function(field) {
+			var str = field.contents;
 			return str != 'y=' && str != '';
 		});
 		app.data.grapherEquations = cl;
@@ -699,7 +707,7 @@ def GrapherListView {
 	}
 }
 
-def GraphListField(focusManager) {
+def GrapherListField(focusManager) {
 	extends {
 		MathTextField
 		PullHoriz
@@ -710,12 +718,17 @@ def GraphListField(focusManager) {
 		pullConstant: 50
 	}
 
+	contents {
+		<span class='interval-label'></span>
+	}
+
 	constructor {
-		this.setContents('y=')
+		this.setContents('y=');
 		this.defaultText = 'Click to add equation';
-		$this.append(elm.create('GraphListFieldColorLabel').named('label'));
+		$this.append(elm.create('GrapherListFieldColorLabel').named('label'));
 		var options = [
-			{color: '#a33', event: 'delete', label: app.r.image('close')},
+			{color: '#0a4766', event: 'interval', label: app.r.image('interval')},
+			{color: '#a33', event: 'delete', label: app.r.image('close')}
 		];
 		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}
@@ -724,6 +737,16 @@ def GraphListField(focusManager) {
 		this.color = color;
 		this.@label.$.css('background',color);
 		this.@label.$.css('border-bottom-color',color);
+	}
+
+	method setInterval(arr,dontSave) {
+		self.interval = arr;
+		if(arr) {
+			self.$interval-label.html('On [' + arr[0].toString() + ',' + arr[1].toString() + ']');
+		} else {
+			self.$interval-label.html('');
+		}
+		if(!dontSave) self.parent('GrapherListView').save();
 	}
 
 	on update {
@@ -742,9 +765,39 @@ def GraphListField(focusManager) {
 		this.setContents('');
 		this.$.trigger('lost-focus');
 	}
+
+	on interval {
+		app.mathPrompt('Enter minX,maxX (or leave blank):',function(no,closePrompt,notValid,prompt) {
+			var val = prompt.@MathTextField.contents();
+			if(val.indexOf(',') != -1 || val == '') {
+				if(val == '') {
+					self.setInterval(false);
+				} else {
+					var p = new Parser(),
+						lower = p.parse(val.split(',')[0]).valueOf(new Frame()).toFloat(),
+						upper = p.parse(val.split(',')[1]).valueOf(new Frame()).toFloat();
+					self.setInterval([lower,upper]);
+				}
+				closePrompt();
+			} else {
+
+			}
+			closePrompt();
+		},this.focusManager);
+	}
 	
 	css {
 		position: relative;
+	}
+
+	my interval-label {
+		css {
+			position: absolute;
+			font-size: 12px;
+			color: #BBB;
+			left: 20px;
+			top: 5px;
+		}
 	}
 
 	my SmallMathInput {
@@ -754,7 +807,7 @@ def GraphListField(focusManager) {
 	}
 }
 
-def GraphListFieldColorLabel {
+def GrapherListFieldColorLabel {
 	html {
 		<div></div>
 	}

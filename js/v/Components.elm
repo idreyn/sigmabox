@@ -722,7 +722,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	constructor {
 		this.container = this.@container;
-		this.menuSwipeThreshold = 25;
+		this.menuSwipeThreshold = 50;
 		this.menu = elm.create(this.menuClass);
 		$this.append(this.menu);
 		if(!utils.tabletMode()) {
@@ -777,7 +777,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(e.gesture.direction == 'up' || e.gesture.direction == 'down') return;
+		if(e.gesture.direction == 'up' || e.gesture.direction == 'down') {
+			this._ignoreDrag = true;
+			return;
+		}
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
 		if(this.menuShown || this.overlay) {
@@ -795,9 +798,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method dragged(e) {
-		if(utils.tabletMode()) return;
+		if(utils.tabletMode() || this.menuShown || this._ignoreDrag) {
+			return;
+		}
  		if(!this._dragOrigin) this._dragOrigin = tx;
-		if(this.menuShown) return;
 		var tx = e.gesture.center.pageX - this._dragOrigin;
 		$this.css(
 			'translateX',
@@ -807,14 +811,16 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	method dragEnd(e) {
 		if(
-			(e.gesture.direction == 'right' && e.gesture.velocityX > 0.1) || 
-			(this._dragOrigin <= this.menuSwipeThreshold && e.gesture.center.pageX >= this.menu.$.width())
+			!this._ignoreDrag && 
+			((e.gesture.direction == 'right' && e.gesture.velocityX > 0.1) || 
+			(this._dragOrigin <= this.menuSwipeThreshold && e.gesture.center.pageX >= this.menu.$.width()))
 		) {
 			this.showMenu();
 		} else {
 			this.hideMenu();
 		}
 		this.applyStyle('animate');
+		this._ignoreDrag = false;
 		this._dragOrigin = null;
 	}
 
@@ -1349,14 +1355,14 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeIn {
-		var bullshit = false;
+		var bullshit = true;
 		if(bullshit) {
 			this.$overlay.css('opacity',0).animate({
 				'opacity': 0.8
-			},0);
+			},100);
 			this.$contents-container.css('translateY',-500).delay(100).animate({
 				'translateY':-100
-			},100,'easeInOutQuart',function() {
+			},300,'easeInOutQuart',function() {
 				$this.trigger('showing');
 			});
 		} else {
@@ -1367,14 +1373,14 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeOut {
-		var bullshit = false;
+		var bullshit = true;
 		if(bullshit) {
-			self.$overlay.css('opacity',0.8).delay(500).animate({
+			self.$overlay.css('opacity',0.8).animate({
 				'opacity': 0
 			},100);
 			self.$contents-container.css('translateY',-100).animate({
 				'translateY':-500
-			},100,'easeInOutBack');
+			},300,'easeInOutBack');
 			setTimeout(function() {
 				$this.hide().remove().trigger('removed');
 			},300);
@@ -1474,7 +1480,7 @@ def Prompt(title,callback,defaultValue) {
 
 	my contents {
 		contents {
-			[[input:TextInput]]
+			[[input:TextInput '']]
 		}
 
 		constructor {
@@ -1553,7 +1559,7 @@ def MathPrompt(title,callback,focusManager) {
 			res = p.parse(self.@input.contents()).valueOf(new Frame);
 		if(self.callback) self.callback(res,self.fadeOut,function(s) {
 			self.$title.html(s);
-		});
+		},self);
 	}
 
 	my toolbar {
