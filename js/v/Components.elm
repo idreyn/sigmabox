@@ -727,7 +727,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(this.menu);
 		if(!utils.tabletMode()) {
 			Hammer(this.@touch-shield).on('tap',this.#tapped);
-			Hammer(this).on('swiperight',this.#swipeRight);
+			//Hammer(this).on('swiperight',this.#swipeRight);
 			Hammer(this).on('dragstart',this.#dragStart);
 			Hammer(this).on('drag',this.#dragged);
 			Hammer(this).on('dragend',this.#dragEnd);
@@ -790,7 +790,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 			e.gesture.stopDetect();
 		} else {
 			if(tx > this.menuSwipeThreshold) {
-				e.gesture.stopDetect();
+				this._ignoreDrag = true;
 			} else {
 				this.applyStyle('no-animate');
 			}
