@@ -315,7 +315,7 @@ def StatsList(manager) {
 	}
 
 	on rename {
-		app.prompt('Name a new list',function(name,close,tryAgain) {
+		app.prompt('Rename this list',function(name,close,tryAgain) {
 			if(app.data.isNameAvailable(name)) {
 				close();
 				self.setName(name);
