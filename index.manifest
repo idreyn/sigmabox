@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 5.13.14.1
+#version 6.1.14.1
 
 CACHE:
 
@@ -15,6 +15,7 @@ res/img/functions.png
 res/img/grapher.png
 res/img/home.png
 res/img/integral.png
+res/img/linear.png
 res/img/logo.png
 res/img/repl.png
 res/img/settings.png
@@ -58,6 +59,8 @@ js/v/LiveEval.elm
 js/v/Components.elm
 js/v/Grapher.elm
 js/v/Functions.elm
+js/v/REPL.elm
+js/v/Linear.elm
 
 js/c/Application.js
 js/c/Resource.js
@@ -84,6 +87,7 @@ res/xml/keyboards/list.xml
 
 
 #fonts
+
 res/fonts/Roboto-Regular-webfont.ttf
 js/lib/mathquill/font/Symbola.ttf
 
