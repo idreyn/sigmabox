@@ -27,11 +27,14 @@ function Value(real,complex,unit) {
 	this.unit = unit;
 }
 
-Value.prototype.equals = function(value) {
-	if(value instanceof Value) {
-		return (this.real == value.real) && (this.complex == value.complex);
+Value.prototype.equals = function(other) {
+	if(this == other) {
+		return true
+	}
+	if(other instanceof Value) {
+		return (this.real == other.real) && (this.complex == other.complex);
 	} else {
-		return this.real === value && this.complex == 0;
+		return this.real === other && this.complex == 0;
 	}
 }
 
@@ -682,6 +685,31 @@ Matrix.prototype.valueOf = function(frame) {
 	return new Matrix(rows);
 }
 
+Matrix.prototype.equals = function(other) {
+	if(this == other) {
+		return true;
+	}
+	if(other._rows != this._rows || other._columns != this._columns) {
+		return false;
+	}
+	for(var i=0;i<this._rows;i++) {
+		for(var j=0;j<this._columns;j++) {
+			var ti = this.select(i+1,j+1);
+			var oi = other.select(i+1,j+1);
+			if(ti.equals && !ti.equals(oi)) {
+				return false;
+			}
+			if(oi.equals && !oi.equals(ti)) {
+				return false;
+			}
+			if(!ti.equals && !oi.equals && ti != oi) {
+				return false;
+			}
+		}
+	}
+	return true;
+}
+
 Matrix.prototype.toString = function(frame,format) {
 	return '[' + this.rows.map(function(row) {
 		return row.map(function(el) {
@@ -921,6 +949,27 @@ Matrix.prototype.transpose = function() {
 	return new Matrix(res);
 }
 
+Matrix.prototype.augment = function(v) {
+	if(v.length != this._rows) {
+		throw 'Dimension error';
+	}
+	var res = [];
+	for(var i=0;i<this.rows.length;i++) {
+		var row = this.rows[i].concat();
+		row.push(v[i]);
+		res.push(row);
+	}
+	return new Matrix(res);
+}
+
+Matrix.prototype.deaugment = function() {
+	var res = [];
+	for(var i=0;i<this.rows.length;i++) {
+		res.push(this.rows[i].slice(0,-1));
+	}
+	return new Matrix(res);
+}
+
 Matrix.prototype.serialize = function() {
 	return this.toString(new Frame({}));
 }
@@ -939,6 +988,29 @@ Vector.prototype.valueOf = function(frame) {
 	return new Vector(this.args.map(function(a) {
 		return a.valueOf(frame);
 	}));
+}
+
+Vector.prototype.equals = function(other) {
+	if(this == other) {
+		return true;
+	}
+	if(other.args.length != this.args.length) {
+		return false;
+	}
+	for(var i=0;i<this.args.length;i++) {
+		var ti = this.args[i];
+		var oi = other.args[i];
+		if(ti.equals && !ti.equals(oi)) {
+			return false;
+		}
+		if(oi.equals && !oi.equals(ti)) {
+			return false;
+		}
+		if(!ti.equals && !oi.equals && ti != oi) {
+			return false;
+		}
+	}
+	return true;
 }
 
 Vector.prototype.copy = function() {

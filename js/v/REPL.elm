@@ -106,7 +106,7 @@ def REPL {
 			});
 
 			this.@clearBtn.$.on('invoke',function() {
-				app.confirm('Really?','Clear all calculation history?',function() {
+				app.confirm('Are you sure?','Clear all calculation history?',function() {
 					root.clear();
 				},'Clear','Cancel');
 			});
@@ -228,7 +228,8 @@ def REPLOutput {
 	}
 
 	on invoke {
-		var res = new Parser().parse(self.$.html()).valueOf(new Frame());
+		var val = self.$.html().split('{').join('<').split('}').join('>');
+		var res = new Parser().parse(val).valueOf(new Frame());
 		app.data.initVariableSave('store',res);
 		app.useKeyboard('variables');
 	}

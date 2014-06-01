@@ -439,8 +439,14 @@ Data.prototype.cancelVariableSave = function() {
 Data.prototype.setVariable = function(k,v,silent) {
 	this.valToSave = null;
 	this.variables[k] = v;
+	var strRes;
+	if(v instanceof Vector && v.args.length > 10) {
+		strRes = '{' + v.args.length.toString() + ' item list}'
+	} else {
+		strRes = v.toString();
+	}
 	if(!silent) app.popNotification(
-		'Set ' + k + ' to ' + v.toString()
+		'Set ' + k + ' to ' + strRes
 	);
 	this.uiSyncBroadcast('variable-update','variable-update');
 	this.serialize();

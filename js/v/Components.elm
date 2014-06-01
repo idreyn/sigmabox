@@ -236,6 +236,8 @@ def PageView(title) {
 
 	my top-bar-container {
 		css {
+			position: relative;
+			z-index: 1;
 			width: 100%;
 			height: 50px;
 			line-height: 50px;
@@ -703,7 +705,6 @@ def SideMenuAppView(menuClass='SideMenu') {
 			width: 100%;
 			height: 100%;
 			box-shadow: -5px 0px 5px rgba(0,0,0,0.25);
-			z-index: 1;
 		}
 	}
 
@@ -1028,7 +1029,7 @@ def Toolbar(stickToBottom,offset=0) {
 		padding-left: 10px;
 		background: #FFF;
 		box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-		z-index: 1000;
+		z-index: 1;
 	}
 }
 
@@ -1036,11 +1037,16 @@ def Toolbar(stickToBottom,offset=0) {
 def ToolbarButton(label,callback) {
 
 	html {
-		<div>$label</div>
+		<div><span class='label'>$label</span></div>
 	}
 
 	constructor {
 
+	}
+
+	method setLabel(l) {
+		this.label = l;
+		this.$label.html(l);
 	}
 
 	on invoke {
@@ -1072,6 +1078,124 @@ def ToolbarButton(label,callback) {
 
 	extends {
 		Button
+	}
+}
+
+def ToolbarButtonDropdown(label) {
+	extends {
+		ToolbarButton
+	}
+
+	properties {
+		autoLabel: true
+	}
+
+	contents {
+		<div class='dropdown'></div>
+	}
+
+	css {
+		position: relative;
+	}
+
+	on invoke(e) {
+		this.open = !this.open;
+		if(this.open) {
+			this.showMenu();
+		} else {
+			this.hideMenu();
+		}
+	}
+
+	method showMenu {
+		if(false) {
+			this.$dropdown.css('opacity',0).show().css('translateY',-200).animate({
+				'opacity': 1,
+				'translateY': 0
+			},200,'easeOutQuart');
+		} else {
+			this.$dropdown.show();
+		}
+		this.$.css('border-bottom-left-radius',0).css('border-bottom-right-radius',0);
+	}
+
+	method hideMenu {
+		if(false) {
+			this.$dropdown.css('translateY',0).animate({
+				'opacity': 0,
+				'translateY': -200
+			},200,'easeOutQuart').delay(200);
+		} else {
+			this.$dropdown.hide();
+		}
+		this.$.css('border-bottom-left-radius',20).css('border-bottom-right-radius',20);
+	}
+
+	method select(o) {
+		var text = o.$.html();
+		if(this.autoLabel) this.setLabel(text);
+		this.$.trigger('select',text);
+	}
+
+	my dropdown {
+		css {
+			position: absolute;
+			top: 30px;
+			right: 0px;
+			background: #333;
+			display: none;
+			color: #FFF;
+			text-shadow: none;
+			font-size: 16px;
+			border-radius: 10px;
+			border-top-right-radius: 0px;
+			overflow: hidden;
+		}
+
+		method setOptions(items) {
+			root.select(items.map(function(i) {
+				return self.addOption(i);
+			}).shift());
+		}
+
+		method addOption(label) {
+			var o = root.create('dropdown-item');
+			o.$.html(label).on('invoke',function() {
+				root.select(o);
+			});
+			this.$.append(o);
+			return o;
+		}
+	}
+
+	my dropdown-item {
+		html {
+			<div></div>
+		}
+
+		extends {
+			Button
+		}
+
+		style default {
+			background: none;
+		}
+
+		style active {
+			background: #444;
+		}
+
+		on invoke(e) {
+			e.stopPropagation();
+		}
+
+		css {
+			text-align: center;
+			padding: 10px;
+			min-width: 100px;
+			height: 40px;
+			line-height: 40px;
+		}
 	}
 }
 
@@ -1663,6 +1787,14 @@ def Overlay {
 		this.flyOut();
 	}
 
+	method behindKeyboard {
+		this.$.css('z-index',1000);
+	}
+
+	method frontOfKeyboard {
+		this.$.css('z-index',1001);
+	}
+
 	method flyOut {
 		app.root.overlay = null;
 		switch(this.overlaySourceDirection) {
@@ -2087,12 +2219,17 @@ def SelectBox(fullWidth) {
 	}
 }
 
-def InlineInteractive(text) {
+def InlineInteractive {
+	html {
+		<div></div>
+	}
+
 	extends {
 		Button
 	}
 
 	css {
+		cursor: pointer;
 		font-weight: 200;
 		font-style: italic;
 		display: inline-block;
@@ -2114,7 +2251,7 @@ def InlineInteractive(text) {
 	}
 }
 
-def InlineNumber(text) {
+def InlineNumber {
 	extends {
 		InlineInteractive
 	}
@@ -2131,8 +2268,12 @@ def InlineNumber(text) {
 		this.applyStyle('default');
 	}
 
+	properties {
+		roundTo: 3
+	}
+
 	method display(n) {
-		n = Functions.round(n,3);
+		n = Functions.round(n,this.roundTo);
 		this.$.html(n);
 		this.data = new Value(n);
 	}
@@ -2143,7 +2284,7 @@ def InlineNumber(text) {
 	}
 }
 
-def InlineMatrix(text) {
+def InlineMatrix {
 	extends {
 		InlineInteractive
 	}
@@ -2176,7 +2317,7 @@ def InlineMatrix(text) {
 	}
 }
 
-def InlineNumberPicker(text) {
+def InlineNumberPicker {
 	extends {
 		InlineInteractive
 	}
@@ -2218,7 +2359,7 @@ def InlineNumberPicker(text) {
 	}
 }
 
-def InlineMatrixPicker(text) {
+def InlineMatrixPicker {
 	extends {
 		InlineInteractive
 	}

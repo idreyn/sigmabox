@@ -819,3 +819,12 @@ Functions.chiSquaredGOFTest = function(e,o) {
 	return {x2: x2, df: df, p: p};
 }
 
+Functions.solveLinearSystem = function(m) {
+	var r = m.rref();
+	if(r.deaugment().equals(Functions.identityMatrix(m._rows))) {
+		return r.col(r._columns);
+	} else {
+		return [];
+	}
+}
+

@@ -42,7 +42,10 @@ Application.prototype.initLayout = function(wrapper) {
 	this.stats = elm.create('StatsView');
 	this.root.addChild(this.stats);
 
-	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl];
+	this.linear = elm.create('LinearSolveView');
+	this.root.addChild(this.linear);
+
+	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl,this.linear];
 	this.root.menu.build();
 	this.setMode(this.data.mode || 'eval');
 

@@ -309,7 +309,7 @@ def StatsList(manager) {
 	}
 
 	on delete {
-		app.confirm('Really?','Delete this list?',function() {
+		app.confirm('Are you sure?','Delete this list?',function() {
 			self.manager.remove(self);
 		});
 	}

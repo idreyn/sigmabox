@@ -135,7 +135,7 @@ def LiveEvalCard(manager) {
 						if(res.args.length <= 10) {
 							res = res.toString();
 						} else {
-							res = '{' + res.args.length + ' item vector}';
+							res = '{' + res.args.length + ' item list}';
 						}
 					}
 				} else if(res instanceof Frac) {
@@ -298,7 +298,7 @@ def LiveEvalCard(manager) {
 			font-size: 20px;
 			top: -100px;
 			color: #FFF;
-			background: #333;
+			background: #222;
 		}
 
 		my inner {
