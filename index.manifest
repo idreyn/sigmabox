@@ -15,6 +15,7 @@ res/img/functions.png
 res/img/grapher.png
 res/img/home.png
 res/img/integral.png
+res/img/interval.png
 res/img/linear.png
 res/img/logo.png
 res/img/repl.png
@@ -25,6 +26,8 @@ res/img/thin-icons/pen.png
 res/img/keys/delete.png
 res/img/keys/left.png
 res/img/keys/right.png
+res/img/keys/undo.png
+res/img/keys/redo.png
 
 #internal HTML documents
 index.html
