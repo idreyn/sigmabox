@@ -659,15 +659,10 @@ def StatsTestSummary {
 	}
 
 	method displayResults {
-		this.$line-item.each(function(i,e) {
-			setTimeout(function() {
-				$(e).show();
-			},i * 10);
-		});
-
+		this.$line-item.show();
 		setTimeout(function() {
 			self.$.trigger('invalidate');
-		},this.$line-item.length * 10 + 10);
+		},10);
 	}
 
 	my top-bar-container {
@@ -996,6 +991,9 @@ def StatsTestViewSimple {
 
 	method displayResults {
 		this.$line-item.show();
+		setTimeout(function() {
+			self.$.trigger('invalidate');
+		},10);
 	}
 
 	method hideResults {

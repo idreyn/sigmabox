@@ -140,6 +140,10 @@ def LinearSolveOverlay(solutions) {
 		Overlay
 	}
 
+	css {
+		background: #FFF;
+	}
+
 	constructor {
 		this.variables = ['x','y','z','u','v','w'];
 		this.$title.html('Solution');
