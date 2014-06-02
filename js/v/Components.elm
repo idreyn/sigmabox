@@ -314,6 +314,8 @@ def ListView {
 		this.fieldType = 'MathTextField';
 		this.$title.html('ListView');
 		this.$.trigger('update');
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	on ready {
@@ -322,6 +324,20 @@ def ListView {
 
 	on active {
 		this.updateScroll();
+	}
+
+	method dragStart {
+		self.$TouchInteractive.each(function() {
+			this.enabled = false;
+		});
+	}
+
+	method dragEnd {
+		setTimeout(function() {
+			self.$TouchInteractive.each(function() {
+				this.enabled = true;
+			});
+		},10);
 	}
 
 	method addField(el,update) {
@@ -402,12 +418,6 @@ def TabbedView {
 
 	constructor {
 		this.tabs = [];
-		this.addTab('Tab One',elm.create('PageView','Tab One'));
-		this.addTab('Tab Two',elm.create('PageView','Tab Two'));
-		this.addTab('Tab Three',elm.create('PageView','Tab Three'));
-		this.addTab('Tab Four',elm.create('PageView','Tab Four'));
-		this.addTab('Tab Five',elm.create('PageView','Tab Five'));
-		this.addTab('Tab Six',elm.create('PageView','Tab Six'));
 		this.$.find('.PageView .top-bar-container').hide();
 	}
 
@@ -2234,7 +2244,7 @@ def InlineInteractive {
 		font-style: italic;
 		display: inline-block;
 		padding: 5px;
-		line-height: 30px;
+		line-height: 2em;
 		border-radius: 1000px;
 	}
 

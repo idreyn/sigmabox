@@ -201,10 +201,10 @@ def LiveEvalCard(manager) {
 
 	on pullEnd(e,data) {
 		if(data.translateY > 90) {
-			app.mode.historyOverlay = app.mode.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
+			self.historyOverlay = self.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
 				self.setContents(res);
 			});
-			app.overlay(app.mode.historyOverlay);
+			app.overlay(self.historyOverlay);
 		}
 	}
 
@@ -378,8 +378,14 @@ def LiveEvalCard(manager) {
 
 			this.clearButton = elm.create('LiveEvalButton','CLR');
 			this.clearButton.$.on('invoke',function() {
-				app.data.addHistoryItem(app.mode.currentInput().contents());
+				var res = app.mode.currentInput().contents();
 				app.mode.currentInput().acceptActionInput('clear');
+				if(app.data.inputHistory[app.data.inputHistory.length - 1] != res) {
+					app.data.addHistoryItem(res);
+					if(root.historyOverlay) {
+						root.historyOverlay.addItem(res);
+					}
+				}
 			});
 			this.$.append(this.clearButton);
 
@@ -402,7 +408,6 @@ def LiveEvalManager {
 	
 	html {
 		<div>
-//			[[indicator:LiveEvalPageIndicator]]
 			<div class='middle'>
 				<div class='inner'> </div>
 			</div>
@@ -577,6 +582,7 @@ def LiveEvalHistoryOverlay(callback) {
 
 	properties {
 		overlaySourceDirection: 'top',
+		addFieldToTop: true,
 		autoAddField: false,
 		persist: true
 	}
@@ -592,11 +598,15 @@ def LiveEvalHistoryOverlay(callback) {
 
 	method populate {
 		this.$MathTextField.remove();
-		app.data.inputHistory.reverse().forEach(function(item) {
-			var f = self.addField();
-			f.disable();
-			f.setContents(item);
-			f.$.on('invoke',self.choose);
+		app.data.inputHistory.forEach(self.addItem);
+	}
+
+	method addItem(text) {
+		var f = self.addField();
+		f.disable();
+		f.setContents(text);
+		f.$.on('invoke',function(e) {
+			self.choose(e);
 		});
 	}
 

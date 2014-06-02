@@ -3,6 +3,10 @@ def MathInput(owner) {
 	html {
 		<span></span>
 	}
+
+	extends {
+		TouchInteractive
+	}
 	
 	constructor {
 		this._contents = '';
@@ -13,11 +17,7 @@ def MathInput(owner) {
 		$this.find('textarea').attr('disabled','disabled');
 	}
 
-	extends {
-		TouchInteractive
-	}
-	
-	css { 
+	css {
 		padding: 20px;
 		height: 100%;
 		width: 100%;
@@ -26,10 +26,6 @@ def MathInput(owner) {
 		color: #333;
 		text-shadow: 1px 1px 10px #666;
 		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
-	}
-
-	on focus {
-
 	}
 
 	method loseFocus {
@@ -237,15 +233,7 @@ def MathTextField(focusManager) {
 		$this.trigger('update');
 	}
 
-	on click {
-		if(!this.enabled) {
-			return;
-		}
-		this.focusManager.setFocus(this);
-		this.mathSelf().cursor.show();
-	}
-
-	on touchstart {
+	on invoke {
 		if(!this.enabled) {
 			return;
 		}
