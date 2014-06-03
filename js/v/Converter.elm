@@ -151,7 +151,7 @@ def Converter {
 					'Length': ['kilometer','mile','inch','feet','yard','nmi','league','furlong','angstrom','fathom','light-second','light-minute','light-year','parsec','picometer','nanometer','micrometer','millimeter','centimeter','decimeter','decameter','hectometer'],
 					'Mass': ['ounce','pound','gram','kilogram','ton','tonne','milligram','microgram','grain','dram','stone','carat','AMU'],
 					'Power': ['watt','horsepower'],
-					'Pressure': ['pascal','atmosphere','bar','mmHg','psi'],
+					'Pressure': ['pascal','kilopascal','atmosphere','bar','mmHg','psi'],
 					'Radiation': ['sievert','roentgen'],
 					'Temperature': ['tempF','tempC','tempK'],
 					'Time': ['second','minute','hour','day','week','fortnight','year','decade','century'],
