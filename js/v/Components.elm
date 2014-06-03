@@ -198,17 +198,19 @@ def Stackable {
 
 def PageView(title) {
 	html {
-		<div>
-			<div class='top-bar-container'>
-				<div class='top-bar'>
-					<span class='title'>$title</span>
-					<span class='toolbar'></span>
-				</div>
-			</div>
-			<div class='contents-container-wrapper'>
-				<div class='contents-container'>
+		<div></div>
+	}
 
-				</div>
+	contents {
+		<div class='top-bar-container'>
+			<div class='top-bar'>
+				<span class='title'>$title</span>
+				<span class='toolbar'></span>
+			</div>
+		</div>
+		<div class='contents-container-wrapper'>
+			<div class='contents-container'>
+
 			</div>
 		</div>
 	}
@@ -218,7 +220,7 @@ def PageView(title) {
 			background; #0F0;
 			width: 100%;
 			height: 100%;
-			position: absolute;
+			position: relative;
 			overflow: hidden;
 		}
 
@@ -270,7 +272,9 @@ def PageView(title) {
 	}
 
 	constructor {
-
+		if(this.title) {
+			this.$title.html(this.title);
+		}
 	}
 
 	on invalidate {
@@ -397,8 +401,6 @@ def ListView {
 		contents {
 			[[items-list:List]]
 		}
-
-
 	}
 }
 
@@ -2283,8 +2285,12 @@ def InlineNumber {
 	}
 
 	method display(n) {
-		n = Functions.round(n,this.roundTo);
-		this.$.html(n);
+		var nr = Functions.round(n,this.roundTo);
+		if(nr == 0) {
+			this.$.html(n.toPrecision(this.roundTo));
+		} else {
+			this.$.html(nr.toString());
+		}
 		this.data = new Value(n);
 	}
 
@@ -2507,5 +2513,33 @@ def NoSwipe {
 
 	method swiped(e) {
 		e.stopPropagation();
+	}
+}
+
+def Shake {
+	properties {
+		times: 2,
+		duration: 100,
+		amplitude: 0.2,
+		property: 'rotate',
+		effect: 'linear'
+	}
+
+	method shake {
+		var perDuration = this.duration / (2 * this.times);
+		for(var i=0;i<this.times;i++) {
+			var props1 = {};
+			props1[this.property] = this.amplitude;
+			this.$.animate(props1,perDuration,this.effect);
+			var props2 = {};
+			props2[this.property] = 0;
+			this.$.animate(props2,perDuration,this.effect);
+			var props3 = {};
+			props3[this.property] = 0 - this.amplitude;
+			this.$.animate(props3,perDuration,this.effect);
+			var props4 = {};
+			props4[this.property] = 0;
+			this.$.animate(props4,perDuration,this.effect);
+		}
 	}
 }

@@ -1,6 +1,6 @@
 def Keyboard(keyboardSource) {
 	html {
-		<div class='sb-keyboard'> 
+		<div class='sb-keyboard'>
 			<div class='middle'>
 				<div class='inner'>
 					<div class='spacer'> </div>
@@ -72,9 +72,6 @@ def Keyboard(keyboardSource) {
 	}
 
 	method slideUp(n,e) {
-		$this.css({
-			'translateY': parseInt($this.css('height'))
-		});
 		this.animated();
 		$this.show();
 		setTimeout(function() {

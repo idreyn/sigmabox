@@ -48,7 +48,7 @@ def SigmaboxSideMenu {
 		[[SigmaboxSideMenuItem 'grapher','grapher']]
 		[[SigmaboxSideMenuItem 'stats','stats']]
 		[[SigmaboxSideMenuItem 'linear','linear']]
-		//[[SigmaboxSideMenuItem 'converter','converter']]
+		[[SigmaboxSideMenuItem 'converter','converter']]
 		[[SigmaboxSideMenuItem 'functions','functions']]
 		//[[SigmaboxSideMenuItem 'settings','settings']]
 	}
