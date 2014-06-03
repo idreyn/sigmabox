@@ -2286,7 +2286,7 @@ def InlineNumber {
 
 	method display(n) {
 		var nr = Functions.round(n,this.roundTo);
-		if(nr == 0) {
+		if(nr == 0 || nr.toString().length > 12) {
 			this.$.html(n.toPrecision(this.roundTo));
 		} else {
 			this.$.html(nr.toString());
