@@ -30,6 +30,8 @@ def REPL {
 		if(!quick) {
 			this.current.takeFocus();
 			this.updateScroll();
+		} else {
+			this.current.hideArrow();
 		}
 		if(inp) {
 			this.current.@input.setContents(inp);
@@ -133,17 +135,43 @@ def REPL {
 
 def REPLLine(focusManager,repl) {
 	html {
-		<div></div>
+		<div>
+			<img class='arrow' src='res/img/repl-arrow.png' width='15px' height='20px' />
+		</div>
 	}
 
 	css {
 		margin-bottom: 40px;
+		position: relative;
+	}
+
+	my arrow {
+		css {
+			position: absolute;
+			top: 15px;
+			left: 4px;
+			opacity: 0.7;
+		}
+	}
+
+	method showArrow {
+		this.$arrow.stop().css('translateX',-20).css('opacity',0).animate({
+			'translateX': 0,
+			'opacity': 0.2
+		},500,'easeOutQuart');
+	}
+
+	method hideArrow {
+		this.$arrow.stop().animate({
+			'opacity': 0
+		},100,'easeOutQuart');
 	}
 
 	constructor {
 		this.$.append(elm.create('REPLInput',this.focusManager,this.repl).named('input'));
 		this.$.append(elm.create('REPLOutput').named('output'));
 		this.@output.$.hide();
+		this.showArrow();
 	}
 
 	method takeFocus {
@@ -154,6 +182,7 @@ def REPLLine(focusManager,repl) {
 		this.parent('REPL').addLine();
 		this.@input.disable();
 		this.evaluate();
+		this.hideArrow();
 		this.parent('REPL').storeLine(this.@input.contents(),this.@output.$.html());
 	}
 
