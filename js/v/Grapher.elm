@@ -176,6 +176,7 @@ def GraphWindow {
 	}
 
 	method modeChoice{
+		this.$GrapherIntersectionMarker.remove();
 		this.@trace-readouts.hide();
 		this.@range-readouts.hide();
 	}
@@ -331,6 +332,8 @@ def GraphWindow {
 	}
 
 	method rangeDragStart(e) {
+		this.$GrapherIntersectionMarker.hide();
+		this.@range-readouts.resetIntersections();
 		this.@trace-readouts.hide();
 		this.$range.show();
 		var p = this.canvasToPlane({
@@ -382,14 +385,58 @@ def GraphWindow {
 				self.rangeStart,
 				self.rangeEnd,
 				self.@equation-choice.selected.equation.data,
-				self.@equation-choice.selected.equation.points
+				self.@equation-choice.selected.equation.points,
+				self.@equation-choice.selected.equation.interval
 			);
 		},200);
 	}
 
+	method findIntersections {
+		var test = self.@equation-choice.selected.equation;
+		var others = this.inputs.filter(function(i) {
+			return i != test;
+		});
+		var zeroEquation = 'zero';
+		var points = [];
+		var testPoints = 1e4;
+		others.push(zeroEquation);
+		others.forEach(function(other) {
+			var diffs = [];
+			var tInterval = test.interval || [-Infinity,Infinity];
+			var oInterval = other.interval || [-Infinity,Infinity];
+			var minX = Math.max(tInterval[0],oInterval[0],self.rangeStart);
+			var maxX = Math.min(tInterval[1],oInterval[1],self.rangeEnd);
+			for(var i=0;i<testPoints;i++) {
+				var tx = ox = minX + i * ((maxX - minX) / testPoints);
+				var ty = test.data.getValue(tx);
+				if(other == 'zero') {
+					var oy = 0;
+				} else {
+					var oy = other.data.getValue(tx);
+				}
+				diffs.push({x: tx, y: 0 - ty, dy: ty - oy});
+			}
+			for(var i=1;i<diffs.length;i++) {
+				var prev = diffs[i - 1].dy;
+				var next = diffs[i].dy;
+				if(
+					(prev < 0 && next >= 0) ||
+					(prev > 0 && next <= 0)
+				) {
+					points.push(diffs[i]);
+				}
+			}
+		});
+		points.forEach(function(p) {
+			var m = elm.create('GrapherIntersectionMarker');
+			m.setup(p,self.planeToCanvas(p));
+			m.flyIn();
+			self.$.append(m);
+		});
+	}
 
 	method pinched(e) {
-		//console.log(e);
+		// This is gonna suck
 	}
 
 	method context() {
@@ -454,6 +501,10 @@ def GraphWindow {
 
 
 	method render() {
+		this.$GrapherIntersectionMarker.remove();
+		if(this.@mode-choice.selected == this.@range-button) {
+			this.@range-readouts.resetIntersections();
+		}
 
 		this.resolutionFactor = 1;
 
@@ -536,7 +587,7 @@ def GraphWindow {
 		c.closePath();
 		c.stroke();	
 
-		if(app.useGratuitousAnimations() || renderEquations) this.inputs.map(function(item) {
+		this.inputs.map(function(item) {
 			var data = item.data,
 				type = item.type,
 				interval = item.interval,
@@ -1052,6 +1103,52 @@ def GrapherTraceHandle {
 	}
 }
 
+def GrapherIntersectionMarker {
+	extends {
+		GrapherTraceHandle
+	}
+
+	contents {
+		<div class='text-container'>
+			<div class='text'></div>
+		</div>
+	}
+
+	css {
+		width: auto;
+		height: auto;
+		font-size: 8px;
+		border-radius: 0px;
+	}
+
+	my text-container {
+		css {
+			position: relative;
+		}
+	}
+
+	my text { 
+		css {
+			position: absolute;
+			left: 0;
+			top: 0;
+			text-align: center;
+			background: #222;
+			color: #FFF;
+			opacity: 0.8;
+			padding: 3px;
+		}
+	}
+
+	method setup(p,c) {
+		self.$text.html('(' + Functions.round(p.x,3).toString() + ',' + Functions.round(p.y,3).toString() + ')');
+		self.$.css({
+			'left': c.x - self.$.width() / 2,
+			'top': c.y - self.$.height() / 2
+		});
+	}
+}
+
 def GrapherRange {
 	html {
 		<div></div>
@@ -1085,6 +1182,7 @@ def SideReadout {
 		display: block;
 		color: #FFF;
 		margin-bottom: 5px;
+		font-size: 0.8em;
 	}
 
 	method setContents(c) {
@@ -1094,7 +1192,7 @@ def SideReadout {
 
 	method slideOut {
 		if(!this.shown) return
-		$this.animate({
+		$this.stop().animate({
 			'translateX': 0 - this.$inner.outerWidth()
 		},300,'easeInOutBack');
 		this.shown = false;
@@ -1102,7 +1200,7 @@ def SideReadout {
 
 	method slideIn {
 		if(this.shown) return
-		$this.css({
+		$this.stop().css({
 			'translateX': 0 - this.$inner.outerWidth()
 		}).animate({
 			'translateX': -90
@@ -1118,8 +1216,27 @@ def SideReadout {
 			display: inline-block;
 		}
 	}
+}
 
+def SideReadoutButton(label) {
+	extends {
+		SideReadout
+		Button
+	}
 
+	my inner {
+		contents {
+			$label
+		}
+	}
+
+	style default {
+		opacity: 0.7
+	}
+
+	style active {
+		opacity: 0.8
+	}
 }
 
 def ReadoutsContainer {
@@ -1205,7 +1322,13 @@ def RangeReadouts {
 		ReadoutsContainer
 	}
 
+	css {
+		left: 0;
+		top: 70px;
+	}
+
 	constructor {
+		$this.append(elm.create('SideReadoutButton','intersections...').named('intersections'));
 		$this.append(elm.create('SideReadout').named('interval'));
 		$this.append(elm.create('SideReadout').named('interval-width'));
 		$this.append(elm.create('SideReadout').named('slope'));
@@ -1213,6 +1336,7 @@ def RangeReadouts {
 		$this.append(elm.create('SideReadout').named('min'));
 		$this.append(elm.create('SideReadout').named('integral'));
 		$this.append(elm.create('SideReadout').named('average'));
+		this.$intersections.on('invoke',this.#toggleIntersections)
 	}
 
 	method showDynamic {
@@ -1222,6 +1346,7 @@ def RangeReadouts {
 			this.@slope
 		]);
 		this.hideThese([
+			this.@intersections,
 			this.@max,
 			this.@min,
 			this.@average,
@@ -1237,11 +1362,27 @@ def RangeReadouts {
 			this.@max,
 			this.@min,
 			this.@average,
-			this.@integral
+			this.@integral,
+			this.@intersections
 		]);
 	}
 
 	method hide {
+		this.hideThese([
+			this.@intersections,
+			this.@interval,
+			this.@interval-width,
+			this.@slope,
+			this.@max,
+			this.@min,
+			this.@average,
+			this.@integral
+		]);
+		this.@intersections.$inner.html('intersections...');
+		this.intersectionsMode = false;
+	}
+
+	method hideAllButIntersections {
 		this.hideThese([
 			this.@interval,
 			this.@interval-width,
@@ -1269,8 +1410,11 @@ def RangeReadouts {
 		this.@slope.setContents('slope = ' + ((yend - ystart) / (end - start)).toPrecision(4));
 	}
 
-	method update(start,end,func,points) {
+	method update(start,end,func,points,interval) {
+		interval = interval ||  [-Infinity,Infinity];
 		this.updateDynamic(start,end,func);
+		start = Math.max(start,interval[0]);
+		end = Math.min(end,interval[1]);
 		if(!func)
 			return;
 		var minX,
@@ -1302,9 +1446,29 @@ def RangeReadouts {
 		Frac.grapherMode = false;
 	}
 
-	css {
-		left: 0;
-		top: 70px;
+	method toggleIntersections {
+		if(!this.intersectionsMode) {
+			this.hideAllButIntersections();
+			this.@intersections.$inner.html('done');
+			this.intersectionsMode = true;
+			this.parent().findIntersections();
+		} else {
+			this.parent().$GrapherIntersectionMarker.each(function() {
+				var s = this;
+				this.$.fadeOut(100);
+				setTimeout(function() {
+					s.$.remove();
+				},1000);
+			});
+			this.@intersections.$inner.html('intersections...');
+			this.intersectionsMode = false;
+			this.show();
+		}
+	}
+
+	method resetIntersections {
+		this.intersectionsMode = true;
+		this.toggleIntersections();
 	}
 }
 
