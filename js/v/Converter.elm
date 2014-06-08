@@ -135,7 +135,7 @@ def Converter {
 				width: 33.33%;
 				float: left;
 				background: #FFF;
-				position: static;
+				position: relative;
 			}
 		}
 

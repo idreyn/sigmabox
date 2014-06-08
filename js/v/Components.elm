@@ -220,7 +220,7 @@ def PageView(title) {
 			background; #0F0;
 			width: 100%;
 			height: 100%;
-			position: relative;
+			position: absolute;
 			overflow: hidden;
 		}
 
@@ -893,10 +893,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 		if(this.overlay) {
 			this.overlay.$.width(this.viewWidth());
-			this.overlay.height(this.$.height());
-			if(this.tabletMode()) {
-
-			}
+			this.overlay.$.height(this.$.height());
 		}
 
 		this.$container.children().each(function(i,e) {

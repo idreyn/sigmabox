@@ -221,6 +221,7 @@ def MathTextField(focusManager) {
 		this.enabled = true;
 		this.input = elm.create('SmallMathInput').named('input');
 		this.input.$.on('update',this.#updated);
+		Hammer(this).on('touch',this.#touch);
 		if(this.focusManager) this.focusManager.register(this);
 		$this.append(this.input);
 	}
@@ -234,6 +235,14 @@ def MathTextField(focusManager) {
 	}
 
 	on invoke {
+		if(!this.enabled) {
+			return;
+		}
+		this.focusManager.setFocus(this);
+		this.mathSelf().cursor.show();
+	}
+
+	on touch {
 		if(!this.enabled) {
 			return;
 		}

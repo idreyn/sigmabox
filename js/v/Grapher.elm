@@ -34,12 +34,12 @@ def GrapherView {
 				eqns = this.@equations-list.collect();
 			if(eqns.length == 0) return;
 			this.noKeyboard = true;
+			this.@equations-list.focusManager.setFocus(null);
 			this.@graph-window.inputs = eqns;
 			this.@graph-window.buildEquationButtonSet();
 			this.@graph-window.$range.hide();
+			this.@graph-window.isRange = false;
 			this.@graph-window.$trace-handle.hide();
-			this.@graph-window.@trace-readouts.hide();
-			this.@graph-window.@range-readouts.hide();
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
 				self.@graph-window.homeWindow();
@@ -54,6 +54,8 @@ def GrapherView {
 			tbf = this.#toolbarFix;
 		this.noKeyboard = false;
 		self.slideTo(self.@equations-list,tbf);
+		this.@graph-window.@trace-readouts.hide();
+		this.@graph-window.@range-readouts.hide();
 	}
 
 	method toolbarFix {
@@ -254,6 +256,7 @@ def GraphWindow {
 	}
 
 	method cursorDragged(e) {
+		this.isRange = false;
 		if(!this._xmin) {
 			this._xmin = this.xmin;
 			this._xmax = this.xmax;
@@ -278,6 +281,7 @@ def GraphWindow {
 	}
 
 	method traceDragStart(e) {
+		this.isRange = false;
 		this.@range-readouts.hide();
 		this.$range.hide();
 		this.$trace-handle.stop().show().css('scale',1).css('opacity',1);
@@ -379,6 +383,7 @@ def GraphWindow {
 		this.rangeStart = this.canvasToPlane({x: (this._rangeCurrentX > this._rangeStartX) ? this._rangeStartX : this._rangeCurrentX }).x;
 		this.rangeEnd = this.canvasToPlane({x: (this._rangeCurrentX > this._rangeStartX) ? this._rangeCurrentX : this._rangeStartX }).x;
 		this.@range-readouts.show();
+		this.isRange = true;
 		var self = this;
 		setTimeout(function() {
 			self.@range-readouts.update(
@@ -427,6 +432,11 @@ def GraphWindow {
 				}
 			}
 		});
+		if(points.length == 0) {
+			app.popNotification('No intersections found. Try zooming in?');
+		} else {
+			app.popNotification('Intersections are approximate.');
+		}
 		points.forEach(function(p) {
 			var m = elm.create('GrapherIntersectionMarker');
 			m.setup(p,self.planeToCanvas(p));
@@ -1355,6 +1365,8 @@ def RangeReadouts {
 	}
 
 	method show {
+		if(window.poonen) debugger;
+		console.log('show');
 		this.showThese([
 			this.@interval,
 			this.@interval-width,
@@ -1462,7 +1474,7 @@ def RangeReadouts {
 			});
 			this.@intersections.$inner.html('intersections...');
 			this.intersectionsMode = false;
-			this.show();
+			if(this.parent().isRange) this.show();
 		}
 	}
 
