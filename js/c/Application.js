@@ -58,7 +58,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.data.uiSyncReady();
 	this.mode.init();
 
-	this.overlay(elm.create('WelcomeView'));
+	//this.overlay(elm.create('WelcomeView'));
 
 	$(window).trigger('app-ready');
 }

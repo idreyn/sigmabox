@@ -219,6 +219,29 @@ Data.prototype.init = function() {
 			Functions.expect(v,Vector);
 			return new Vector(v.args.reverse());
 		}),
+		'map': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return new Vector(v.args.map(lambda));
+		}),
+		'reduce': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return v.args.reduce(function(x,y) {
+				return lambda(x,y);
+			});
+		}),
+		'filter': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return new Vector(v.args.filter(function(n) {
+				var res = lambda(n);
+				if(res instanceof Value) {
+					return res.toFloat();
+				}
+				return res;
+			}));
+		}),
 		// Numerical stuff
 		'lcm': this.wrap(function(a,b) {
 			var gcd_rec = function(a, b) {

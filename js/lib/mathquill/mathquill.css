@@ -219,7 +219,6 @@
 }
 .mathquill-rendered-math .paren {
   padding: 0 .1em;
-  vertical-align: -webkit-baseline-middle;
   -webkit-transform-origin: bottom center;
   -moz-transform-origin: bottom center;
   -ms-transform-origin: bottom center;

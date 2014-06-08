@@ -14,6 +14,8 @@ Frame.prototype.lookup = function(symbol) {
 	return res;
 }
 
+Frame.prototype.get = Frame.prototype.lookup;
+
 Frame.prototype.set = function(k,v) {
 	this.src[k] = v;
 }
@@ -1240,4 +1242,29 @@ Product.prototype.valueOf = function(frame) {
 		]).valueOf(frame);
 	}
 	return prod;
+}
+
+function Lambda(vars,expression) {
+	this.vars = vars;
+	this.expression = expression;
+}
+
+Lambda.prototype.valueOf = function(frame) {
+	var self = this;
+	var f =  function() {
+		var args = Array.prototype.slice.call(arguments);
+		var fr = new Frame({},frame);
+		for(var i=0;i<self.vars.length;i++) {
+			fr.set(self.vars[i],args[i] || 0);
+		}
+		return self.expression.valueOf(fr);
+	}
+	f.toString = function() {
+		return '(lambda)';
+	}
+	return f;
+}
+
+Lambda.prototype.toString = function() {
+	return '(lambda)';
 }

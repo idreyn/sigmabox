@@ -392,6 +392,7 @@ def Key(_keyData,keyboard) {
 			this.labelType = 'text';
 			var l = skd.attr('text-label');
 			var s;
+			l = l.split('->').join('&rarr;');
 			if(l.indexOf('_') != -1) {
 				s = l.split('_');
 				l = s[0] + '<sub>' + s[1] + '</sub>';

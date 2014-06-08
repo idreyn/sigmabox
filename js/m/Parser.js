@@ -40,6 +40,7 @@ Parser.prototype.parse = function(s,topLevel) {
 	s = s.split('\\left\\{').join('<');
 	s = s.split('\\right\\}').join('>');
 	s = s.split('&nbsp;').join('');
+	s = s.split('\\longrightarrow').join(':');
 	if(topLevel) {
 		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3
 		s = s.replace(/(\\times|\\cdot|\/)(\-[0-9\.]*)/,'$1($2)');
@@ -47,6 +48,7 @@ Parser.prototype.parse = function(s,topLevel) {
 	var p = this,
 		res = s,
 		check = [
+			p.lambda,
 			p.number,
 			p.addition,
 			p.multiplication,
@@ -505,6 +507,26 @@ Parser.prototype.leadingNumber = function(s) {
 			_factors.push(new Factor(self.parse(rest)));
 		}
 		return new Mult(_factors);
+	} else {
+		return Parser.NO_MATCH;
+	}
+}
+
+Parser.prototype.lambda = function(s) {
+	var index = ParseUtil.nextIndexOf(':',s);
+	if(index == 0) {
+		throw 'Lambda is missing bound variable';
+	}
+	if(index > -1) {
+		var vars = s.slice(0,index);
+		if(vars.charAt(0) != '(') {
+			throw 'Invalid lambda syntax';
+		} else {
+			vars = vars.slice(1,vars.length - 1);
+		}
+		vars = vars.split(',');
+		var expression = this.parse(s.slice(index + 1));
+		return new Lambda(vars,expression);
 	} else {
 		return Parser.NO_MATCH;
 	}

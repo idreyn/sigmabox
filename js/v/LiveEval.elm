@@ -243,7 +243,7 @@ def LiveEvalCard(manager) {
 			if(s.length > approxChars) {
 				this.$.css('font-size','20');
 			} else {
-				this.$.css('font-size','40');
+				this.$.css('font-size','35');
 			}
 			if(s == '') s = '0';
 			this.$scroll.html(s);
