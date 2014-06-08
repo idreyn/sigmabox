@@ -41,19 +41,28 @@ def SigmaboxSideMenu {
 		SideMenu
 	}
 
-	contents {
-		<img src='res/img/logo.png' width='100%' />
-		[[SigmaboxSideMenuItem 'calculator','eval']]
-		[[SigmaboxSideMenuItem 'repl', 'repl']]
-		[[SigmaboxSideMenuItem 'grapher','grapher']]
-		[[SigmaboxSideMenuItem 'functions','functions']]
-		[[SigmaboxSideMenuItem 'stats','stats']]
-		[[SigmaboxSideMenuItem 'linear','linear']]
-		[[SigmaboxSideMenuItem 'converter','converter']]
+	constructor {
+		this.$top-bar-container.hide();
+		this.updateScroll();
 	}
 
-	method build {
+	my contents-container-wrapper {
+		css {
+			width: 75px;
+		}
+	}
 
+	my contents-container {
+		contents {
+			<img src='res/img/logo.png' width='100%' />
+			[[SigmaboxSideMenuItem 'calculator','eval']]
+			[[SigmaboxSideMenuItem 'repl', 'repl']]
+			[[SigmaboxSideMenuItem 'grapher','grapher']]
+			[[SigmaboxSideMenuItem 'functions','functions']]
+			[[SigmaboxSideMenuItem 'stats','stats']]
+			[[SigmaboxSideMenuItem 'linear','linear']]
+			[[SigmaboxSideMenuItem 'converter','converter']]
+		}
 	}
 
 	method setMode(mode) {

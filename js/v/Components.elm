@@ -201,6 +201,10 @@ def PageView(title) {
 		<div></div>
 	}
 
+	properties {
+		useScrollbars: true
+	}
+
 	contents {
 		<div class='top-bar-container'>
 			<div class='top-bar'>
@@ -288,7 +292,7 @@ def PageView(title) {
 
 	method updateScroll(horiz) {
 		if(!self.scroll) {
-			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: true, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
+			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: self.useScrollbars, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
 			self.scroll.on('scroll',self._onScroll);
 		} else {
 			self.scroll.refresh();
@@ -740,7 +744,6 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(this.menu);
 		if(!utils.tabletMode()) {
 			Hammer(this.@touch-shield).on('tap',this.#tapped);
-			//Hammer(this).on('swiperight',this.#swipeRight);
 			Hammer(this).on('dragstart',this.#dragStart);
 			Hammer(this).on('drag',this.#dragged);
 			Hammer(this).on('dragend',this.#dragEnd);
@@ -752,6 +755,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method tapped(e) {
+		console.log('tapped');
 		if(this.menuShown && !utils.tabletMode()) {
 			this.hideMenu();
 		}
@@ -830,7 +834,9 @@ def SideMenuAppView(menuClass='SideMenu') {
 		) {
 			this.showMenu();
 		} else {
-			this.hideMenu();
+			if(!this._ignoreDrag) {
+				this.hideMenu();
+			}
 		}
 		this.applyStyle('animate');
 		this._ignoreDrag = false;
@@ -906,7 +912,11 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 def SideMenu {
 	extends {
-		View
+		PageView
+	}
+
+	properties {
+		useScrollbars: false
 	}
 
 	css {
@@ -1401,6 +1411,7 @@ def LiveEvalButton(text) {
 		margin-right: 5px;
 		padding-left: 5px;
 		padding-right: 5px;
+		border-radius: 1000px;
 	}
 
 	constructor {
@@ -1414,9 +1425,6 @@ def LiveEvalButton(text) {
 		$this.css(
 			'height',
 			this.height
-		).css(
-			'border-radius',
-			this.height / 2
 		);
 		this.label.size();
 	}

@@ -35,15 +35,6 @@ h1, h2, h3 {
 	transition: background .1s ease .1s;
 }
 
-.MathJax_Display {
-	padding-top: 20px;
-	margin: 0 !important;
-}
-
-.MathInput {
-	display: block;
-}
-
 .StatsView .StatsList:nth-child(odd) .top-bar {
     background: #AAA !important;
 }

@@ -449,9 +449,9 @@ def StatsListField(focusManager) {
 		css {
 			position: absolute;
 			font-size: 12px;
-			color: #BBB;
-			left: 5px;
-			top: 5px;
+			color: #CCC;
+			left: 2px;
+			top: 2px;
 		}
 	}
 }
@@ -577,8 +577,8 @@ def StatsTestChoiceOverlay(callback) {
 			SimpleListItem
 		}
 
-		css {
-
+		style active {
+			background: #FFF;
 		}
 
 		method setup(data) {

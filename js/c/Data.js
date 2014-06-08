@@ -463,6 +463,10 @@ Data.prototype.setVariable = function(k,v,silent) {
 	this.valToSave = null;
 	this.variables[k] = v;
 	var strRes;
+	if(v instanceof Function) {
+		app.popNotification("Can't save this type");
+		return;
+	}
 	if(v instanceof Vector && v.args.length > 10) {
 		strRes = '{' + v.args.length.toString() + ' item list}'
 	} else {

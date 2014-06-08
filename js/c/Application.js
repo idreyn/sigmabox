@@ -49,7 +49,6 @@ Application.prototype.initLayout = function(wrapper) {
 	this.root.addChild(this.converter);
 
 	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl,this.linear,this.converter];
-	this.root.menu.build();
 	this.setMode(this.data.mode || 'eval');
 
 	$(window).on('resize',$.proxy(this.resize,this));

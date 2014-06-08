@@ -865,6 +865,10 @@ def GrapherListField(focusManager) {
 		method empty {
 			return this.contents() == 'y=' || this.contents() == '';
 		}
+
+		css {
+			padding-left: 20px;
+		}
 	}
 }
 
@@ -1365,8 +1369,6 @@ def RangeReadouts {
 	}
 
 	method show {
-		if(window.poonen) debugger;
-		console.log('show');
 		this.showThese([
 			this.@interval,
 			this.@interval-width,

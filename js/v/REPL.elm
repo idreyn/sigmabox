@@ -38,7 +38,8 @@ def REPL {
 			this.current.@input.disable();
 		}
 		if(out) {
-			this.current.@output.$.html(out).show();
+			this.current.@output.$contents.html(out)
+			this.current.$output.show();
 		}
 	}
 
@@ -183,7 +184,7 @@ def REPLLine(focusManager,repl) {
 		this.@input.disable();
 		this.evaluate();
 		this.hideArrow();
-		this.parent('REPL').storeLine(this.@input.contents(),this.@output.$.html());
+		this.parent('REPL').storeLine(this.@input.contents(),this.@output.$contents.html());
 	}
 
 	method evaluate() {
@@ -198,11 +199,11 @@ def REPLLine(focusManager,repl) {
 			if(res instanceof Frac && app.data.displayDecimalizedFractions) {
 				res = res.decimalize();
 			}
-			this.@output.$.html(res.toString());
+			this.@output.$contents.html(res.toString());
 		} catch(e) {
-			this.@output.$.html(e);
+			this.@output.$contents.html(e);
 		}
-		this.@output.$.show();
+		this.$output.show();
 	}
 }
 
@@ -243,23 +244,42 @@ def REPLOutput {
 		<div></div>
 	}
 
+	contents {
+		[[store-button:LiveEvalButton 'STORE']]
+		<span class='contents'><span>
+	}
+
 	extends {
 		TouchInteractive
 	}
 
 	css {
+		box-sizing: border-box;
 		font-size: 14pt;
 		padding: 10px;
+		padding-left: 5px;
 		color: #333;
 		background: #CCC;
 		opacity: 0.75;
-		padding-left: 20px;
 	}
 
-	on invoke {
-		var val = self.$.html().split('{').join('<').split('}').join('>');
-		var res = new Parser().parse(val).valueOf(new Frame());
-		app.data.initVariableSave('store',res);
-		app.useKeyboard('variables');
+	my LiveEvalButton {
+		css {
+			font-size: 10px;
+			text-shadow: none;
+			padding: 5px;
+		}
+
+		style default {
+			text-shadow: none;
+			background: none;
+		}
+
+		on invoke {
+			var val = root.$contents.html().split('{').join('<').split('}').join('>');
+			var res = new Parser().parse(val).valueOf(new Frame());
+			app.data.initVariableSave('store',res);
+			app.useKeyboard('variables');
+		}
 	}
 }

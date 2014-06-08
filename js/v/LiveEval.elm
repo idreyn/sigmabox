@@ -77,7 +77,7 @@ def LiveEvalCard(manager) {
 		this.$lower.css('height','20%');
 		this.@lower.size();
 		this.$toolbar.css('height','10%');
-		this.$MathInput.css('width',
+		this.$MathInput.css('padding','20px').css('width',
 			parseInt($this.css('width')) - 2 * parseInt(this.$MathInput.css('padding'))
 		).css('font-size',
 			Math.min(
@@ -214,18 +214,6 @@ def LiveEvalCard(manager) {
 			width: 100%;
 			overflow-y: hidden;
 			overflow-x: hidden;
-		}
-	}
-	
-	find .input {
-		css {
-			outline: none;
-			width: 100%;
-			max-width: 100%;
-			border: 0px;
-			padding: 20px;
-			background: transparent;
-			font-size: 40pt;
 		}
 	}
 

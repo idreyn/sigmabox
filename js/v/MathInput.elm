@@ -18,7 +18,8 @@ def MathInput(owner) {
 	}
 
 	css {
-		padding: 20px;
+		box-sizing: border-box;
+		padding: 10px;
 		height: 100%;
 		width: 100%;
 		display: block;
@@ -197,9 +198,9 @@ def SmallMathInput {
 		line-height: 30px;
 		min-height: 30px;
 		background: #FFF;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		font-size: 25px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		font-size: 20px;
 		border-bottom: 2px solid #EEE;
 		box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 		text-shadow: 1px 1px 10px rgba(0,0,0,0.1);
