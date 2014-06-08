@@ -78,14 +78,15 @@ def LiveEvalCard(manager) {
 		this.@lower.size();
 		this.$toolbar.css('height','10%');
 		this.$MathInput.css('padding','20px').css('width',
-			parseInt($this.css('width')) - 2 * parseInt(this.$MathInput.css('padding'))
+			parseInt($this.css('width'))
 		).css('font-size',
+			Math.max(
 			Math.min(
 				Math.min(
 					this.$MathInput.height() / 5,
 					this.$MathInput.width() / 12
 				)
-			,40) + 'px'
+			,40),25) + 'px'
 		);
 		this.@toolbar.size();
 	}

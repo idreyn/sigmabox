@@ -43,7 +43,6 @@ def SigmaboxSideMenu {
 
 	constructor {
 		this.$top-bar-container.hide();
-		this.updateScroll();
 	}
 
 	my contents-container-wrapper {
@@ -86,7 +85,7 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	css {
-		margin-bottom: 10px;
+		margin-bottom: 15px;
 		background: none;
 		overflow-x hidden;
 		height: 75px;

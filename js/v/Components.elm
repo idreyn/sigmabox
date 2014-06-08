@@ -755,7 +755,6 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method tapped(e) {
-		console.log('tapped');
 		if(this.menuShown && !utils.tabletMode()) {
 			this.hideMenu();
 		}
@@ -902,6 +901,8 @@ def SideMenuAppView(menuClass='SideMenu') {
 			this.overlay.$.height(this.$.height());
 		}
 
+		this.$SideMenu.get(0).size();
+
 		this.$container.children().each(function(i,e) {
 			if(e.size) {
 				e.size();
@@ -940,6 +941,10 @@ def SideMenu {
 
 	method selectByIndex(i) {
 		this.$SideMenuItem.get(i).$.trigger('invoke');
+	}
+
+	method size {
+		this.updateScroll();
 	}
 
 }
