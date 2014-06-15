@@ -39,7 +39,9 @@ Parser.prototype.parse = function(s,topLevel) {
 	// It's convenient for us to replace those with < > for parsing.
 	s = s.split('\\left\\{').join('<');
 	s = s.split('\\right\\}').join('>');
+	// Getting rid of extra spaces
 	s = s.split('&nbsp;').join('');
+	// The lambda arrow becomes a colon
 	s = s.split('\\longrightarrow').join(':');
 	if(topLevel) {
 		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3

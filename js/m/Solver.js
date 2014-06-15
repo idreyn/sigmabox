@@ -56,7 +56,6 @@ Solver.prototype.guess = function(guess) {
 		epsilon = 1e-20,
 		ddx_steadyCount = 0,
 		repeat = 100;
-	// Some assclown is going to try and solve N/x = 0 and we just don't like to see that...
 	try {
 		var left0 = this.leftAt(0);
 	} catch(e) {
@@ -109,15 +108,15 @@ Solver.prototype.guess = function(guess) {
 	} else {
 		// If it's an angle we should try to normalize it
 		if(app.data.trigUseRadians) {
-			var offsets = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+			var offsets = [0, Math.PI/2, 2*Math.PI/3, Math.PI, 4*Math.PI/3, 3*Math.PI/2];
 		} else {
-			var offsets = [0,90,180,270];
+			var offsets = [0,90,120,180,240,270];
 		}
 		var new_guess = guess;
 		for(var i=0;i<offsets.length;i++) {
-			var normalized_guess = Functions.normalize(guess,app.data.trigUseRadians) - offsets[i];
+			var normalized_guess = Functions.normalize(guess - offsets[i],app.data.trigUseRadians);
 			if(Functions.aboutEquals(this.f(guess),this.f(normalized_guess))) {
-				if(normalized_guess > 0) new_guess = normalized_guess;
+				if(Math.abs(normalized_guess) < Math.abs(new_guess)) new_guess = normalized_guess;
 			}
 		}
 		guess = new_guess;
@@ -162,6 +161,8 @@ Solver.prototype.steady = function(val) {
 }
 
 Solver.prototype.solve  = function() {
+	Frac.fastMode = true;
+	var experimental = true;
 	this.solveMode = 'linear';
 	try {
 		var lin = this.guess(0.01);
@@ -170,6 +171,13 @@ Solver.prototype.solve  = function() {
 			this.steady(e.value);
 		}
 		lin = false;
+	}
+	if(!experimental) {
+		if(lin) {
+			return lin;
+		} else {
+			this.cannotSolve();
+		}
 	}
 	this.solveMode = 'exponential';
 	try {
@@ -192,6 +200,7 @@ Solver.prototype.solve  = function() {
 	this.solveMode = 'linear';
 	var poss = [lin,exp,log];
 	var res = this.pickBestSolution(poss);
+	Frac.fastMode = false;
 	if(res) {
 		return res;
 	} else {
@@ -368,6 +377,16 @@ PolySolver.prototype.solve = function() {
 			];
 		}
 	}
+	var allZero = true;
+	for(var i=0;i<this.coeffs.length-1;i++) {
+		if(this.coeffs[i].toFloat() != 0) {
+			allZero = false;
+		}
+	}
+	if(allZero) {
+		roots = [new Value(0)];
+		hasAnswer = true;
+	}
 	while(!hasAnswer) {
 		var r0 = new Value(0.4,0.9);
 		var roots = [];
@@ -381,8 +400,8 @@ PolySolver.prototype.solve = function() {
 		var precision = 0.000001,
 			maxDev = Infinity,
 			iter = 0,
-			maxIter = 100;
-		while(maxDev > precision && iter < maxIter) {
+			repeat = 100;
+		while(maxDev > precision && iter < repeat) {
 			iter++;
 			prev = roots.concat();
 			for(var i=0;i<roots.length;i++) {

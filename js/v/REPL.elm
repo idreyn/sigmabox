@@ -193,6 +193,7 @@ def REPLLine(focusManager,repl) {
 			var p = new Parser();
 			var res = p.parse(text);
 			res = res.valueOf(new Frame({}));
+			app.data.displayPolarVectors = false;
 			if(res instanceof Vector && app.data.displayPolarVectors) {
 				res = res.toStringPolar(app.data.trigUseRadians);
 			}

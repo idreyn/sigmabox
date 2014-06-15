@@ -346,16 +346,12 @@ function Frac(top,bottom) {
 	this.bottom = bottom;
 }
 
-Frac.grapherMode = false;
+Frac.fastMode = false;
 
 Frac.prototype.valueOf = function(frame) {
-
-	//debugger;
-
-	if(Frac.grapherMode) {
+	if(Frac.fastMode) {
 		return this.grapherEval(frame);
 	}
-
 	var top = this.top.valueOf(frame);
 	var bottom = this.bottom.valueOf(frame);
 

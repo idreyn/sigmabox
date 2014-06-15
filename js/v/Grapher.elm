@@ -403,7 +403,7 @@ def GraphWindow {
 		});
 		var zeroEquation = 'zero';
 		var points = [];
-		var testPoints = 1e4;
+		var testPoints = 1e5;
 		others.push(zeroEquation);
 		others.forEach(function(other) {
 			var diffs = [];
@@ -432,11 +432,13 @@ def GraphWindow {
 				}
 			}
 		});
-		if(points.length == 0) {
-			app.popNotification('No intersections found. Try zooming in?');
-		} else {
-			app.popNotification('Intersections are approximate.');
-		}
+		setTimeout(function() {
+			if(points.length == 0) {
+				app.popNotification('No intersections found. Try zooming in?');
+			} else {
+				app.popNotification('Intersections are approximate.');
+			}
+		},1000);
 		points.forEach(function(p) {
 			var m = elm.create('GrapherIntersectionMarker');
 			m.setup(p,self.planeToCanvas(p));
@@ -605,7 +607,7 @@ def GraphWindow {
 			if(type == 'function') {
 				var points = [];
 				var step = 1;
-				Frac.grapherMode = true;
+				Frac.fastMode = true;
 				if(!data.cache) {
 					// Slap a cache onto the evaluable objects
 					data.cache = {};
@@ -640,7 +642,7 @@ def GraphWindow {
 						points.push({x: planeX, y: planeY});
 					};
 				};
-				Frac.grapherMode = false;
+				Frac.fastMode = false;
 				var start = points.shift();
 				start = planeToCanvas(start);
 				c.lineWidth = 4;
@@ -828,6 +830,10 @@ def GrapherListField(focusManager) {
 	}
 
 	on interval {
+		if(this.contents() == 'y=') {
+			app.popNotification('Input an equation before setting boundaries');
+			return;
+		}
 		app.mathPrompt('Enter minX,maxX (or leave blank):',function(no,closePrompt,notValid,prompt) {
 			var val = prompt.@MathTextField.contents();
 			if(val.indexOf(',') != -1 || val == '') {
@@ -857,7 +863,7 @@ def GrapherListField(focusManager) {
 			font-size: 12px;
 			color: #BBB;
 			left: 20px;
-			top: 5px;
+			top: 3px;
 		}
 	}
 
@@ -867,6 +873,8 @@ def GrapherListField(focusManager) {
 		}
 
 		css {
+			padding-top: 15px;
+			padding-bottom: 15px;
 			padding-left: 20px;
 		}
 	}
@@ -1314,11 +1322,11 @@ def TraceReadouts {
 		this.@point.setContents('(' + x.toPrecision(4) + ',' + (0 - y).toPrecision(4) + ')');
 		if(func) {
 			var d;
-			Frac.grapherMode = true;
+			Frac.fastMode = true;
 			app.data.trigForceRadians(function() {
 				d = new Derivative(func).at(x).toString();
 			});
-			Frac.grapherMode = false;
+			Frac.fastMode = false;
 			self.@derivative.setContents('d/dx = ' + d);
 		} else {
 			this.@derivative.setContents('d/dx = halp');
@@ -1447,7 +1455,7 @@ def RangeReadouts {
 				minY = 0 - point.y;
 			}
 		});
-		Frac.grapherMode = true;
+		Frac.fastMode = true;
 		this.@min.setContents('min &#8776; (' + minX.toPrecision(4) + ',' + minY.toPrecision(4) + ')');
 		this.@max.setContents('max &#8776; (' + maxX.toPrecision(4) + ',' + maxY.toPrecision(4) + ')');
 		var integral = new Integral(new Value(start),new Value(end),func);
@@ -1457,7 +1465,7 @@ def RangeReadouts {
 		});
 		this.@integral.setContents('∫ &#8776; ' + ir.toPrecision(4));
 		this.@average.setContents('average &#8776; ' + (ir / Math.abs(end-start)).toPrecision(4));
-		Frac.grapherMode = false;
+		Frac.fastMode = false;
 	}
 
 	method toggleIntersections {
@@ -1465,7 +1473,10 @@ def RangeReadouts {
 			this.hideAllButIntersections();
 			this.@intersections.$inner.html('done');
 			this.intersectionsMode = true;
-			this.parent().findIntersections();
+			app.popNotification('This will take a few seconds');
+			setTimeout(function() {
+				self.parent().findIntersections();
+			},1000);
 		} else {
 			this.parent().$GrapherIntersectionMarker.each(function() {
 				var s = this;

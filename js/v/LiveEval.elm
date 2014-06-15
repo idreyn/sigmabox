@@ -120,6 +120,9 @@ def LiveEvalCard(manager) {
 			} else {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
+				if(res.toString() == 'NaN') {
+					throw 'Invalid parameters';
+				}
 				if(res instanceof Matrix) {
 					res = res.toString(true);
 				}

@@ -76,16 +76,10 @@ Functions.r2d = function(n) {
 }
 
 Functions.normalize = function(v,r) {
-	if(isNaN(v)) throw "What is this shit?"
-	var min = 0;
-	var max = r? 2*Math.PI : 360;
-	while(!(v >= min && v <= max)) {
-		if(v > max) {
-			v -= max;
-		} else {
-			v += max;
-		}
-	}
+	if(isNaN(v)) throw "Can't normalize this";
+	var factor = r? 2*Math.PI : 360;
+	v = v % factor;
+	if(v < 0) v = v + factor;
 	return v;
 }
 

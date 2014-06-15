@@ -109,7 +109,11 @@ def LinearSolveField {
 			this.setStyle('default','background','#F5F5F5');
 			this.applyStyle('default');
 		}
-		$this.css('font-size',(22 - 2 * dim).toString() + 'px');
+		if(app.utils.tabletMode()) {
+
+		} else {
+			$this.css('font-size',(22 - 2 * dim).toString() + 'px');
+		}
 		this.$container.html('');
 		for(var i=0;i<dim;i++) {
 			var v = this.variables[i];
