@@ -85,6 +85,10 @@ def MathInput(owner) {
 		$this.mathquill('latex',input);
 		self._contents = input;
 	}
+
+	method refresh(input) {
+		this.setContents(this.contents());
+	}
 	
 	method acceptActionInput(type) {
 		var oldContents = this.contents();
@@ -194,8 +198,7 @@ def SmallMathInput {
 
 	css {
 		width: 100%;
-		display: table;
-		line-height: 30px;
+		display: block;
 		min-height: 30px;
 		background: #FFF;
 		padding-top: 10px;

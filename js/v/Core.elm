@@ -306,7 +306,7 @@ def WelcomeView {
 		contents {
 			<img src='res/img/logo-intro.png' class='logo' />
 			<h1>Welcome to Sigmabox.</h1>
-			<p>A beautiful calculator featuring live evaluation, graphing, statistics, and more.</p>
+			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
 			<br/>
 			[[ready-button:ToolbarButton 'My body is ready &rsaquo;']]
 		}

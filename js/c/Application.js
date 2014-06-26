@@ -57,7 +57,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.data.uiSyncReady();
 	this.mode.init();
 
-	//this.overlay(elm.create('WelcomeView'));
+	// this.overlay(elm.create('WelcomeView'));
 
 	$(window).trigger('app-ready');
 }
@@ -134,7 +134,7 @@ Application.prototype.setMode = function(mode) {
 	});
 	this.mode = mode;
 	this.mode.$.show();
-	this.mode.$.trigger('active');
+	this.mode.$.trigger('displayed');
 	if(!this.mode.noKeyboard) {
 		this.showKeyboard();
 	} else {

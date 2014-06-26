@@ -3,7 +3,7 @@ html, body {
 	min-width: 100%;
 	max-width: 100%;
 	font-family: 'Helvetica Neue' sans-serif;
-    font-weight: 200;
+    font-weight: 200 !important;
     background: url(../res/img/background.png);
     overflow: hidden;
     top: 0;

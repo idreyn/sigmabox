@@ -72,7 +72,6 @@ Parser.prototype.parse = function(s,topLevel) {
 	}
 	if(!ParseUtil.isClear(s,s.length)) {
 		// Mismatched braces, somewhere
-		// // console.log(s);
 		throw 'Mismatched parentheses';
 	}
 	//var t = PolySolver.match(s);
@@ -339,11 +338,9 @@ Parser.prototype.func = function(s) {
 			var func = s.slice(1,firstBrace);
 			if(func.indexOf('\\') != -1) {
 				// We've caught a situation like \pi\epsilon_{0}.
-				//// // console.log('FUNC',func);
 				var ind = func.indexOf('\\');
 				var first = func.slice(0,ind);
 				var rest = func.slice(ind + 1);
-				//// // console.log('BWA',first,rest,s.slice(firstBrace));
 				return new Mult([
 					this.parse('\\' + first),
 					this.parse('\\' + rest + s.slice(firstBrace))
@@ -487,7 +484,6 @@ Parser.prototype.number = function(s) {
 }
 
 Parser.prototype.leadingNumber = function(s) {
-	
 	var self = this;
 	// Let's see if there's a leading number
 	var numChars = "0123456789.";

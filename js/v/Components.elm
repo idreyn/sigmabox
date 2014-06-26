@@ -184,6 +184,12 @@ def View {
 		e.preventDefault();
 	}
 
+	on displayed {
+		this.$MathInput.each(function() {
+			this.refresh();
+		});
+	}
+
 	method setMaxWidth(m) {
 		this.maxWidth = m;
 		this.size();
