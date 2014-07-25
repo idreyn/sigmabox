@@ -11,6 +11,7 @@ Data.prototype.toSerialize = [
 	'currentInput',
 	'grapherEquations',
 	'grapherWindow',
+	'repl'
 ];
 
 Data.prototype.init = function() {
@@ -28,9 +29,9 @@ Data.prototype.init = function() {
 		'\\phi': new Value(1.6180339887), // Golden ratio
 		'\\varepsilon_{0}': new Value(8.854187817e-12), // Permittivity of free space
 		'\\mu_{0}': new Value(1.256637061e-6), // Permeability of free space
-		'g': new Value(9.80665), // Standard gravity
-		'G': new Value(6.67384e-11), // Gravitation constant
-		'c_{light}': new Value(299792458), // Speed of light
+		'g_{grav}': new Value(9.80665), // Standard gravity
+		'G_{grav}': new Value(6.67384e-11), // Gravitation constant
+		'c_{L}': new Value(299792458), // Speed of light
 		'k_{E}': new Value(8.98755179e9), // Electric constant
 		'\\alpha_{B}': new Value(5.2917721092e-11), // Bohr radius
 		'Z_{0}': new Value(376.730313461), // Characteristic impedance of vacuum
@@ -50,21 +51,6 @@ Data.prototype.init = function() {
 		'R_{gas}': new Value(8.3144621), // Gas constant
 		'\\sigma_{sb}': new Value(5.670373e-8) // Stefan-Boltzmann constant
 	}
-
-	/**
-
-	for(var k in this.constants) {
-		this.registerFunction(k);
-	}
-
-	var alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
-
-	for(var k in alphabet) {
-		this.registerFunction(alphabet[k]);
-		this.registerFunction(alphabet[k].toUpperCase());
-	}
-
-	**/
 
 	this.variables = {
 
@@ -233,6 +219,29 @@ Data.prototype.init = function() {
 			Functions.expect(v,Vector);
 			return new Vector(v.args.reverse());
 		}),
+		'map': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return new Vector(v.args.map(lambda));
+		}),
+		'reduce': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return v.args.reduce(function(x,y) {
+				return lambda(x,y);
+			});
+		}),
+		'filter': this.wrap(function(lambda,v) {
+			Functions.expect(lambda,Function);
+			Functions.expect(v,Vector);
+			return new Vector(v.args.filter(function(n) {
+				var res = lambda(n);
+				if(res instanceof Value) {
+					return res.toFloat();
+				}
+				return res;
+			}));
+		}),
 		// Numerical stuff
 		'lcm': this.wrap(function(a,b) {
 			var gcd_rec = function(a, b) {
@@ -295,6 +304,8 @@ Data.prototype.init = function() {
 	this.lists = {
 
 	}
+
+	this.repl = [];
 
 	this.deserialize();
 }
@@ -420,7 +431,13 @@ Data.prototype.deserializeLists = function(obj) {
 
 Data.prototype.lookup = function(symbol) {
 	symbol = symbol.name || symbol;
-	return this.constants[symbol] || this.variables[symbol] || this.lookupList(symbol) || new Value(0);
+	var res = this.constants[symbol] || this.variables[symbol] || this.lookupList(symbol);
+	if(res) return res;
+	if(!res && symbol.charAt(0) == '\\') {
+		return this.lookup(symbol.slice(1));
+	} else {
+		return new Value(0);
+	}
 }
 
 Data.prototype.lookupList = function(name) {
@@ -445,15 +462,25 @@ Data.prototype.cancelVariableSave = function() {
 Data.prototype.setVariable = function(k,v,silent) {
 	this.valToSave = null;
 	this.variables[k] = v;
+	var strRes;
+	if(v instanceof Function) {
+		app.popNotification("Can't save this type");
+		return;
+	}
+	if(v instanceof Vector && v.args.length > 10) {
+		strRes = '{' + v.args.length.toString() + ' item list}'
+	} else {
+		strRes = v.toString();
+	}
 	if(!silent) app.popNotification(
-		'Set ' + k + ' to ' + v.toString()
+		'Set ' + k + ' to ' + strRes
 	);
 	this.uiSyncBroadcast('variable-update','variable-update');
 	this.serialize();
 }
 
 Data.prototype.isNameAvailable = function(name) {
-	if(window.LatexCmds[name] || name.indexOf(' ') > -1 || /\d/.test(name)) {
+	if(window.LatexCmds[name] || name.indexOf(' ') > -1 || /\d/.test(name) || this.constants[name]) {
 		return false;
 	} else {
 		return true;

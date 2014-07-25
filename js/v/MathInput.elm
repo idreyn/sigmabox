@@ -3,18 +3,23 @@ def MathInput(owner) {
 	html {
 		<span></span>
 	}
-	
-	constructor {
-		$this.mathquill('editable');
-		$this.find('textarea').attr('disabled','disabled');
-	}
 
 	extends {
 		TouchInteractive
 	}
 	
-	css { 
-		padding: 20px;
+	constructor {
+		this._contents = '';
+		this._refresh = true;
+		this.history = [];
+		this.historyPointer = 0;
+		$this.mathquill('editable');
+		$this.find('textarea').attr('disabled','disabled');
+	}
+
+	css {
+		box-sizing: border-box;
+		padding: 10px;
 		height: 100%;
 		width: 100%;
 		display: block;
@@ -24,20 +29,42 @@ def MathInput(owner) {
 		-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 	}
 
-	on focus {
-
-	}
-
 	method loseFocus {
 		this.mathSelf().cursor.hide();
 	}
 
-	method takeFocus {
-		
+	method updateHistory {
+		if(self.historyPointer != 0) {
+			self.history = self.history.slice(0, self.history.length - self.historyPointer);
+			self.historyPointer = 0;
+		}
+		if(self.contents() != self.history[self.history.length - 1]) {
+			self.history.push(self.contents());
+		}
 	}
-	
+
+	method undo {
+		self.historyPointer = Math.min(self.historyPointer + 1, self.history.length - 1);
+		self.setContents(self.history[self.history.length - 1 - self.historyPointer]);
+	}
+
+	method redo {
+		self.historyPointer = Math.max(self.historyPointer - 1, 0);
+		self.setContents(self.history[self.history.length - 1 - self.historyPointer]);
+	}
+
+	method size {
+		var c = this.contents();
+		if(c.indexOf('\\int') > -1 || c.indexOf('\\sum') > -1 || c.indexOf('\\prod') > -1) $this.mathquill('respace');
+	}
+
 	method contents {
-		return $this.mathquill('latex');
+		if(self._refresh || true) {
+			var c = $this.mathquill('latex');
+			self._contents = c;
+			self._refresh = false;
+		}
+		return self._contents;
 	}
 	
 	method mathSelf {
@@ -47,13 +74,20 @@ def MathInput(owner) {
 	method acceptLatexInput(input,doUpdate) {
 		if(doUpdate === undefined) doUpdate = true;
 		if(!(self.preventInput && self.preventInput(input))) $this.mathquill('write',input);
-		this.mathSelf().cursor.show();
+		self.mathSelf().cursor.show();
+		self.updateHistory();
+		self._refresh = true;
 		if(doUpdate) $this.trigger('update');
 	}
 
 	method setContents(input) {
 		$this.html('',true);
 		$this.mathquill('latex',input);
+		self._contents = input;
+	}
+
+	method refresh(input) {
+		this.setContents(this.contents());
 	}
 	
 	method acceptActionInput(type) {
@@ -61,6 +95,9 @@ def MathInput(owner) {
 		type.split(',').forEach(function(t) {
 			self.$.trigger('action-input',type);
 			var c = self.mathSelf().cursor;
+			if(t !== 'left' && t == 'right') {
+				self._refresh = true;
+			}
 			switch(t) {
 				case 'left':
 					if(!(self.preventCursorLeft && self.preventCursorLeft()) && (c.prev || c.parent != c.root)) {
@@ -76,11 +113,18 @@ def MathInput(owner) {
 						self.$.trigger('cursor-right');
 					}
 					break;
+				case 'equals':
+					if(!self.onEqualsSign) {
+						self.acceptLatexInput('=');
+					} else {
+						self.onEqualsSign();
+					}
+					break;
 				case 'backspace':
 					if(!(self.preventBackspace && self.preventBackspace())) self.mathSelf().cursor.backspace();
 					break;
 				case 'clear':
-					$this.mathquill('latex','');
+					self.setContents('');
 					break;
 				case 'function':
 					app.overlay(elm.create('FunctionChoiceView',function(func) {
@@ -101,8 +145,18 @@ def MathInput(owner) {
 						self.acceptLatexInput('\\' + list.name);
 					}));
 					break;
+				case 'undo':
+					self.undo();
+					break;
+				case 'redo':
+					self.redo();
+					break;
+			}
+			if(self.contents() != oldContents && t != 'undo' && t != 'redo') {
+				self.updateHistory();
 			}
 		});
+		this.mathSelf().cursor.show();
 		if(self.afterInput) self.afterInput(oldContents,this.contents());
 		$this.trigger('update');
 	}
@@ -144,12 +198,12 @@ def SmallMathInput {
 
 	css {
 		width: 100%;
-		line-height: 30px;
+		display: block;
 		min-height: 30px;
 		background: #FFF;
-		padding-top: 20px;
-		padding-bottom: 20px;
-		font-size: 25px;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		font-size: 20px;
 		border-bottom: 2px solid #EEE;
 		box-shadow: 1px 1px 2px rgba(0,0,0,0.2);
 		text-shadow: 1px 1px 10px rgba(0,0,0,0.1);
@@ -171,6 +225,7 @@ def MathTextField(focusManager) {
 		this.enabled = true;
 		this.input = elm.create('SmallMathInput').named('input');
 		this.input.$.on('update',this.#updated);
+		Hammer(this).on('touch',this.#touch);
 		if(this.focusManager) this.focusManager.register(this);
 		$this.append(this.input);
 	}
@@ -183,7 +238,7 @@ def MathTextField(focusManager) {
 		$this.trigger('update');
 	}
 
-	on click {
+	on invoke {
 		if(!this.enabled) {
 			return;
 		}
@@ -191,7 +246,7 @@ def MathTextField(focusManager) {
 		this.mathSelf().cursor.show();
 	}
 
-	on touchstart {
+	on touch {
 		if(!this.enabled) {
 			return;
 		}

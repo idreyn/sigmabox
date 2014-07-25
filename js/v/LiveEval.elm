@@ -3,7 +3,6 @@ def LiveEvalCard(manager) {
 		<div> 
 			<div class='history-pull'></div>
 			<div class='upper'> 
-
 			</div>
 			<div class='toolbar'>
 
@@ -78,15 +77,16 @@ def LiveEvalCard(manager) {
 		this.$lower.css('height','20%');
 		this.@lower.size();
 		this.$toolbar.css('height','10%');
-		this.$MathInput.css('width',
-			parseInt($this.css('width')) - 2 * parseInt(this.$MathInput.css('padding'))
+		this.$MathInput.css('padding','20px').css('width',
+			parseInt($this.css('width'))
 		).css('font-size',
+			Math.max(
 			Math.min(
 				Math.min(
 					this.$MathInput.height() / 5,
 					this.$MathInput.width() / 12
 				)
-			,40) + 'px'
+			,40),25) + 'px'
 		);
 		this.@toolbar.size();
 	}
@@ -120,6 +120,9 @@ def LiveEvalCard(manager) {
 			} else {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
+				if(res.toString() == 'NaN') {
+					throw 'Invalid parameters';
+				}
 				if(res instanceof Matrix) {
 					res = res.toString(true);
 				}
@@ -136,7 +139,7 @@ def LiveEvalCard(manager) {
 						if(res.args.length <= 10) {
 							res = res.toString();
 						} else {
-							res = '{' + res.args.length + ' item vector}';
+							res = '{' + res.args.length + ' item list}';
 						}
 					}
 				} else if(res instanceof Frac) {
@@ -202,9 +205,10 @@ def LiveEvalCard(manager) {
 
 	on pullEnd(e,data) {
 		if(data.translateY > 90) {
-			app.overlay(elm.create('LiveEvalHistoryOverlay', function(res) {
+			self.historyOverlay = self.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
 				self.setContents(res);
-			}));
+			});
+			app.overlay(self.historyOverlay);
 		}
 	}
 
@@ -214,18 +218,6 @@ def LiveEvalCard(manager) {
 			width: 100%;
 			overflow-y: hidden;
 			overflow-x: hidden;
-		}
-	}
-	
-	find .input {
-		css {
-			outline: none;
-			width: 100%;
-			max-width: 100%;
-			border: 0px;
-			padding: 20px;
-			background: transparent;
-			font-size: 40pt;
 		}
 	}
 
@@ -243,9 +235,9 @@ def LiveEvalCard(manager) {
 			if(s.length > approxChars) {
 				this.$.css('font-size','20');
 			} else {
-				this.$.css('font-size','40');
+				this.$.css('font-size','35');
 			}
-			if(s == '') s = '0'
+			if(s == '') s = '0';
 			this.$scroll.html(s);
 			this.$.css('line-height',this.$.height() + 'px');
 			if(!self.scroll) self.scroll = new IScroll(self,{mouseWheel: true, scrollX: true});
@@ -298,7 +290,7 @@ def LiveEvalCard(manager) {
 			font-size: 20px;
 			top: -100px;
 			color: #FFF;
-			background: #333;
+			background: #222;
 		}
 
 		my inner {
@@ -378,8 +370,14 @@ def LiveEvalCard(manager) {
 
 			this.clearButton = elm.create('LiveEvalButton','CLR');
 			this.clearButton.$.on('invoke',function() {
-				app.data.addHistoryItem(app.mode.currentInput().contents());
+				var res = app.mode.currentInput().contents();
 				app.mode.currentInput().acceptActionInput('clear');
+				if(app.data.inputHistory[app.data.inputHistory.length - 1] != res) {
+					app.data.addHistoryItem(res);
+					if(root.historyOverlay) {
+						root.historyOverlay.addItem(res);
+					}
+				}
 			});
 			this.$.append(this.clearButton);
 
@@ -402,7 +400,6 @@ def LiveEvalManager {
 	
 	html {
 		<div>
-//			[[indicator:LiveEvalPageIndicator]]
 			<div class='middle'>
 				<div class='inner'> </div>
 			</div>
@@ -474,7 +471,7 @@ def LiveEvalManager {
 			'top',
 			0
 		);
-//		this.@indicator.size();
+		$this.find('.MathInput').each(function() { this.size(); });
 		$this.find('.LiveEvalCard').each(function() { this.size(); });
 		this.screenFraction = i;
 		if(this.scroll) this.scroll.refresh();
@@ -577,7 +574,9 @@ def LiveEvalHistoryOverlay(callback) {
 
 	properties {
 		overlaySourceDirection: 'top',
-		autoAddField: false
+		addFieldToTop: true,
+		autoAddField: false,
+		persist: true
 	}
 
 	constructor {
@@ -591,11 +590,15 @@ def LiveEvalHistoryOverlay(callback) {
 
 	method populate {
 		this.$MathTextField.remove();
-		app.data.inputHistory.reverse().forEach(function(item) {
-			var f = self.addField();
-			f.disable();
-			f.setContents(item);
-			f.$.on('invoke',self.choose);
+		app.data.inputHistory.forEach(self.addItem);
+	}
+
+	method addItem(text) {
+		var f = self.addField();
+		f.disable();
+		f.setContents(text);
+		f.$.on('invoke',function(e) {
+			self.choose(e);
 		});
 	}
 

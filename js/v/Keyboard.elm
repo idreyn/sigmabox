@@ -1,6 +1,6 @@
 def Keyboard(keyboardSource) {
 	html {
-		<div class='sb-keyboard'> 
+		<div class='sb-keyboard'>
 			<div class='middle'>
 				<div class='inner'>
 					<div class='spacer'> </div>
@@ -198,6 +198,7 @@ def DragKeyboard(keyboardSource) {
 	on pullUpdate(e,data) {
 		var y = data.y,
 			translateY = data.translateY;
+		self.pulling = true;
 		self.@KeyboardPullIndicator.setHeight(Math.abs(translateY));
 		// Stop keys from being pressed
 		if(y > 30 && !self.disabled) {
@@ -214,7 +215,8 @@ def DragKeyboard(keyboardSource) {
 		},500);
 		this.animated();
 		this.slideUp();
-		this.@KeyboardPullIndicator.invoke();
+		if(self.pulling) this.@KeyboardPullIndicator.invoke();
+		self.pulling = false;
 	}
 
 
@@ -278,7 +280,7 @@ def Key(_keyData,keyboard) {
 	}
 	
 	on invoke {
-		if(this.cannotInvoke) return;
+		if(this.cannotInvoke || this.parentKeyboard.disabled) return;
 		try {
 			if(this.activeSubkey().attr('variable')) {
 				if(app.data.varSaveMode) {
@@ -390,6 +392,7 @@ def Key(_keyData,keyboard) {
 			this.labelType = 'text';
 			var l = skd.attr('text-label');
 			var s;
+			l = l.split('->').join('&rarr;');
 			if(l.indexOf('_') != -1) {
 				s = l.split('_');
 				l = s[0] + '<sub>' + s[1] + '</sub>';

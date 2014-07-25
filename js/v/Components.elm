@@ -4,6 +4,7 @@ def TouchInteractive {
 	constructor {
 		this._hammer = Hammer(this);
 		this._hammer.on('tap',this.#tapped);
+		this._hammer.on('hold',this.#held);
 		this._hammer.on('touch',this.#touched);
 		this._hammer.on('release',this.#released);
 		this._hammer.on('dragged',this.#dragged);
@@ -22,6 +23,10 @@ def TouchInteractive {
 		this._isTouchInBounds = false;
 	}
 
+	method held(e) {
+		this._held = true;
+	}
+
 	method touched(e) {
 		if(!this.enabled) return;
 		this.$.trigger('begin');
@@ -34,6 +39,7 @@ def TouchInteractive {
 		this.$.trigger('end');
 		this.$.trigger('endactive');
 		this._isTouchInBounds = false;
+		this._held = false;
 	}
 
 	on touchmove(e) {
@@ -178,6 +184,12 @@ def View {
 		e.preventDefault();
 	}
 
+	on displayed {
+		this.$MathInput.each(function() {
+			this.refresh();
+		});
+	}
+
 	method setMaxWidth(m) {
 		this.maxWidth = m;
 		this.size();
@@ -192,17 +204,23 @@ def Stackable {
 
 def PageView(title) {
 	html {
-		<div>
-			<div class='top-bar-container'>
-				<div class='top-bar'>
-					<span class='title'>$title</span>
-					<span class='toolbar'></span>
-				</div>
-			</div>
-			<div class='contents-container-wrapper'>
-				<div class='contents-container'>
+		<div></div>
+	}
 
-				</div>
+	properties {
+		useScrollbars: true
+	}
+
+	contents {
+		<div class='top-bar-container'>
+			<div class='top-bar'>
+				<span class='title'>$title</span>
+				<span class='toolbar'></span>
+			</div>
+		</div>
+		<div class='contents-container-wrapper'>
+			<div class='contents-container'>
+
 			</div>
 		</div>
 	}
@@ -217,7 +235,7 @@ def PageView(title) {
 		}
 
 		method size {
-			$this.css('height', $parent.height() - (parent.$top-bar-container.css('display') == 'none' ? 0 : parent.$top-bar-container.height()));
+			$this.css('height', $parent.height() - (parent.$top-bar-container.css('display') == 'none' || parent.sizeOverToolbar? 0 : parent.$top-bar-container.height()));
 		}
 	}
 
@@ -230,6 +248,8 @@ def PageView(title) {
 
 	my top-bar-container {
 		css {
+			position: relative;
+			z-index: 1;
 			width: 100%;
 			height: 50px;
 			line-height: 50px;
@@ -262,7 +282,9 @@ def PageView(title) {
 	}
 
 	constructor {
-
+		if(this.title) {
+			this.$title.html(this.title);
+		}
 	}
 
 	on invalidate {
@@ -275,8 +297,16 @@ def PageView(title) {
 	}
 
 	method updateScroll(horiz) {
-		if(!self.scroll) self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: true, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
-		self.scroll.refresh();
+		if(!self.scroll) {
+			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: self.useScrollbars, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
+			self.scroll.on('scroll',self._onScroll);
+		} else {
+			self.scroll.refresh();
+		}
+	}
+
+	method _onScroll(e) {
+		this.$.trigger('scroll');
 	}
 
 	extends {
@@ -298,6 +328,8 @@ def ListView {
 		this.fieldType = 'MathTextField';
 		this.$title.html('ListView');
 		this.$.trigger('update');
+		Hammer(this).on('dragstart',this.#dragStart);
+		Hammer(this).on('dragend',this.#dragEnd);
 	}
 
 	on ready {
@@ -306,6 +338,20 @@ def ListView {
 
 	on active {
 		this.updateScroll();
+	}
+
+	method dragStart {
+		self.$TouchInteractive.each(function() {
+			this.enabled = false;
+		});
+	}
+
+	method dragEnd {
+		setTimeout(function() {
+			self.$TouchInteractive.each(function() {
+				this.enabled = true;
+			});
+		},10);
 	}
 
 	method addField(el,update) {
@@ -365,8 +411,6 @@ def ListView {
 		contents {
 			[[items-list:List]]
 		}
-
-
 	}
 }
 
@@ -386,12 +430,6 @@ def TabbedView {
 
 	constructor {
 		this.tabs = [];
-		this.addTab('Tab One',elm.create('PageView','Tab One'));
-		this.addTab('Tab Two',elm.create('PageView','Tab Two'));
-		this.addTab('Tab Three',elm.create('PageView','Tab Three'));
-		this.addTab('Tab Four',elm.create('PageView','Tab Four'));
-		this.addTab('Tab Five',elm.create('PageView','Tab Five'));
-		this.addTab('Tab Six',elm.create('PageView','Tab Six'));
 		this.$.find('.PageView .top-bar-container').hide();
 	}
 
@@ -689,7 +727,6 @@ def SideMenuAppView(menuClass='SideMenu') {
 			width: 100%;
 			height: 100%;
 			box-shadow: -5px 0px 5px rgba(0,0,0,0.25);
-			z-index: 1;
 		}
 	}
 
@@ -708,14 +745,15 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	constructor {
 		this.container = this.@container;
-		this.menuSwipeThreshold = 25;
+		this.menuSwipeThreshold = 50;
 		this.menu = elm.create(this.menuClass);
 		$this.append(this.menu);
-		Hammer(this.@touch-shield).on('tap',this.#tapped);
-		Hammer(this).on('swiperight',this.#swipeRight);
-		//Hammer(this).on('dragstart',this.#dragStart);
-		//Hammer(this).on('drag',this.#dragged);
-		//Hammer(this).on('dragend',this.#dragEnd);
+		if(!utils.tabletMode()) {
+			Hammer(this.@touch-shield).on('tap',this.#tapped);
+			Hammer(this).on('dragstart',this.#dragStart);
+			Hammer(this).on('drag',this.#dragged);
+			Hammer(this).on('dragend',this.#dragEnd);
+		}
 	}
 
 	method addChild(x) {
@@ -723,7 +761,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method tapped(e) {
-		if(this.menuShown) {
+		if(this.menuShown && !utils.tabletMode()) {
 			this.hideMenu();
 		}
 	}
@@ -747,8 +785,8 @@ def SideMenuAppView(menuClass='SideMenu') {
 		$this.append(view);
 		view.relinquish = function() {
 			self.overlay = undefined;
-			this.$.remove();
 		}
+		view.$.trigger('ready');
 		if(utils.tabletMode()) {
 			view.$.width(this.viewWidth());
 			view.flyIn();
@@ -761,7 +799,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 
 	method dragStart(e) {
-		if(e.gesture.direction == 'up') return;
+		if(e.gesture.direction == 'up' || e.gesture.direction == 'down') {
+			this._ignoreDrag = true;
+			return;
+		}
 		var tx = e.gesture.center.pageX;
 		this._dragOrigin = tx;
 		if(this.menuShown || this.overlay) {
@@ -771,7 +812,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 			e.gesture.stopDetect();
 		} else {
 			if(tx > this.menuSwipeThreshold) {
-				e.gesture.stopDetect();
+				this._ignoreDrag = true;
 			} else {
 				this.applyStyle('no-animate');
 			}
@@ -779,8 +820,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	method dragged(e) {
-		if(!this._dragOrigin) this._dragOrigin = tx;
-		if(this.menuShown) return;
+		if(utils.tabletMode() || this.menuShown || this._ignoreDrag) {
+			return;
+		}
+ 		if(!this._dragOrigin) this._dragOrigin = tx;
 		var tx = e.gesture.center.pageX - this._dragOrigin;
 		$this.css(
 			'translateX',
@@ -790,14 +833,18 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 	method dragEnd(e) {
 		if(
-			(e.gesture.direction == 'right' && e.gesture.velocityX > 0.1) || 
-			(this._dragOrigin <= this.menuSwipeThreshold && e.gesture.center.pageX >= this.menu.$.width())
+			!this._ignoreDrag && 
+			((e.gesture.direction == 'right' && e.gesture.velocityX > 0.1) || 
+			(this._dragOrigin <= this.menuSwipeThreshold && e.gesture.center.pageX >= this.menu.$.width()))
 		) {
 			this.showMenu();
 		} else {
-			this.hideMenu();
+			if(!this._ignoreDrag) {
+				this.hideMenu();
+			}
 		}
 		this.applyStyle('animate');
+		this._ignoreDrag = false;
 		this._dragOrigin = null;
 	}
 
@@ -857,11 +904,10 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 		if(this.overlay) {
 			this.overlay.$.width(this.viewWidth());
-			this.overlay.height(this.$.height());
-			if(this.tabletMode()) {
-
-			}
+			this.overlay.$.height(this.$.height());
 		}
+
+		this.$SideMenu.get(0).size();
 
 		this.$container.children().each(function(i,e) {
 			if(e.size) {
@@ -873,7 +919,11 @@ def SideMenuAppView(menuClass='SideMenu') {
 
 def SideMenu {
 	extends {
-		View
+		PageView
+	}
+
+	properties {
+		useScrollbars: false
 	}
 
 	css {
@@ -897,6 +947,10 @@ def SideMenu {
 
 	method selectByIndex(i) {
 		this.$SideMenuItem.get(i).$.trigger('invoke');
+	}
+
+	method size {
+		this.updateScroll();
 	}
 
 }
@@ -1005,7 +1059,7 @@ def Toolbar(stickToBottom,offset=0) {
 		padding-left: 10px;
 		background: #FFF;
 		box-shadow: 1px 1px 1px rgba(0,0,0,0.1);
-		z-index: 1000;
+		z-index: 1;
 	}
 }
 
@@ -1013,11 +1067,16 @@ def Toolbar(stickToBottom,offset=0) {
 def ToolbarButton(label,callback) {
 
 	html {
-		<div>$label</div>
+		<div><span class='label'>$label</span></div>
 	}
 
 	constructor {
 
+	}
+
+	method setLabel(l) {
+		this.label = l;
+		this.$label.html(l);
 	}
 
 	on invoke {
@@ -1049,6 +1108,124 @@ def ToolbarButton(label,callback) {
 
 	extends {
 		Button
+	}
+}
+
+def ToolbarButtonDropdown(label) {
+	extends {
+		ToolbarButton
+	}
+
+	properties {
+		autoLabel: true
+	}
+
+	contents {
+		<div class='dropdown'></div>
+	}
+
+	css {
+		position: relative;
+	}
+
+	on invoke(e) {
+		this.open = !this.open;
+		if(this.open) {
+			this.showMenu();
+		} else {
+			this.hideMenu();
+		}
+	}
+
+	method showMenu {
+		if(false) {
+			this.$dropdown.css('opacity',0).show().css('translateY',-200).animate({
+				'opacity': 1,
+				'translateY': 0
+			},200,'easeOutQuart');
+		} else {
+			this.$dropdown.show();
+		}
+		this.$.css('border-bottom-left-radius',0).css('border-bottom-right-radius',0);
+	}
+
+	method hideMenu {
+		if(false) {
+			this.$dropdown.css('translateY',0).animate({
+				'opacity': 0,
+				'translateY': -200
+			},200,'easeOutQuart').delay(200);
+		} else {
+			this.$dropdown.hide();
+		}
+		this.$.css('border-bottom-left-radius',20).css('border-bottom-right-radius',20);
+	}
+
+	method select(o) {
+		var text = o.$.html();
+		if(this.autoLabel) this.setLabel(text);
+		this.$.trigger('select',text);
+	}
+
+	my dropdown {
+		css {
+			position: absolute;
+			top: 30px;
+			right: 0px;
+			background: #333;
+			display: none;
+			color: #FFF;
+			text-shadow: none;
+			font-size: 16px;
+			border-radius: 10px;
+			border-top-right-radius: 0px;
+			overflow: hidden;
+		}
+
+		method setOptions(items) {
+			root.select(items.map(function(i) {
+				return self.addOption(i);
+			}).shift());
+		}
+
+		method addOption(label) {
+			var o = root.create('dropdown-item');
+			o.$.html(label).on('invoke',function() {
+				root.select(o);
+			});
+			this.$.append(o);
+			return o;
+		}
+	}
+
+	my dropdown-item {
+		html {
+			<div></div>
+		}
+
+		extends {
+			Button
+		}
+
+		style default {
+			background: none;
+		}
+
+		style active {
+			background: #444;
+		}
+
+		on invoke(e) {
+			e.stopPropagation();
+		}
+
+		css {
+			text-align: center;
+			padding: 10px;
+			min-width: 100px;
+			height: 40px;
+			line-height: 40px;
+		}
 	}
 }
 
@@ -1245,6 +1422,7 @@ def LiveEvalButton(text) {
 		margin-right: 5px;
 		padding-left: 5px;
 		padding-right: 5px;
+		border-radius: 1000px;
 	}
 
 	constructor {
@@ -1258,9 +1436,6 @@ def LiveEvalButton(text) {
 		$this.css(
 			'height',
 			this.height
-		).css(
-			'border-radius',
-			this.height / 2
 		);
 		this.label.size();
 	}
@@ -1332,14 +1507,14 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeIn {
-		var bullshit = false;
+		var bullshit = true;
 		if(bullshit) {
 			this.$overlay.css('opacity',0).animate({
 				'opacity': 0.8
-			},0);
+			},100);
 			this.$contents-container.css('translateY',-500).delay(100).animate({
 				'translateY':-100
-			},100,'easeInOutQuart',function() {
+			},300,'easeInOutQuart',function() {
 				$this.trigger('showing');
 			});
 		} else {
@@ -1350,14 +1525,14 @@ def Dialog(title,buttons,contents) {
 	}
 
 	method fadeOut {
-		var bullshit = false;
+		var bullshit = true;
 		if(bullshit) {
-			self.$overlay.css('opacity',0.8).delay(500).animate({
+			self.$overlay.css('opacity',0.8).animate({
 				'opacity': 0
 			},100);
 			self.$contents-container.css('translateY',-100).animate({
 				'translateY':-500
-			},100,'easeInOutBack');
+			},300,'easeInOutBack');
 			setTimeout(function() {
 				$this.hide().remove().trigger('removed');
 			},300);
@@ -1457,7 +1632,7 @@ def Prompt(title,callback,defaultValue) {
 
 	my contents {
 		contents {
-			[[input:TextInput]]
+			[[input:TextInput '']]
 		}
 
 		constructor {
@@ -1508,7 +1683,7 @@ def MathPrompt(title,callback,focusManager) {
 	my MathTextField {
 		css {
 			width: 100%;
-			height: 40px;
+			height: 60px;
 			padding: 0px;
 			box-shadow: none;
 			border-right: none;
@@ -1536,7 +1711,7 @@ def MathPrompt(title,callback,focusManager) {
 			res = p.parse(self.@input.contents()).valueOf(new Frame);
 		if(self.callback) self.callback(res,self.fadeOut,function(s) {
 			self.$title.html(s);
-		});
+		},self);
 	}
 
 	my toolbar {
@@ -1640,6 +1815,14 @@ def Overlay {
 		this.flyOut();
 	}
 
+	method behindKeyboard {
+		this.$.css('z-index',1000);
+	}
+
+	method frontOfKeyboard {
+		this.$.css('z-index',1001);
+	}
+
 	method flyOut {
 		app.root.overlay = null;
 		switch(this.overlaySourceDirection) {
@@ -1665,24 +1848,29 @@ def Overlay {
 	method flyIn {
 		switch(this.overlaySourceDirection) {
 			case 'right':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
 				$this.css('translateX',0);
 				break;
 			case 'left':
+				$this.css('-webkit-transition','-webkit-transform 0.1s ease-out');
 				$this.css('translateX',0);
 				break;
 			case 'top':
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
 				$this.css('translateY',0);
 				break;
 			case 'bottom': 
+				$this.css('-webkit-transition','-webkit-transform 0.2s ease-out');
 				$this.css('translateY',0);
 				break;
 		}
+		$this.show();
 	}
 
 	on removed {
 		this.flyOut();
 		setTimeout(function() {
-			$this.hide().remove();
+			if(!self.persist) $this.remove();
 			if(self.relinquish) self.relinquish.call(self);
 		},1000)
 	}
@@ -2059,17 +2247,22 @@ def SelectBox(fullWidth) {
 	}
 }
 
-def InlineInteractive(text) {
+def InlineInteractive {
+	html {
+		<div></div>
+	}
+
 	extends {
 		Button
 	}
 
 	css {
+		cursor: pointer;
 		font-weight: 200;
 		font-style: italic;
 		display: inline-block;
 		padding: 5px;
-		line-height: 30px;
+		line-height: 2em;
 		border-radius: 1000px;
 	}
 
@@ -2086,7 +2279,7 @@ def InlineInteractive(text) {
 	}
 }
 
-def InlineNumber(text) {
+def InlineNumber {
 	extends {
 		InlineInteractive
 	}
@@ -2103,9 +2296,17 @@ def InlineNumber(text) {
 		this.applyStyle('default');
 	}
 
+	properties {
+		roundTo: 3
+	}
+
 	method display(n) {
-		n = Functions.round(n,3);
-		this.$.html(n);
+		var nr = Functions.round(n,this.roundTo);
+		if(nr == 0 || nr.toString().length > 12) {
+			this.$.html(n.toPrecision(this.roundTo));
+		} else {
+			this.$.html(nr.toString());
+		}
 		this.data = new Value(n);
 	}
 
@@ -2115,7 +2316,7 @@ def InlineNumber(text) {
 	}
 }
 
-def InlineMatrix(text) {
+def InlineMatrix {
 	extends {
 		InlineInteractive
 	}
@@ -2148,7 +2349,7 @@ def InlineMatrix(text) {
 	}
 }
 
-def InlineNumberPicker(text) {
+def InlineNumberPicker {
 	extends {
 		InlineInteractive
 	}
@@ -2190,7 +2391,7 @@ def InlineNumberPicker(text) {
 	}
 }
 
-def InlineMatrixPicker(text) {
+def InlineMatrixPicker {
 	extends {
 		InlineInteractive
 	}
@@ -2328,5 +2529,33 @@ def NoSwipe {
 
 	method swiped(e) {
 		e.stopPropagation();
+	}
+}
+
+def Shake {
+	properties {
+		times: 2,
+		duration: 100,
+		amplitude: 0.2,
+		property: 'rotate',
+		effect: 'linear'
+	}
+
+	method shake {
+		var perDuration = this.duration / (2 * this.times);
+		for(var i=0;i<this.times;i++) {
+			var props1 = {};
+			props1[this.property] = this.amplitude;
+			this.$.animate(props1,perDuration,this.effect);
+			var props2 = {};
+			props2[this.property] = 0;
+			this.$.animate(props2,perDuration,this.effect);
+			var props3 = {};
+			props3[this.property] = 0 - this.amplitude;
+			this.$.animate(props3,perDuration,this.effect);
+			var props4 = {};
+			props4[this.property] = 0;
+			this.$.animate(props4,perDuration,this.effect);
+		}
 	}
 }

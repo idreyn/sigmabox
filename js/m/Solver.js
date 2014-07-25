@@ -7,6 +7,7 @@ function Solver(left,right) {
 	var self = this;
 	this.left = left;
 	this.right = right;
+	this.solveMode = 'linear';
 	if(this.left instanceof Solver || this.right instanceof Solver) {
 		throw 'Cannot solve nested equations';
 	}
@@ -25,7 +26,19 @@ Solver.prototype.rightAt = function(x) {
 }
 
 Solver.prototype.f = function(x) {
-	return this.leftAt(x) - this.rightAt(x);
+	try {
+		if(this.solveMode == 'linear') {
+			return this.leftAt(x) - this.rightAt(x);
+		}
+		if(this.solveMode == 'exponential') {
+			return Math.exp(this.leftAt(x)) - Math.exp(this.rightAt(x));
+		}
+		if(this.solveMode == 'logarithmic') {
+			return Math.log(this.leftAt(x)) - Math.log(this.rightAt(x));
+		}
+	} catch(e) {
+		return 0;
+	}
 }
 
 Solver.prototype.fPrime = function(x) {
@@ -43,7 +56,6 @@ Solver.prototype.guess = function(guess) {
 		epsilon = 1e-20,
 		ddx_steadyCount = 0,
 		repeat = 100;
-	// Some assclown is going to try and solve N/x = 0 and we just don't like to see that...
 	try {
 		var left0 = this.leftAt(0);
 	} catch(e) {
@@ -81,43 +93,128 @@ Solver.prototype.guess = function(guess) {
 		}
 		guess = betterGuess;
 	}
+	if(isNaN(guess)) {
+		this.cannotSolve();
+	}
 	if(ddx_steadyCount == repeat - 1) {
 		// If the derivative never changed, that's probably because both sides are constant
 		if(this.leftAt(guess) == this.rightAt(guess)) {
 			// Yep, left == right.
-			this.result = true;
+			throw {steady: true, value: true};
 		} else {
 			// No, left != right.
-			this.result = false;
+			throw {steady: true, value: false};
 		}
 	} else {
-		// A few more things we can try
+		// If it's an angle we should try to normalize it
+		if(app.data.trigUseRadians) {
+			var offsets = [0, Math.PI/2, 2*Math.PI/3, Math.PI, 4*Math.PI/3, 3*Math.PI/2];
+		} else {
+			var offsets = [0,90,120,180,240,270];
+		}
+		var new_guess = guess;
+		for(var i=0;i<offsets.length;i++) {
+			var normalized_guess = Functions.normalize(guess - offsets[i],app.data.trigUseRadians);
+			if(Functions.aboutEquals(this.f(guess),this.f(normalized_guess))) {
+				if(Math.abs(normalized_guess) < Math.abs(new_guess)) new_guess = normalized_guess;
+			}
+		}
+		guess = new_guess;
+		// If we got a negative root with a corresponding positive root it makes more sense to give the positive one
 		var abs_guess = Math.abs(guess);
 		if(this.f(guess) == this.f(abs_guess)) {
-			// If we got a negative root with a corresponding positive root it makes more sense to give the positive one
 			guess = abs_guess;
 		}
-		var normalized_guess = Functions.normalize(guess,app.data.trigUseRadians);
-		if(this.f(guess) == this.f(normalized_guess)) {
-			// If it's an angle we should try to normalize it
-			guess = normalized_guess;
-		}
-		this.result = new Value(guess).round(3);
 	}
-	return this.result;
+	this.lr = this.leftAt(guess) - this.rightAt(guess);
+	this.result = new Value(guess).round(3);
+	if(Functions.aboutEquals(this.leftAt(this.result),this.rightAt(this.result),5) || true) {
+		return this.result;
+	} else {
+		this.cannotSolve();
+	}
+}
+
+Solver.prototype.pickBestSolution = function(poss) {
+	var self = this;
+	poss = poss.filter(function(a) {
+		return a !== false
+	}).map(function(a) {
+		return {x: a, f: self.f(new Value(a).toFloat())};
+	}).sort(function(a,b) {
+		return Math.abs(a.f) > Math.abs(b.f) ? 1 : -1;
+	});
+	var res =  poss[0];
+	if(res) {
+		return res.x;
+	} else {
+		return false;
+	}
 }
 
 Solver.prototype.cannotSolve = function() {
 	throw "Can't solve";
 }
 
+Solver.prototype.steady = function(val) {
+	throw 'That is ' + val.toString();
+}
+
+Solver.prototype.solve  = function() {
+	Frac.fastMode = true;
+	var experimental = true;
+	this.solveMode = 'linear';
+	try {
+		var lin = this.guess(0.01);
+	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
+		lin = false;
+	}
+	if(!experimental) {
+		if(lin) {
+			return lin;
+		} else {
+			this.cannotSolve();
+		}
+	}
+	this.solveMode = 'exponential';
+	try {
+		var exp = this.guess(0.01);
+	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
+		exp = false;
+	}
+	this.solveMode = 'logarithmic';
+	try {
+		var log = this.guess(0.01);
+	} catch(e) {
+		if(e.steady) {
+			this.steady(e.value);
+		}
+		log = false;
+	}
+	this.solveMode = 'linear';
+	var poss = [lin,exp,log];
+	var res = this.pickBestSolution(poss);
+	Frac.fastMode = false;
+	if(res) {
+		return res;
+	} else {
+		this.cannotSolve();
+	}
+}
+
 Solver.prototype.toString = function() {
-	var s = this.guess(.001);
+	var s = this.solve();
 	if(s === true || s === false) {
 		if(s) {
 			return 'That is true';
 		} else {
-			return 'That is false'
+			return 'That is false';
 		}
 	} else {
 		if(true) {
@@ -280,6 +377,16 @@ PolySolver.prototype.solve = function() {
 			];
 		}
 	}
+	var allZero = true;
+	for(var i=0;i<this.coeffs.length-1;i++) {
+		if(this.coeffs[i].toFloat() != 0) {
+			allZero = false;
+		}
+	}
+	if(allZero) {
+		roots = [new Value(0)];
+		hasAnswer = true;
+	}
 	while(!hasAnswer) {
 		var r0 = new Value(0.4,0.9);
 		var roots = [];
@@ -293,8 +400,8 @@ PolySolver.prototype.solve = function() {
 		var precision = 0.000001,
 			maxDev = Infinity,
 			iter = 0,
-			maxIter = 100;
-		while(maxDev > precision && iter < maxIter) {
+			repeat = 100;
+		while(maxDev > precision && iter < repeat) {
 			iter++;
 			prev = roots.concat();
 			for(var i=0;i<roots.length;i++) {

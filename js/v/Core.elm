@@ -36,25 +36,32 @@ def SyncSubscriber {
 	}
 }
 
-
 def SigmaboxSideMenu {
 	extends {
 		SideMenu
 	}
 
-	contents {
-		<img src='res/img/logo-alpha.png' width='100%' />
-		//[[SigmaboxSideMenuItem 'light-bulb', 'lab']]
-		[[SigmaboxSideMenuItem 'calculator','eval']]
-		[[SigmaboxSideMenuItem 'grapher','grapher']]
-		[[SigmaboxSideMenuItem 'stats','stats']]
-		[[SigmaboxSideMenuItem 'functions','functions']]
-		[[SigmaboxSideMenuItem 'converter','converter']]
-		[[SigmaboxSideMenuItem 'settings','settings']]
+	constructor {
+		this.$top-bar-container.hide();
 	}
 
-	method build {
+	my contents-container-wrapper {
+		css {
+			width: 75px;
+		}
+	}
 
+	my contents-container {
+		contents {
+			<img src='res/img/logo.png' width='100%' />
+			[[SigmaboxSideMenuItem 'calculator','eval']]
+			[[SigmaboxSideMenuItem 'repl', 'repl']]
+			[[SigmaboxSideMenuItem 'grapher','grapher']]
+			[[SigmaboxSideMenuItem 'functions','functions']]
+			[[SigmaboxSideMenuItem 'stats','stats']]
+			[[SigmaboxSideMenuItem 'linear','linear']]
+			[[SigmaboxSideMenuItem 'converter','converter']]
+		}
 	}
 
 	method setMode(mode) {
@@ -78,7 +85,7 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	css {
-		margin-bottom: 10px;
+		margin-bottom: 15px;
 		background: none;
 		overflow-x hidden;
 		height: 75px;
@@ -277,5 +284,60 @@ def SigmaLabView {
 
 	properties {
 		noKeyboard: true
+	}
+}
+
+def WelcomeView {
+	extends {
+		PageView
+		Overlay
+	}
+
+	properties {
+		overlaySourceDirection: 'top'
+	}
+
+	css {
+		background: radial-gradient(ellipse at center, rgba(255,255,255,1) 0%,rgba(220,220,220,1) 100%);
+		text-align: center;
+	}
+
+	my contents-container {
+		contents {
+			<img src='res/img/logo-intro.png' class='logo' />
+			<h1>Welcome to Sigmabox.</h1>
+			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
+			<br/>
+			[[ready-button:ToolbarButton 'My body is ready &rsaquo;']]
+		}
+
+		css {
+			padding: 20px;
+			box-sizing: border-box;
+		}
+
+		my ready-button {
+			on invoke {
+				root.flyOut();
+			}
+		}
+
+		my logo {
+			css {
+				height: 200px;
+				margin-top: 15%;
+			}
+		}
+
+		find h1 {
+			css {
+				margin: 5px;
+				font-size: 25px;
+			}
+		}
+	}
+
+	constructor {
+		this.$top-bar-container.hide();
 	}
 }

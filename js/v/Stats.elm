@@ -309,13 +309,13 @@ def StatsList(manager) {
 	}
 
 	on delete {
-		app.confirm('Really?','Delete this list?',function() {
+		app.confirm('Are you sure?','Delete this list?',function() {
 			self.manager.remove(self);
 		});
 	}
 
 	on rename {
-		app.prompt('Name a new list',function(name,close,tryAgain) {
+		app.prompt('Rename this list',function(name,close,tryAgain) {
 			if(app.data.isNameAvailable(name)) {
 				close();
 				self.setName(name);
@@ -364,8 +364,8 @@ def StatsListField(focusManager) {
 	}
 
 	properties {
-		pullMaxWidth: 20,
-		pullConstant: 50
+		pullMaxWidth: 100,
+		pullConstant: 30
 	}
 
 	contents {
@@ -449,9 +449,9 @@ def StatsListField(focusManager) {
 		css {
 			position: absolute;
 			font-size: 12px;
-			color: #BBB;
-			left: 5px;
-			top: 5px;
+			color: #CCC;
+			left: 2px;
+			top: 2px;
 		}
 	}
 }
@@ -577,8 +577,8 @@ def StatsTestChoiceOverlay(callback) {
 			SimpleListItem
 		}
 
-		css {
-
+		style active {
+			background: #FFF;
 		}
 
 		method setup(data) {
@@ -659,17 +659,10 @@ def StatsTestSummary {
 	}
 
 	method displayResults {
-		this.$line-item.each(function(i,e) {
-			setTimeout(function() {
-				$(e).css('translateX',0 - root.$.width()).show().animate({
-					'translateX': 0,
-				},300,'easeInOutBack');
-			},i * 10);
-		});
-
+		this.$line-item.show();
 		setTimeout(function() {
 			self.$.trigger('invalidate');
-		},this.$line-item.length * 10 + 10);
+		},10);
 	}
 
 	my top-bar-container {
@@ -992,28 +985,19 @@ def StatsTestViewSimple {
 		this.$title.hide();
 	}
 
-	method displayResults {
-		this.$line-item.each(function(i,e) {
-			setTimeout(function() {
-				$(e).css('translateX',0 - root.$.width()).show().animate({
-					'translateX': 0,
-				},300,'easeInOutBack');
-			},i * 10);
-		});
+	css {
+		font-size: 0.8em;
+	}
 
+	method displayResults {
+		this.$line-item.show();
 		setTimeout(function() {
 			self.$.trigger('invalidate');
-		},this.$line-item.length * 10 + 10);
+		},10);
 	}
 
 	method hideResults {
-		this.$line-item.each(function(i,e) {
-			setTimeout(function() {
-				$(e).animate({
-					'translateX': 0 - root.$.width(),
-				},300,'easeInOutBack');
-			},i * 10);
-		});
+		this.$line-item.hide();
 	}
 
 	my top-bar-container {
@@ -1043,12 +1027,6 @@ def StatsTestViewSimple {
 		css {
 			background: #FFF;
 			text-align: center;
-		}
-	}
-
-	my contents-container {
-		css {
-
 		}
 	}
 }
@@ -1186,7 +1164,7 @@ def ZTestView {
 			<div class='choose-sel source-type'><div class='item use-stats'>Input statistics</div> or <div class='item use-list'>use a list</div></div>
 			<br/>
 			<div class='source-list-container'>Choose a source list: <div class='stats-list list-inp'>List...</div></div>
-			<div class='source-stats-container'>Mean (&mu;): <div class='num-inp stats-inp stats-mean'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size'>10</div></div>
+			<div class='source-stats-container'>Mean (&mu;): <div class='num-inp stats-inp stats-mean'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size'>10</div></div>
 			<div class='choose-sel hypothesis'>
 				Hypothesis: 
 				<div class='item mu-ne-mu0'>&mu; &ne; &mu;0</div>
@@ -1338,7 +1316,7 @@ def TTestView {
 			<div class='choose-sel source-type'><div class='item use-stats'>Input statistics</div> or <div class='item use-list'>use a list</div></div>
 			<br/>
 			<div class='source-list-container'>Choose a source list: <div class='stats-list list-inp'>List...</div></div>
-			<div class='source-stats-container'>Mean (&mu;): <div class='num-inp stats-inp stats-mean'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size'>10</div></div>
+			<div class='source-stats-container'>Mean (&mu;): <div class='num-inp stats-inp stats-mean'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size'>10</div></div>
 			<div class='choose-sel hypothesis'>
 				Hypothesis: 
 				<div class='item mu-ne-mu0'>&mu; &ne; &mu;0</div>
@@ -1521,12 +1499,12 @@ def TwoSampleZTestView {
 			<div class='choose-sel source-type'><b>List 1: </b><div class='item use-stats-1'>Input statistics</div> or <div class='item use-list-1'>use a list</div></div>
 			<br/>
 			<div class='source-list-container source-list-container-1'>Choose a source list: <div class='stats-list-1 list-inp'>List...</div></div>
-			<div class='source-stats-container source-stats-container-1'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-1'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev-1'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size-1'>10</div></div>
+			<div class='source-stats-container source-stats-container-1'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-1'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev-1'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size-1'>10</div></div>
 			</br>
 			<div class='choose-sel source-type'><b>List 2: </b><div class='item use-stats-2'>Input statistics</div> or <div class='item use-list-2'>use a list</div></div>
 			<br/>
 			<div class='source-list-container source-list-container-2'>Choose a source list: <div class='stats-list-2 list-inp'>List...</div></div>
-			<div class='source-stats-container source-stats-container-2'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-2'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev-2'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size-2'>10</div></div>
+			<div class='source-stats-container source-stats-container-2'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-2'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev-2'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size-2'>10</div></div>
 			<div class='choose-sel hypothesis'>
 				Hypothesis: 
 				<div class='item mu1-ne-mu2'>&mu;1 &ne; &mu;2</div>
@@ -1707,12 +1685,12 @@ def TwoSampleTTestView {
 			<div class='choose-sel source-type'><b>List 1: </b><div class='item use-stats-1'>Input statistics</div> or <div class='item use-list-1'>use a list</div></div>
 			<br/>
 			<div class='source-list-container source-list-container-1'>Choose a source list: <div class='stats-list-1 list-inp'>List...</div></div>
-			<div class='source-stats-container source-stats-container-1'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-1'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev-1'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size-1'>10</div></div>
+			<div class='source-stats-container source-stats-container-1'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-1'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev-1'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size-1'>10</div></div>
 			</br>
 			<div class='choose-sel source-type'><b>List 2: </b><div class='item use-stats-2'>Input statistics</div> or <div class='item use-list-2'>use a list</div></div>
 			<br/>
 			<div class='source-list-container source-list-container-2'>Choose a source list: <div class='stats-list-2 list-inp'>List...</div></div>
-			<div class='source-stats-container source-stats-container-2'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-2'>0.0</div> St. Dev (&sigma;): <div class='num-inp stats-inp stats-stdev-2'>1.0</div> Sample Size (n): <div class='num-inp stats-inp stats-sample-size-2'>10</div></div>
+			<div class='source-stats-container source-stats-container-2'>Mean (&mu;): <div class='num-inp stats-inp stats-mean-2'>0.0</div> StDev (&sigma;): <div class='num-inp stats-inp stats-stdev-2'>1.0</div> Size (n): <div class='num-inp stats-inp stats-sample-size-2'>10</div></div>
 			<div class='choose-sel hypothesis'>
 				Hypothesis: 
 				<div class='item mu1-ne-mu2'>&mu;1 &ne; &mu;2</div>

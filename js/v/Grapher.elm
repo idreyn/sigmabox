@@ -34,12 +34,12 @@ def GrapherView {
 				eqns = this.@equations-list.collect();
 			if(eqns.length == 0) return;
 			this.noKeyboard = true;
+			this.@equations-list.focusManager.setFocus(null);
 			this.@graph-window.inputs = eqns;
 			this.@graph-window.buildEquationButtonSet();
 			this.@graph-window.$range.hide();
+			this.@graph-window.isRange = false;
 			this.@graph-window.$trace-handle.hide();
-			this.@graph-window.@trace-readouts.hide();
-			this.@graph-window.@range-readouts.hide();
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
 				self.@graph-window.homeWindow();
@@ -54,6 +54,8 @@ def GrapherView {
 			tbf = this.#toolbarFix;
 		this.noKeyboard = false;
 		self.slideTo(self.@equations-list,tbf);
+		this.@graph-window.@trace-readouts.hide();
+		this.@graph-window.@range-readouts.hide();
 	}
 
 	method toolbarFix {
@@ -79,6 +81,10 @@ def GraphWindow {
 		[[range-readouts:RangeReadouts]]
 		[[trace-handle:GrapherTraceHandle]]
 		[[range:GrapherRange]]
+	}
+
+	css {
+		font-weight: 400;
 	}
 
 	constructor {
@@ -172,6 +178,7 @@ def GraphWindow {
 	}
 
 	method modeChoice{
+		this.$GrapherIntersectionMarker.remove();
 		this.@trace-readouts.hide();
 		this.@range-readouts.hide();
 	}
@@ -249,6 +256,7 @@ def GraphWindow {
 	}
 
 	method cursorDragged(e) {
+		this.isRange = false;
 		if(!this._xmin) {
 			this._xmin = this.xmin;
 			this._xmax = this.xmax;
@@ -273,6 +281,7 @@ def GraphWindow {
 	}
 
 	method traceDragStart(e) {
+		this.isRange = false;
 		this.@range-readouts.hide();
 		this.$range.hide();
 		this.$trace-handle.stop().show().css('scale',1).css('opacity',1);
@@ -327,6 +336,8 @@ def GraphWindow {
 	}
 
 	method rangeDragStart(e) {
+		this.$GrapherIntersectionMarker.hide();
+		this.@range-readouts.resetIntersections();
 		this.@trace-readouts.hide();
 		this.$range.show();
 		var p = this.canvasToPlane({
@@ -364,28 +375,80 @@ def GraphWindow {
 
 	method rangeDragEnd(e) {
 		var p = this.canvasToPlane({
-			x: e.gesture.center.pageX,
+			x: e.gesture.center.pageX - $this.offset().left,
 			y: e.gesture.center.pageY
-		});
+		})
 		this.placeTraceHandle(p.x,p.y);
 		this.@trace-handle.flyOut();
 		this.rangeStart = this.canvasToPlane({x: (this._rangeCurrentX > this._rangeStartX) ? this._rangeStartX : this._rangeCurrentX }).x;
 		this.rangeEnd = this.canvasToPlane({x: (this._rangeCurrentX > this._rangeStartX) ? this._rangeCurrentX : this._rangeStartX }).x;
 		this.@range-readouts.show();
+		this.isRange = true;
 		var self = this;
 		setTimeout(function() {
 			self.@range-readouts.update(
 				self.rangeStart,
 				self.rangeEnd,
 				self.@equation-choice.selected.equation.data,
-				self.@equation-choice.selected.equation.points
+				self.@equation-choice.selected.equation.points,
+				self.@equation-choice.selected.equation.interval
 			);
 		},200);
 	}
 
+	method findIntersections {
+		var test = self.@equation-choice.selected.equation;
+		var others = this.inputs.filter(function(i) {
+			return i != test;
+		});
+		var zeroEquation = 'zero';
+		var points = [];
+		var testPoints = 1e5;
+		others.push(zeroEquation);
+		others.forEach(function(other) {
+			var diffs = [];
+			var tInterval = test.interval || [-Infinity,Infinity];
+			var oInterval = other.interval || [-Infinity,Infinity];
+			var minX = Math.max(tInterval[0],oInterval[0],self.rangeStart);
+			var maxX = Math.min(tInterval[1],oInterval[1],self.rangeEnd);
+			for(var i=0;i<testPoints;i++) {
+				var tx = ox = minX + i * ((maxX - minX) / testPoints);
+				var ty = test.data.getValue(tx);
+				if(other == 'zero') {
+					var oy = 0;
+				} else {
+					var oy = other.data.getValue(tx);
+				}
+				diffs.push({x: tx, y: 0 - ty, dy: ty - oy});
+			}
+			for(var i=1;i<diffs.length;i++) {
+				var prev = diffs[i - 1].dy;
+				var next = diffs[i].dy;
+				if(
+					(prev < 0 && next >= 0) ||
+					(prev > 0 && next <= 0)
+				) {
+					points.push(diffs[i]);
+				}
+			}
+		});
+		setTimeout(function() {
+			if(points.length == 0) {
+				app.popNotification('No intersections found. Try zooming in?');
+			} else {
+				app.popNotification('Intersections are approximate.');
+			}
+		},1000);
+		points.forEach(function(p) {
+			var m = elm.create('GrapherIntersectionMarker');
+			m.setup(p,self.planeToCanvas(p));
+			m.flyIn();
+			self.$.append(m);
+		});
+	}
 
 	method pinched(e) {
-		//console.log(e);
+		// This is gonna suck
 	}
 
 	method context() {
@@ -450,6 +513,10 @@ def GraphWindow {
 
 
 	method render() {
+		this.$GrapherIntersectionMarker.remove();
+		if(this.@mode-choice.selected == this.@range-button) {
+			this.@range-readouts.resetIntersections();
+		}
 
 		this.resolutionFactor = 1;
 
@@ -532,14 +599,15 @@ def GraphWindow {
 		c.closePath();
 		c.stroke();	
 
-		if(app.useGratuitousAnimations() || renderEquations) this.inputs.map(function(item) {
+		this.inputs.map(function(item) {
 			var data = item.data,
 				type = item.type,
+				interval = item.interval,
 				color = item.color;
 			if(type == 'function') {
 				var points = [];
 				var step = 1;
-				Frac.grapherMode = true;
+				Frac.fastMode = true;
 				if(!data.cache) {
 					// Slap a cache onto the evaluable objects
 					data.cache = {};
@@ -574,7 +642,7 @@ def GraphWindow {
 						points.push({x: planeX, y: planeY});
 					};
 				};
-				Frac.grapherMode = false;
+				Frac.fastMode = false;
 				var start = points.shift();
 				start = planeToCanvas(start);
 				c.lineWidth = 4;
@@ -587,6 +655,7 @@ def GraphWindow {
 					var currentPlane = p;
 					p = planeToCanvas(p);
 					if( // All of the reasons we might not want a line here
+						(interval && (currentPlane.x < interval[0] || currentPlane.x > interval[1])) || 
 						isNaN(currentPlane.y) ||
 						p.y === null || 
 						(lastPlane.y > self.ymax && currentPlane.y < self.ymin) || 
@@ -644,25 +713,26 @@ def GrapherListView {
 
 	constructor {
 		this.$title.html('Grapher');
-		this.fieldType = 'GraphListField';
+		this.fieldType = 'GrapherListField';
 		// Add buttons
 		this.$toolbar.append(elm.create('ToolbarButtonImportant','Graph &rsaquo;').named('graph-button'));
 		this.load();
 	}
 
 	method fields {
-		return this.$GraphListField;
+		return this.$GrapherListField;
 	}
 
 	method collect {
 		var res = [];
 		var p = new Parser();
-		this.$GraphListField.each(function() {
+		this.$GrapherListField.each(function() {
 			var field = this;
 			if(field.contents().length == 2) return;
 			res.push({
 				data: p.parse(field.contents().slice(2),false),
 				color: field.color,
+				interval: field.interval,
 				type: 'function'
 			});
 		});
@@ -679,15 +749,20 @@ def GrapherListView {
 
 	method load {
 		var self = this;
-		if(app.data.grapherEquations) app.data.grapherEquations.map(function(eq) {
-			self.addField().setContents(eq);
+		if(app.data.grapherEquations) app.data.grapherEquations.map(function(field) {
+			var f = self.addField();
+			f.setContents(field.contents);
+			if(field.interval) {
+				f.setInterval(field.interval,true);
+			}
 		});
 	}
 
 	method save {
 		var cl = this.fields().map(function(i,field) {
-			return field.contents();
-		}).toArray().filter(function(str) {
+			return {contents: field.contents(),interval: field.interval};
+		}).toArray().filter(function(field) {
+			var str = field.contents;
 			return str != 'y=' && str != '';
 		});
 		app.data.grapherEquations = cl;
@@ -695,7 +770,7 @@ def GrapherListView {
 	}
 }
 
-def GraphListField(focusManager) {
+def GrapherListField(focusManager) {
 	extends {
 		MathTextField
 		PullHoriz
@@ -706,12 +781,17 @@ def GraphListField(focusManager) {
 		pullConstant: 50
 	}
 
+	contents {
+		<span class='interval-label'></span>
+	}
+
 	constructor {
-		this.setContents('y=')
+		this.setContents('y=');
 		this.defaultText = 'Click to add equation';
-		$this.append(elm.create('GraphListFieldColorLabel').named('label'));
+		$this.append(elm.create('GrapherListFieldColorLabel').named('label'));
 		var options = [
-			{color: '#a33', event: 'delete', label: app.r.image('close')},
+			{color: '#0a4766', event: 'interval', label: app.r.image('interval')},
+			{color: '#a33', event: 'delete', label: app.r.image('close')}
 		];
 		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}
@@ -720,6 +800,16 @@ def GraphListField(focusManager) {
 		this.color = color;
 		this.@label.$.css('background',color);
 		this.@label.$.css('border-bottom-color',color);
+	}
+
+	method setInterval(arr,dontSave) {
+		self.interval = arr;
+		if(arr) {
+			self.$interval-label.html('On [' + arr[0].toString() + ',' + arr[1].toString() + ']');
+		} else {
+			self.$interval-label.html('');
+		}
+		if(!dontSave) self.parent('GrapherListView').save();
 	}
 
 	on update {
@@ -738,19 +828,59 @@ def GraphListField(focusManager) {
 		this.setContents('');
 		this.$.trigger('lost-focus');
 	}
+
+	on interval {
+		if(this.contents() == 'y=') {
+			app.popNotification('Input an equation before setting boundaries');
+			return;
+		}
+		app.mathPrompt('Enter minX,maxX (or leave blank):',function(no,closePrompt,notValid,prompt) {
+			var val = prompt.@MathTextField.contents();
+			if(val.indexOf(',') != -1 || val == '') {
+				if(val == '') {
+					self.setInterval(false);
+				} else {
+					var p = new Parser(),
+						lower = p.parse(val.split(',')[0]).valueOf(new Frame()).toFloat(),
+						upper = p.parse(val.split(',')[1]).valueOf(new Frame()).toFloat();
+					self.setInterval([lower,upper]);
+				}
+				closePrompt();
+			} else {
+
+			}
+			closePrompt();
+		},this.focusManager);
+	}
 	
 	css {
 		position: relative;
+	}
+
+	my interval-label {
+		css {
+			position: absolute;
+			font-size: 12px;
+			color: #BBB;
+			left: 20px;
+			top: 3px;
+		}
 	}
 
 	my SmallMathInput {
 		method empty {
 			return this.contents() == 'y=' || this.contents() == '';
 		}
+
+		css {
+			padding-top: 15px;
+			padding-bottom: 15px;
+			padding-left: 20px;
+		}
 	}
 }
 
-def GraphListFieldColorLabel {
+def GrapherListFieldColorLabel {
 	html {
 		<div></div>
 	}
@@ -995,6 +1125,52 @@ def GrapherTraceHandle {
 	}
 }
 
+def GrapherIntersectionMarker {
+	extends {
+		GrapherTraceHandle
+	}
+
+	contents {
+		<div class='text-container'>
+			<div class='text'></div>
+		</div>
+	}
+
+	css {
+		width: auto;
+		height: auto;
+		font-size: 8px;
+		border-radius: 0px;
+	}
+
+	my text-container {
+		css {
+			position: relative;
+		}
+	}
+
+	my text { 
+		css {
+			position: absolute;
+			left: 0;
+			top: 0;
+			text-align: center;
+			background: #222;
+			color: #FFF;
+			opacity: 0.8;
+			padding: 3px;
+		}
+	}
+
+	method setup(p,c) {
+		self.$text.html('(' + Functions.round(p.x,3).toString() + ',' + Functions.round(p.y,3).toString() + ')');
+		self.$.css({
+			'left': c.x - self.$.width() / 2,
+			'top': c.y - self.$.height() / 2
+		});
+	}
+}
+
 def GrapherRange {
 	html {
 		<div></div>
@@ -1028,6 +1204,7 @@ def SideReadout {
 		display: block;
 		color: #FFF;
 		margin-bottom: 5px;
+		font-size: 0.8em;
 	}
 
 	method setContents(c) {
@@ -1037,7 +1214,7 @@ def SideReadout {
 
 	method slideOut {
 		if(!this.shown) return
-		$this.animate({
+		$this.stop().animate({
 			'translateX': 0 - this.$inner.outerWidth()
 		},300,'easeInOutBack');
 		this.shown = false;
@@ -1045,7 +1222,7 @@ def SideReadout {
 
 	method slideIn {
 		if(this.shown) return
-		$this.css({
+		$this.stop().css({
 			'translateX': 0 - this.$inner.outerWidth()
 		}).animate({
 			'translateX': -90
@@ -1061,8 +1238,27 @@ def SideReadout {
 			display: inline-block;
 		}
 	}
+}
 
+def SideReadoutButton(label) {
+	extends {
+		SideReadout
+		Button
+	}
 
+	my inner {
+		contents {
+			$label
+		}
+	}
+
+	style default {
+		opacity: 0.7
+	}
+
+	style active {
+		opacity: 0.8
+	}
 }
 
 def ReadoutsContainer {
@@ -1126,11 +1322,11 @@ def TraceReadouts {
 		this.@point.setContents('(' + x.toPrecision(4) + ',' + (0 - y).toPrecision(4) + ')');
 		if(func) {
 			var d;
-			Frac.grapherMode = true;
+			Frac.fastMode = true;
 			app.data.trigForceRadians(function() {
 				d = new Derivative(func).at(x).toString();
 			});
-			Frac.grapherMode = false;
+			Frac.fastMode = false;
 			self.@derivative.setContents('d/dx = ' + d);
 		} else {
 			this.@derivative.setContents('d/dx = halp');
@@ -1148,7 +1344,13 @@ def RangeReadouts {
 		ReadoutsContainer
 	}
 
+	css {
+		left: 0;
+		top: 70px;
+	}
+
 	constructor {
+		$this.append(elm.create('SideReadoutButton','intersections...').named('intersections'));
 		$this.append(elm.create('SideReadout').named('interval'));
 		$this.append(elm.create('SideReadout').named('interval-width'));
 		$this.append(elm.create('SideReadout').named('slope'));
@@ -1156,6 +1358,7 @@ def RangeReadouts {
 		$this.append(elm.create('SideReadout').named('min'));
 		$this.append(elm.create('SideReadout').named('integral'));
 		$this.append(elm.create('SideReadout').named('average'));
+		this.$intersections.on('invoke',this.#toggleIntersections)
 	}
 
 	method showDynamic {
@@ -1165,6 +1368,7 @@ def RangeReadouts {
 			this.@slope
 		]);
 		this.hideThese([
+			this.@intersections,
 			this.@max,
 			this.@min,
 			this.@average,
@@ -1180,11 +1384,27 @@ def RangeReadouts {
 			this.@max,
 			this.@min,
 			this.@average,
-			this.@integral
+			this.@integral,
+			this.@intersections
 		]);
 	}
 
 	method hide {
+		this.hideThese([
+			this.@intersections,
+			this.@interval,
+			this.@interval-width,
+			this.@slope,
+			this.@max,
+			this.@min,
+			this.@average,
+			this.@integral
+		]);
+		this.@intersections.$inner.html('intersections...');
+		this.intersectionsMode = false;
+	}
+
+	method hideAllButIntersections {
 		this.hideThese([
 			this.@interval,
 			this.@interval-width,
@@ -1212,8 +1432,11 @@ def RangeReadouts {
 		this.@slope.setContents('slope = ' + ((yend - ystart) / (end - start)).toPrecision(4));
 	}
 
-	method update(start,end,func,points) {
+	method update(start,end,func,points,interval) {
+		interval = interval ||  [-Infinity,Infinity];
 		this.updateDynamic(start,end,func);
+		start = Math.max(start,interval[0]);
+		end = Math.min(end,interval[1]);
 		if(!func)
 			return;
 		var minX,
@@ -1232,7 +1455,7 @@ def RangeReadouts {
 				minY = 0 - point.y;
 			}
 		});
-		Frac.grapherMode = true;
+		Frac.fastMode = true;
 		this.@min.setContents('min &#8776; (' + minX.toPrecision(4) + ',' + minY.toPrecision(4) + ')');
 		this.@max.setContents('max &#8776; (' + maxX.toPrecision(4) + ',' + maxY.toPrecision(4) + ')');
 		var integral = new Integral(new Value(start),new Value(end),func);
@@ -1242,12 +1465,35 @@ def RangeReadouts {
 		});
 		this.@integral.setContents('∫ &#8776; ' + ir.toPrecision(4));
 		this.@average.setContents('average &#8776; ' + (ir / Math.abs(end-start)).toPrecision(4));
-		Frac.grapherMode = false;
+		Frac.fastMode = false;
 	}
 
-	css {
-		left: 0;
-		top: 70px;
+	method toggleIntersections {
+		if(!this.intersectionsMode) {
+			this.hideAllButIntersections();
+			this.@intersections.$inner.html('done');
+			this.intersectionsMode = true;
+			app.popNotification('This will take a few seconds');
+			setTimeout(function() {
+				self.parent().findIntersections();
+			},1000);
+		} else {
+			this.parent().$GrapherIntersectionMarker.each(function() {
+				var s = this;
+				this.$.fadeOut(100);
+				setTimeout(function() {
+					s.$.remove();
+				},1000);
+			});
+			this.@intersections.$inner.html('intersections...');
+			this.intersectionsMode = false;
+			if(this.parent().isRange) this.show();
+		}
+	}
+
+	method resetIntersections {
+		this.intersectionsMode = true;
+		this.toggleIntersections();
 	}
 }
 

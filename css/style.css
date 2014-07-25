@@ -3,10 +3,11 @@ html, body {
 	min-width: 100%;
 	max-width: 100%;
 	font-family: 'Helvetica Neue' sans-serif;
-    font-weight: 200;
+    font-weight: 200 !important;
     background: url(../res/img/background.png);
     overflow: hidden;
     top: 0;
+    -webkit-user-select: none !important;
 }
 
 h1, h2, h3 {
@@ -32,15 +33,6 @@ h1, h2, h3 {
 .color-transition {
 	-webkit-transition: background .1s ease .1s;
 	transition: background .1s ease .1s;
-}
-
-.MathJax_Display {
-	padding-top: 20px;
-	margin: 0 !important;
-}
-
-.MathInput {
-	display: block;
 }
 
 .StatsView .StatsList:nth-child(odd) .top-bar {

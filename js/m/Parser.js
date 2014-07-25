@@ -39,7 +39,10 @@ Parser.prototype.parse = function(s,topLevel) {
 	// It's convenient for us to replace those with < > for parsing.
 	s = s.split('\\left\\{').join('<');
 	s = s.split('\\right\\}').join('>');
+	// Getting rid of extra spaces
 	s = s.split('&nbsp;').join('');
+	// The lambda arrow becomes a colon
+	s = s.split('\\longrightarrow').join(':');
 	if(topLevel) {
 		// Add some parentheses so -5 * -3 doesn't get parsed as (-5*) - 3
 		s = s.replace(/(\\times|\\cdot|\/)(\-[0-9\.]*)/,'$1($2)');
@@ -47,6 +50,7 @@ Parser.prototype.parse = function(s,topLevel) {
 	var p = this,
 		res = s,
 		check = [
+			p.lambda,
 			p.number,
 			p.addition,
 			p.multiplication,
@@ -68,7 +72,6 @@ Parser.prototype.parse = function(s,topLevel) {
 	}
 	if(!ParseUtil.isClear(s,s.length)) {
 		// Mismatched braces, somewhere
-		// // console.log(s);
 		throw 'Mismatched parentheses';
 	}
 	//var t = PolySolver.match(s);
@@ -335,11 +338,9 @@ Parser.prototype.func = function(s) {
 			var func = s.slice(1,firstBrace);
 			if(func.indexOf('\\') != -1) {
 				// We've caught a situation like \pi\epsilon_{0}.
-				//// // console.log('FUNC',func);
 				var ind = func.indexOf('\\');
 				var first = func.slice(0,ind);
 				var rest = func.slice(ind + 1);
-				//// // console.log('BWA',first,rest,s.slice(firstBrace));
 				return new Mult([
 					this.parse('\\' + first),
 					this.parse('\\' + rest + s.slice(firstBrace))
@@ -483,7 +484,6 @@ Parser.prototype.number = function(s) {
 }
 
 Parser.prototype.leadingNumber = function(s) {
-	
 	var self = this;
 	// Let's see if there's a leading number
 	var numChars = "0123456789.";
@@ -505,6 +505,26 @@ Parser.prototype.leadingNumber = function(s) {
 			_factors.push(new Factor(self.parse(rest)));
 		}
 		return new Mult(_factors);
+	} else {
+		return Parser.NO_MATCH;
+	}
+}
+
+Parser.prototype.lambda = function(s) {
+	var index = ParseUtil.nextIndexOf(':',s);
+	if(index == 0) {
+		throw 'Lambda is missing bound variable';
+	}
+	if(index > -1) {
+		var vars = s.slice(0,index);
+		if(vars.charAt(0) != '(') {
+			throw 'Invalid lambda syntax';
+		} else {
+			vars = vars.slice(1,vars.length - 1);
+		}
+		vars = vars.split(',');
+		var expression = this.parse(s.slice(index + 1));
+		return new Lambda(vars,expression);
 	} else {
 		return Parser.NO_MATCH;
 	}

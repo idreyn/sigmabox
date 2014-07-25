@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 3.26.2014.1
+#version 6.1.14.1
 
 CACHE:
 
@@ -15,7 +15,10 @@ res/img/functions.png
 res/img/grapher.png
 res/img/home.png
 res/img/integral.png
+res/img/interval.png
+res/img/linear.png
 res/img/logo.png
+res/img/repl.png
 res/img/settings.png
 res/img/stats.png
 res/img/thin-icons/close.png
@@ -23,9 +26,11 @@ res/img/thin-icons/pen.png
 res/img/keys/delete.png
 res/img/keys/left.png
 res/img/keys/right.png
+res/img/keys/undo.png
+res/img/keys/redo.png
 
 #internal HTML documents
-index.php
+index.html
 
 #style sheets
 css/lib/touchscroll.css
@@ -57,6 +62,8 @@ js/v/LiveEval.elm
 js/v/Components.elm
 js/v/Grapher.elm
 js/v/Functions.elm
+js/v/REPL.elm
+js/v/Linear.elm
 
 js/c/Application.js
 js/c/Resource.js
@@ -83,6 +90,7 @@ res/xml/keyboards/list.xml
 
 
 #fonts
+
 res/fonts/Roboto-Regular-webfont.ttf
 js/lib/mathquill/font/Symbola.ttf
 

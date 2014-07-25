@@ -6,3 +6,4 @@ plugins/
 spec/
 merges/
 node_modules/
+res_src/

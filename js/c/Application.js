@@ -27,6 +27,9 @@ Application.prototype.initLayout = function(wrapper) {
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
+	this.repl = elm.create('REPL');
+	this.root.addChild(this.repl);
+
 	this.grapher = elm.create('GrapherView');
 	this.root.addChild(this.grapher);
 
@@ -39,14 +42,22 @@ Application.prototype.initLayout = function(wrapper) {
 	this.stats = elm.create('StatsView');
 	this.root.addChild(this.stats);
 
-	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab];
-	this.root.menu.build();
+	this.linear = elm.create('LinearSolveView');
+	this.root.addChild(this.linear);
+
+	this.converter = elm.create('Converter');
+	this.root.addChild(this.converter);
+
+	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl,this.linear,this.converter];
 	this.setMode(this.data.mode || 'eval');
 
 	$(window).on('resize',$.proxy(this.resize,this));
 	this.resize();
+	
 	this.data.uiSyncReady();
 	this.mode.init();
+
+	// this.overlay(elm.create('WelcomeView'));
 
 	$(window).trigger('app-ready');
 }
@@ -123,7 +134,7 @@ Application.prototype.setMode = function(mode) {
 	});
 	this.mode = mode;
 	this.mode.$.show();
-	this.mode.$.trigger('active');
+	this.mode.$.trigger('displayed');
 	if(!this.mode.noKeyboard) {
 		this.showKeyboard();
 	} else {
@@ -172,8 +183,9 @@ Application.prototype.popNotification = function(text) {
 	});
 }
 
-Application.prototype.prompt = function(title,callback,defaultVal) {
+Application.prototype.prompt = function(title,callback,defaultVal,cancelCallback) {
 	var p = elm.create('Prompt',title,callback,defaultVal);
+	p.cancelCallback = cancelCallback;
 	$('body').append(p);
 	return p;
 }

@@ -1,5 +1,10 @@
 var Functions = {};
 
+Functions.aboutEquals = function(a,b,precision) {
+	if(!precision) precision = 6;
+	return new Value(a).round(precision).equals(new Value(b).round(precision));
+}
+
 Functions.expect = function(arg,type) {
 	if(!(arg instanceof type)) {
 		throw type.name + ' expected';
@@ -71,15 +76,10 @@ Functions.r2d = function(n) {
 }
 
 Functions.normalize = function(v,r) {
-	var min = 0;
-	var max = r? 2*Math.PI : 360;
-	while(!(v >= min && v <= max)) {
-		if(v > max) {
-			v -= max;
-		} else {
-			v += max;
-		}
-	}
+	if(isNaN(v)) throw "Can't normalize this";
+	var factor = r? 2*Math.PI : 360;
+	v = v % factor;
+	if(v < 0) v = v + factor;
 	return v;
 }
 
@@ -360,7 +360,11 @@ Functions.normalcdf = function(z1,z2,mu,sigma) {
 }
 
 Functions.binompdf = function(n,p,k) {
-	return Functions.nCr(n,k) * Functions.power(p,k) * Functions.power(1-p,n-k);
+	if(k > n || k < 0) {
+		return 0;
+	} else {
+		return Functions.nCr(n,k) * Functions.power(p,k) * Functions.power(1-p,n-k);
+	}
 }
 
 Functions.binomcdf = function(n,p,k) {
@@ -807,5 +811,14 @@ Functions.chiSquaredGOFTest = function(e,o) {
 	}
 	p = 1 - Functions.chisquaredcdf(x2,df);
 	return {x2: x2, df: df, p: p};
+}
+
+Functions.solveLinearSystem = function(m) {
+	var r = m.rref();
+	if(r.deaugment().equals(Functions.identityMatrix(m._rows))) {
+		return r.col(r._columns);
+	} else {
+		return [];
+	}
 }
 

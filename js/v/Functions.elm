@@ -172,7 +172,12 @@ def FunctionField(focusManager) {
 					renameAndTryAgain("Invalid function name. Try again?");
 				}
 			},
-			self.functionName
+			self.functionName,
+			function() {
+				if(!rename) {
+					self.$.remove();
+				}
+			}
 		);
 	}
 

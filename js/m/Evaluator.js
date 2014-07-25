@@ -14,6 +14,8 @@ Frame.prototype.lookup = function(symbol) {
 	return res;
 }
 
+Frame.prototype.get = Frame.prototype.lookup;
+
 Frame.prototype.set = function(k,v) {
 	this.src[k] = v;
 }
@@ -27,11 +29,14 @@ function Value(real,complex,unit) {
 	this.unit = unit;
 }
 
-Value.prototype.equals = function(value) {
-	if(value instanceof Value) {
-		return (this.real == value.real) && (this.complex == value.complex);
+Value.prototype.equals = function(other) {
+	if(this == other) {
+		return true
+	}
+	if(other instanceof Value) {
+		return (this.real == other.real) && (this.complex == other.complex);
 	} else {
-		return this.real === value && this.complex == 0;
+		return this.real === other && this.complex == 0;
 	}
 }
 
@@ -341,16 +346,14 @@ function Frac(top,bottom) {
 	this.bottom = bottom;
 }
 
-Frac.grapherMode = false;
+Frac.fastMode = false;
 
 Frac.prototype.valueOf = function(frame) {
-
-	if(Frac.grapherMode) {
+	if(Frac.fastMode) {
 		return this.grapherEval(frame);
 	}
-
-	var top = new Value(this.top.valueOf(frame));
-	var bottom = new Value(this.bottom.valueOf(frame));
+	var top = this.top.valueOf(frame);
+	var bottom = this.bottom.valueOf(frame);
 
 	if(bottom instanceof Vector) {
 		throw "Invalid denominator";
@@ -504,7 +507,15 @@ Frac.prototype.toString = function() {
 		if(red.bottom.equals(1)) {
 			return red.top.toString();
 		} else {
-			return red.top.toString() + '/' + red.bottom.toString();
+			var top = red.top.toString();
+			if(red.top.complex) {
+				top = '(' + top + ')';
+			}
+			var bottom = red.bottom.toString();
+			if(red.bottom.complex) {
+				bottom = '(' + bottom + ')';
+			}
+			return top + '/' + bottom;
 		}
 	} else {
 		return red.toString();
@@ -670,6 +681,31 @@ Matrix.prototype.valueOf = function(frame) {
 		});
 	});
 	return new Matrix(rows);
+}
+
+Matrix.prototype.equals = function(other) {
+	if(this == other) {
+		return true;
+	}
+	if(other._rows != this._rows || other._columns != this._columns) {
+		return false;
+	}
+	for(var i=0;i<this._rows;i++) {
+		for(var j=0;j<this._columns;j++) {
+			var ti = this.select(i+1,j+1);
+			var oi = other.select(i+1,j+1);
+			if(ti.equals && !ti.equals(oi)) {
+				return false;
+			}
+			if(oi.equals && !oi.equals(ti)) {
+				return false;
+			}
+			if(!ti.equals && !oi.equals && ti != oi) {
+				return false;
+			}
+		}
+	}
+	return true;
 }
 
 Matrix.prototype.toString = function(frame,format) {
@@ -911,6 +947,27 @@ Matrix.prototype.transpose = function() {
 	return new Matrix(res);
 }
 
+Matrix.prototype.augment = function(v) {
+	if(v.length != this._rows) {
+		throw 'Dimension error';
+	}
+	var res = [];
+	for(var i=0;i<this.rows.length;i++) {
+		var row = this.rows[i].concat();
+		row.push(v[i]);
+		res.push(row);
+	}
+	return new Matrix(res);
+}
+
+Matrix.prototype.deaugment = function() {
+	var res = [];
+	for(var i=0;i<this.rows.length;i++) {
+		res.push(this.rows[i].slice(0,-1));
+	}
+	return new Matrix(res);
+}
+
 Matrix.prototype.serialize = function() {
 	return this.toString(new Frame({}));
 }
@@ -922,11 +979,6 @@ Matrix.prototype.copy = function() {
 }
 
 function Vector(args) {
-	if(!isNaN(args[0])) {
-		args = args.map(function(i) {
-			return new Value(i);
-		});
-	}
 	this.args = args || [];
 }
 
@@ -934,6 +986,29 @@ Vector.prototype.valueOf = function(frame) {
 	return new Vector(this.args.map(function(a) {
 		return a.valueOf(frame);
 	}));
+}
+
+Vector.prototype.equals = function(other) {
+	if(this == other) {
+		return true;
+	}
+	if(other.args.length != this.args.length) {
+		return false;
+	}
+	for(var i=0;i<this.args.length;i++) {
+		var ti = this.args[i];
+		var oi = other.args[i];
+		if(ti.equals && !ti.equals(oi)) {
+			return false;
+		}
+		if(oi.equals && !oi.equals(ti)) {
+			return false;
+		}
+		if(!ti.equals && !oi.equals && ti != oi) {
+			return false;
+		}
+	}
+	return true;
 }
 
 Vector.prototype.copy = function() {
@@ -1123,11 +1198,11 @@ function Sum(index,lower,upper,f) {
 }
 
 Sum.prototype.valueOf = function(frame) {
-	var a = this.lower.valueOf(frame),
-		b = this.upper.valueOf(frame),
+	var a = this.lower.valueOf(frame).toFloat(),
+		b = this.upper.valueOf(frame).toFloat(),
 		sum = new Value(0);
 		fr = new Frame({},frame);
-	if(a.toFloat() > b.toFloat()) {
+	if(a > b) {
 		throw "Invalid bounds";
 	}
 	for(var i=a;i<=b;i++) {
@@ -1148,11 +1223,11 @@ function Product(index,lower,upper,f) {
 }
 
 Product.prototype.valueOf = function(frame) {
-	var a = this.lower.valueOf(frame),
-		b = this.upper.valueOf(frame),
+	var a = this.lower.valueOf(frame).toFloat(),
+		b = this.upper.valueOf(frame).toFloat(),
 		prod = new Value(1);
 		fr = new Frame({},frame);
-	if(a.toFloat() > b.toFloat()) {
+	if(a > b) {
 		throw "Invalid bounds";
 	}
 	for(var i=a;i<=b;i++) {
@@ -1163,4 +1238,29 @@ Product.prototype.valueOf = function(frame) {
 		]).valueOf(frame);
 	}
 	return prod;
+}
+
+function Lambda(vars,expression) {
+	this.vars = vars;
+	this.expression = expression;
+}
+
+Lambda.prototype.valueOf = function(frame) {
+	var self = this;
+	var f =  function() {
+		var args = Array.prototype.slice.call(arguments);
+		var fr = new Frame({},frame);
+		for(var i=0;i<self.vars.length;i++) {
+			fr.set(self.vars[i],args[i] || 0);
+		}
+		return self.expression.valueOf(fr);
+	}
+	f.toString = function() {
+		return '(lambda)';
+	}
+	return f;
+}
+
+Lambda.prototype.toString = function() {
+	return '(lambda)';
 }
