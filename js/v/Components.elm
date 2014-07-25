@@ -1683,7 +1683,7 @@ def MathPrompt(title,callback,focusManager) {
 	my MathTextField {
 		css {
 			width: 100%;
-			height: 40px;
+			height: 60px;
 			padding: 0px;
 			box-shadow: none;
 			border-right: none;
