@@ -20,6 +20,14 @@ def GrapherView {
 		this.setFragmentMode(this.@equations-list,this.@graph-window);
 	}
 
+	on displayed {
+		app.help.introduce('grapher-inputs');
+	}
+
+	on invalidate {
+
+	}
+
 	method updateColors {
 		var self = this;
 		this.@equations-list.fields().each(function(i,e) {
@@ -40,10 +48,11 @@ def GrapherView {
 			this.@graph-window.$range.hide();
 			this.@graph-window.isRange = false;
 			this.@graph-window.$trace-handle.hide();
+			this.@graph-window.homeWindow();
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
-				self.@graph-window.homeWindow();
 			},10);
+			app.help.introduce('grapher-interaction',1000);
 		} catch(e) {
 			app.popNotification(e);
 		}
@@ -101,8 +110,9 @@ def GraphWindow {
 		this.setWindow(10,false);
 	}
 
-	on invalidate {
-
+	method size {
+		this.$.width(app.root.$container.width());
+		this.$.height(app.root.$container.height());
 	}
 
 	method displayUI(b) {
@@ -129,7 +139,7 @@ def GraphWindow {
 					elm.create('GrapherButton','&ndash;').named('zoom-out'),
 					elm.create('GrapherButton','+').named('zoom-in')
 				]
-			)
+			).named('zoom-buttons')
 		);
 		this.$top-toolbar.append(
 			elm.create(
@@ -510,7 +520,6 @@ def GraphWindow {
 	method canvasToPlane(p) {
 		return { x: (p.x - this.origin.x)/this.x_scale, y: (p.y - this.origin.y)/this.y_scale };
 	}
-
 
 	method render() {
 		this.$GrapherIntersectionMarker.remove();

@@ -11,7 +11,8 @@ Data.prototype.toSerialize = [
 	'currentInput',
 	'grapherEquations',
 	'grapherWindow',
-	'repl'
+	'repl',
+	'helpSequencesPlayed'
 ];
 
 Data.prototype.init = function() {
@@ -21,6 +22,7 @@ Data.prototype.init = function() {
 	this.trigUseRadians = false;
 	this.displayPolarVectors = false;
 	this.displayDecimalizedFractions = false;
+	this.helpSequencesPlayed = [];
 
 	this.constants = {
 		'i': new Value(0,1),
@@ -53,7 +55,7 @@ Data.prototype.init = function() {
 	}
 
 	this.variables = {
-
+		
 	};
 	
 	this.functions = {
@@ -290,7 +292,11 @@ Data.prototype.init = function() {
 		'mode': this.wrap(Functions.mode),
 		'stdev': this.wrap(Functions.stdev),
 		'rand': this.wrap(Math.random),
-		'tdist': this.wrap(Functions.tDistribution)
+		'tdist': this.wrap(Functions.tDistribution),
+		// Ans key
+		'ans': this.wrap(function() {
+			return app.data.ans;
+		})
 	}
 
 	for(var k in this.functions) {

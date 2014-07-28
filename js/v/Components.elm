@@ -297,6 +297,7 @@ def PageView(title) {
 	}
 
 	method updateScroll(horiz) {
+		return;
 		if(!self.scroll) {
 			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: self.useScrollbars, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
 			self.scroll.on('scroll',self._onScroll);
@@ -976,6 +977,7 @@ def SideMenuItem {
 	}
 
 	on invoke {
+		if(this.parent('SideMenuAppView').menuItemsDisabled) return;
 		$this.parent().trigger('item-selected',this);
 	}
 }
@@ -1165,6 +1167,10 @@ def ToolbarButtonDropdown(label) {
 		var text = o.$.html();
 		if(this.autoLabel) this.setLabel(text);
 		this.$.trigger('select',text);
+	}
+
+	method setOptions(arr) {
+		this.@dropdown.setOptions(arr);
 	}
 
 	my dropdown {

@@ -1,6 +1,6 @@
 CACHE MANIFEST
 
-#version 6.1.14.1
+#version 7.27.14
 
 CACHE:
 
@@ -64,6 +64,8 @@ js/v/Grapher.elm
 js/v/Functions.elm
 js/v/REPL.elm
 js/v/Linear.elm
+js/v/Converter.elm
+js/v/Help.elm
 
 js/c/Application.js
 js/c/Resource.js

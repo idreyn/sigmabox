@@ -7,8 +7,12 @@ def SigmaboxAppFrame {
 		SideMenuAppView
 	}
 
-	css {
+	contents {
+		[[help:HelpGuide]]
+	}
 
+	constructor {
+		this.help = this.@help;
 	}
 }
 
@@ -129,9 +133,10 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	on invoke {
+		if(this.parent('SideMenuAppView').menuItemsDisabled) return;
 		app.setMode(this.mode);
 		setTimeout(function() {
-			app.root.hideMenu();
+			self.parent('SideMenuAppView').hideMenu();
 		},100);
 	}
 
@@ -284,60 +289,5 @@ def SigmaLabView {
 
 	properties {
 		noKeyboard: true
-	}
-}
-
-def WelcomeView {
-	extends {
-		PageView
-		Overlay
-	}
-
-	properties {
-		overlaySourceDirection: 'top'
-	}
-
-	css {
-		background: radial-gradient(ellipse at center, rgba(255,255,255,1) 0%,rgba(220,220,220,1) 100%);
-		text-align: center;
-	}
-
-	my contents-container {
-		contents {
-			<img src='res/img/logo-intro.png' class='logo' />
-			<h1>Welcome to Sigmabox.</h1>
-			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
-			<br/>
-			[[ready-button:ToolbarButton 'My body is ready &rsaquo;']]
-		}
-
-		css {
-			padding: 20px;
-			box-sizing: border-box;
-		}
-
-		my ready-button {
-			on invoke {
-				root.flyOut();
-			}
-		}
-
-		my logo {
-			css {
-				height: 200px;
-				margin-top: 15%;
-			}
-		}
-
-		find h1 {
-			css {
-				margin: 5px;
-				font-size: 25px;
-			}
-		}
-	}
-
-	constructor {
-		this.$top-bar-container.hide();
 	}
 }

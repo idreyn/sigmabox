@@ -72,6 +72,7 @@
 	</key>
 	<key name='equals' row='5' col='4' default-color='#0a4766'>
 		<primary text-label='=' action='input:equals' />
+		<alternate text-label='ans'>\ans</alternate>
 	</key>
 
 	
@@ -133,7 +134,7 @@
 	<key name='pi' row='4' col='7'>
 		<primary text-label='π'>\pi</primary>
 	</key>
-	<key name='constants' row='5' col='7' default-color='#333'>
+	<key name='variables' row='5' col='7' default-color='#333'>
 		<primary text-label='Aa' action='app: keyboard variables'></primary>
 		<alternate text-label='K&#954;' action='app: keyboard constants'></alternate>
 	</key>

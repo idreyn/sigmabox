@@ -30,12 +30,6 @@ def FunctionListView {
 
 	method sortOn(field,invert) {
 		var n = 1 * (invert? -1 : 1);
-		if(field == this._lastSortField) {
-			n *= -1;
-			this._lastSortField = null;
-		} else {
-			this._lastSortField = field;
-		}
 		this.$FunctionField.sortElements(function(a,b) {
 			return a[field] > b[field] ? n  : (0 - n)
 		});
@@ -43,26 +37,31 @@ def FunctionListView {
 
 	my toolbar {
 		contents {
-			[[sort-az-button:ToolbarButton 'A&rarr;Z']]
+			[[sort-button:ToolbarButtonDropdown 'Sort']]
 			[[add-button:ToolbarButtonImportant 'Add']]
+		}
+
+		my sort-button {
+			properties {
+				autoLabel: false
+			}
+
+			constructor {
+				this.setOptions(['A to Z','Z to A','Newest','Oldest']);
+			}
+
+			on select(e,text) {
+				if(text == 'A to Z') root.sortOn('functionName');
+				if(text == 'Z to A') root.sortOn('functionName',true);
+				if(text == 'Oldest') root.sortOn('dateCreated');
+				if(text == 'Newest') root.sortOn('dateCreated',true);
+			}
 		}
 	}
 
 	my add-button {
 		on invoke {
 			root.createField();
-		}
-	}
-
-	my sort-az-button {
-		on invoke {
-			root.sortOn('functionName');
-		}
-	}
-
-	my sort-date-button {
-		on invoke {
-			root.sortOn('dateCreated',true);
 		}
 	}
 }
@@ -109,8 +108,8 @@ def FunctionField(focusManager) {
 		);
 	}
 
-	contents {
-
+	on gain-focus {
+		app.help.introduce('custom-functions');
 	}
 
 	on update {

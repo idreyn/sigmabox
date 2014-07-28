@@ -77,7 +77,8 @@ def LiveEvalCard(manager) {
 		this.$lower.css('height','20%');
 		this.@lower.size();
 		this.$toolbar.css('height','10%');
-		this.$MathInput.css('padding','20px').css('width',
+		this.$MathInput.css('padding','20px').css(
+			'width',
 			parseInt($this.css('width'))
 		).css('font-size',
 			Math.max(
@@ -205,11 +206,19 @@ def LiveEvalCard(manager) {
 
 	on pullEnd(e,data) {
 		if(data.translateY > 90) {
-			self.historyOverlay = self.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
-				self.setContents(res);
-			});
-			app.overlay(self.historyOverlay);
+			this.showHistory();
 		}
+	}
+
+	method showHistory {
+		self.historyOverlay = self.historyOverlay || elm.create('LiveEvalHistoryOverlay', function(res) {
+			self.setContents(res);
+		});
+		app.overlay(self.historyOverlay);
+	}
+
+	method hideHistory {
+		self.historyOverlay.flyOut();
 	}
 
 	find .upper {
@@ -349,7 +358,7 @@ def LiveEvalCard(manager) {
 			});
 			this.$.append(this.vectorSwitch);
 
-			this.evalButton = elm.create('LiveEvalButton','SET');
+			this.evalButton = elm.create('LiveEvalButton','SET').named('set-button');
 			this.evalButton.$.on('invoke',function() {
 				if(!app.data.varSaveMode) {
 					app.data.initVariableSave('set');
@@ -359,7 +368,7 @@ def LiveEvalCard(manager) {
 
 			this.$.append(this.evalButton);
 
-			this.storeButton = elm.create('LiveEvalButton','STO');
+			this.storeButton = elm.create('LiveEvalButton','STO').named('sto-button');
 			this.storeButton.$.on('invoke',function() {
 				if(!app.data.varSaveMode) {
 					app.data.initVariableSave('store',root.result());
@@ -368,7 +377,7 @@ def LiveEvalCard(manager) {
 			});
 			this.$.append(this.storeButton);
 
-			this.clearButton = elm.create('LiveEvalButton','CLR');
+			this.clearButton = elm.create('LiveEvalButton','CLR').named('clr-button');
 			this.clearButton.$.on('invoke',function() {
 				var res = app.mode.currentInput().contents();
 				app.mode.currentInput().acceptActionInput('clear');
@@ -396,8 +405,7 @@ def LiveEvalCard(manager) {
 	}
 }
 
-def LiveEvalManager {
-	
+def LiveEvalManager {	
 	html {
 		<div>
 			<div class='middle'>
@@ -407,6 +415,7 @@ def LiveEvalManager {
 	}
 	
 	css {
+		position: relative;
 		width: 100%;
 		height: 100%;
 		-webkit-overflow-scrolling: touch;
@@ -428,11 +437,7 @@ def LiveEvalManager {
 			overflow: hidden;
 		}
 	}
-		
-	constructor {
 
-	}
-	
 	method init() {
 		this.size();
 	}
@@ -521,10 +526,6 @@ def LiveEvalPageIndicator {
 		left: 0;
 		height: 150px;
 		width: 5px;
-	}
-
-	constructor {
-
 	}
 
 	method size {

@@ -15,6 +15,10 @@ def REPL {
 		self.doUpdateScroll();
 	}
 
+	on displayed {
+		app.help.introduce('repl',200);
+	}
+
 	method load {
 		app.data.repl.slice(Math.max(app.data.repl.length - 20,0)).forEach(function(line) {
 			self.addLine(true,line.input,line.output);
@@ -149,7 +153,7 @@ def REPLLine(focusManager,repl) {
 	my arrow {
 		css {
 			position: absolute;
-			top: 15px;
+			top: 10px;
 			left: 4px;
 			opacity: 0.7;
 		}
@@ -193,6 +197,7 @@ def REPLLine(focusManager,repl) {
 			var p = new Parser();
 			var res = p.parse(text);
 			res = res.valueOf(new Frame({}));
+			app.data.variables.ans = res;
 			app.data.displayPolarVectors = false;
 			if(res instanceof Vector && app.data.displayPolarVectors) {
 				res = res.toStringPolar(app.data.trigUseRadians);
@@ -246,12 +251,22 @@ def REPLOutput {
 	}
 
 	contents {
-		[[store-button:LiveEvalButton 'STORE']]
+		[[insert-button:REPLButton 'INS']]
+		[[store-button:REPLButton 'STO']]
 		<span class='contents'><span>
 	}
 
 	extends {
 		TouchInteractive
+	}
+
+	my store-button {	
+		on invoke {
+			var val = root.$contents.html().split('{').join('<').split('}').join('>');
+			var res = new Parser().parse(val).valueOf(new Frame());
+			app.data.initVariableSave('store',res);
+			app.useKeyboard('variables');
+		}
 	}
 
 	css {
@@ -263,24 +278,22 @@ def REPLOutput {
 		background: #CCC;
 		opacity: 0.75;
 	}
+}
 
-	my LiveEvalButton {
-		css {
-			font-size: 10px;
-			text-shadow: none;
-			padding: 5px;
-		}
+def REPLButton(text) {
+	extends {
+		LiveEvalButton
+	}
 
-		style default {
-			text-shadow: none;
-			background: none;
-		}
+	css {
+		display: inline-block;
+		font-size: 10px;
+		text-shadow: none;
+		padding: 5px;
+	}
 
-		on invoke {
-			var val = root.$contents.html().split('{').join('<').split('}').join('>');
-			var res = new Parser().parse(val).valueOf(new Frame());
-			app.data.initVariableSave('store',res);
-			app.useKeyboard('variables');
-		}
+	style default {
+		text-shadow: none;
+		background: none;
 	}
 }

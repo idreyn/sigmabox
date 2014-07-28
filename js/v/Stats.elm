@@ -21,9 +21,13 @@ def StatsView {
 	}
 
 	method oneVarStats(list) {
+		if(list.data.length == 0) {
+			app.popNotification('Can\'t analyze an empty list!');
+			return;
+		}
 		var s = this.addView(elm.create('OneVarStats'));
 		s.$InlineListPicker.get(0).choose(list);
-		this.slideTo(1)
+		this.slideTo(1);
 	}
 }
 
@@ -127,12 +131,14 @@ def StatsListsManager {
 			self.orderLists();
 			self.updateScroll();
 			setTimeout(function() {
+				app.help.introduce('stats');
 				self.scroll.scrollToElement(el);
 			},10);
 		},20);
 	}
 
 	method addList {
+		app.help.introduce('stats');
 		var l = elm.create('StatsList',this);
 		l.delegateFocus(this);
 		this.@contents-container.$.append(l);
@@ -303,7 +309,7 @@ def StatsList(manager) {
 	}
 
 	on pullStart(e,data) {
-		if((data.originY - $this.offset().top) > 50) {
+		if((data.originY - $this.offset().top) > 65) {
 			self.pullCancel = true;
 		}
 	}

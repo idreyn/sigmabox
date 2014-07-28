@@ -78,7 +78,8 @@ def Keyboard(keyboardSource) {
 			$this.css({
 				'translateY': 0,
 			});
-		},0);
+		},this.slideUpOccured? 0 : 10);
+		this.slideUpOccured = true;
 	}
 
 	method slideDown(n,e) {
@@ -152,9 +153,7 @@ def Keyboard(keyboardSource) {
 	}
 
 	method getKeyByName(name) {
-		return this.keys.filter(function(k) {
-			return k.name == name;
-		})[0];
+		return this.$.find('.Key[name='+name+']').get(0);
 	}
 	
 	method getKeys() {
@@ -170,6 +169,19 @@ def Keyboard(keyboardSource) {
 	
 	method snapBack {
 		var interval = (this.padding + this.keyWidth);
+	}
+
+	method invokeSequence(sequence,delay) {
+		delay = delay || 200;
+		sequence.forEach(function(key,i) {
+			setTimeout(function() {
+				if(key instanceof Array) {
+					self.getKeyByName(key[0]).flashInvoke(key[1]);
+				} else {
+					self.getKeyByName(key).flashInvoke();	
+				}
+			},i * delay);
+		});
 	}
 }
 
@@ -278,7 +290,7 @@ def Key(_keyData,keyboard) {
 			<div class='label'> </div>
 		</div>
 	}
-	
+
 	on invoke {
 		if(this.cannotInvoke || this.parentKeyboard.disabled) return;
 		try {
@@ -330,6 +342,19 @@ def Key(_keyData,keyboard) {
 			this.setPrimary();
 		}
 	}
+
+	method flashInvoke(alt) {
+		if(alt) {
+			self.setAlt();
+		}
+		self.cannotInvoke = false;
+		self.applyStyle('active');
+		self.$.trigger('invoke');
+		setTimeout(function() {
+			self.cancel();
+			self.cannotInvoke = false;
+		},100);
+	}
 	
 	on active(e) {
 		this.parentKeyboard.currentKey = this;
@@ -340,6 +365,7 @@ def Key(_keyData,keyboard) {
 	}
 
 	method cancel {
+		this.applyStyle('default');
 		this.$.trigger('endactive');
 		this.cannotInvoke = true;
 		setTimeout(function() {
@@ -376,6 +402,7 @@ def Key(_keyData,keyboard) {
 		this.col = kd.attr('col');
 		this.row = kd.attr('row');
 		this.name = kd.attr('name');
+		this.$.attr('name',this.name);
 		if(kd.attr('default-color')) {
 			this.setStyle('default','background',kd.attr('default-color'));
 		}
@@ -421,6 +448,7 @@ def Key(_keyData,keyboard) {
 	method setAlt {
 		//console.log('setAlt');
 		if(this.hasAlt()) {
+			this.applyStyle('active');
 			if(this.$.width() < 100) this.$.css('translateY',0 - this.$.height() * (3/4));
 			this.altMode = true;
 			this.label();
@@ -451,17 +479,6 @@ def Key(_keyData,keyboard) {
 		} else if(this.labelType == 'image') {
 	
 		}
-	}
-
-	method doInvoke(alt) {
-		var self = this;
-		this.tapped();
-		if(alt) {
-			this.setAlt();
-		}
-		setTimeout(function() {
-			self.released();
-		},10);
 	}
 	
 	method keyData() {

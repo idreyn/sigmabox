@@ -22,6 +22,8 @@ Application.prototype.initLayout = function(wrapper) {
 	this.root = elm.create('SigmaboxAppFrame');
 	$(this.wrapper).append(this.root);
 
+	this.help = this.root.help;
+
 	this.initKeyboards();
 
 	this.eval = elm.create('LiveEvalManager');
@@ -93,7 +95,6 @@ Application.prototype.showKeyboard = function() {
 		this.keyboard.slideUp();
 		self.keyboardHeight = 1 - self.modeHeight;
 		this.liteResize();
-
 	}
 }
 
@@ -172,6 +173,14 @@ Application.prototype.acceptActionInput = function(input) {
 	if(kw == 'set') {
 		this.setVariablePrompt(split[1]);
 	}
+}
+
+Application.prototype.showMenu = function() {
+	this.root.showMenu();
+}
+
+Application.prototype.hideMenu = function() {
+	this.root.hideMenu();
 }
 
 Application.prototype.popNotification = function(text) {

@@ -16,7 +16,7 @@ def Converter {
 		this.$top-bar-container.hide();
 	}
 
-	on active {
+	on displayed {
 		setTimeout(function() {
 			self.$upper.css('line-height',(1.00 * self.$upper.height()) + 'px').css('opacity',1);
 		});

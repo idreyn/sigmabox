@@ -71,7 +71,7 @@ KeyInput.prototype.keyDown = function(e) {
 	this.bindings.forEach(function(k) {
 		if(e.keyCode == k.keyCode && !!e.shiftKey == !!k.shiftKey) {
 			try {
-				if(k.key) app.keyboard.getKeyByName(k.key).doInvoke(k.alt);
+				if(k.key) app.keyboard.getKeyByName(k.key).invoke(k.alt);
 				if(k.callback) k.callback(e);
 			} catch(err) {
 
