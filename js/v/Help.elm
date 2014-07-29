@@ -19,7 +19,7 @@ def WelcomeView {
 			<h1>Welcome to Sigmabox.</h1>
 			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
 			<br/>
-			[[ready-button:ToolbarButton 'My body is ready &rsaquo;']]
+			[[ready-button:ToolbarButton 'Engage &rsaquo;']]
 		}
 
 		css {
@@ -29,6 +29,7 @@ def WelcomeView {
 
 		my ready-button {
 			on invoke {
+				app.help.playSequence('eval');
 				root.flyOut();
 			}
 		}
@@ -264,6 +265,7 @@ def HelpGuide {
 				}
 			},
 			{
+				minTime: 3000,
 				text: 'After entering an expression, evaluate it by pressing the = key.',
 				onEnter: function() {
 					app.keyboard.invokeSequence(['1','plus','1','plus','2','plus','3','plus','5','plus','8','equals']);
@@ -290,7 +292,28 @@ def HelpGuide {
 				}
 			},
 			{
-				text: 'Have fun with classic mode! (if that\'s your thing)',
+				text: 'You can hold down on a previous expression to reuse it...',
+				touchTip: {
+					target: '.REPLInput',
+					type: 'no-stroke'
+				}
+			},
+			{
+				text: '...or on a result to save its value in a variable.',
+				touchTip: {
+					target: '.REPLOutput',
+					type: 'no-stroke'
+				},
+				onEnter: function() {
+					app.useKeyboard('variables');
+				},
+				onExit: function() {
+					app.useKeyboard('main');
+				}
+				
+			},
+			{
+				text: 'Have fun with classic mode!',
 				onExit: function() {
 					app.mode.clear();
 					app.mode.$.css('padding-top',0);
@@ -311,7 +334,7 @@ def HelpGuide {
 		this.addSequence('grapher-interaction',[
 			{
 				position: 'bottom',
-				text: 'Look at you, graphing equations like a champ! Just a few things to note...'
+				text: 'You\'ve graphed your first equation! Just a few things to note...'
 			},
 			{
 				position: 'bottom',
@@ -455,7 +478,7 @@ def HelpGuide {
 
 	on invoke {
 		if(this.sequence) {
-			if(new Date().valueOf() - this.switchTime < 1000) {
+			if(new Date().valueOf() - this.switchTime < (this.minScreenTime || 1000)) {
 				return;
 			}
 			var onExit = this.sequence[this.index].onExit;
@@ -512,7 +535,7 @@ def HelpGuide {
 				},500);
 			}
 		}
-
+		this.minScreenTime = screen.minTime;
 		this.$text.html(text);
 		if(position == 'bottom') {
 			this.$text.css('bottom',0).css('top','');

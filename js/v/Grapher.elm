@@ -52,7 +52,7 @@ def GrapherView {
 			setTimeout(function() {
 				self.slideTo(self.@graph-window,tbf);
 			},10);
-			app.help.introduce('grapher-interaction',1000);
+			app.help.introduce('grapher-interaction');
 		} catch(e) {
 			app.popNotification(e);
 		}

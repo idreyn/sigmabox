@@ -131,7 +131,7 @@ def StatsListsManager {
 			self.orderLists();
 			self.updateScroll();
 			setTimeout(function() {
-				app.help.introduce('stats');
+				if(app.mode == self.parent('Stats')) app.help.introduce('stats');
 				self.scroll.scrollToElement(el);
 			},10);
 		},20);
@@ -303,7 +303,13 @@ def StatsList(manager) {
 		} else {
 			self.scroll = new IScroll(
 				self.@contents-container-wrapper,
-				{scrollbars: true, mouseWheel: true, fadeScrollbars: true}
+				{
+					useTransition: false,
+					scrollbars: true,
+					mouseWheel: true,
+					fadeScrollbars: true,
+					bounce: true,
+				}
 			);
 		}
 	}

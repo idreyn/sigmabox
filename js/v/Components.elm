@@ -25,6 +25,7 @@ def TouchInteractive {
 
 	method held(e) {
 		this._held = true;
+		this.$.trigger('hold');
 	}
 
 	method touched(e) {
@@ -297,9 +298,14 @@ def PageView(title) {
 	}
 
 	method updateScroll(horiz) {
-		return;
 		if(!self.scroll) {
-			self.scroll = new IScroll(self.@contents-container-wrapper,{scrollbars: self.useScrollbars, fadeScrollbars: true, mouseWheel: true, scrollX: horiz});
+			self.scroll = new IScroll(self.@contents-container-wrapper,{
+				scrollbars: self.useScrollbars,
+				fadeScrollbars: true,
+				mouseWheel: true,
+				scrollX: horiz,
+				useTransition: false
+			});
 			self.scroll.on('scroll',self._onScroll);
 		} else {
 			self.scroll.refresh();

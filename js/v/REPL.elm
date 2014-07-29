@@ -11,12 +11,9 @@ def REPL {
 		this.load();
 	}
 
-	on active {
-		self.doUpdateScroll();
-	}
-
 	on displayed {
 		app.help.introduce('repl',200);
+		self.doUpdateScroll();
 	}
 
 	method load {
@@ -145,6 +142,10 @@ def REPLLine(focusManager,repl) {
 		</div>
 	}
 
+	extends {
+		TouchInteractive
+	}
+
 	css {
 		margin-bottom: 40px;
 		position: relative;
@@ -242,17 +243,23 @@ def REPLInput(focusManager,repl) {
 			this.parent('REPL').doUpdateScroll();
 		}
 	}
+
+	on hold {
+		if(!this.enabled) {
+			var parent = this.parent('REPL');
+			parent.current.@input.setContents(this.@input.contents());
+			parent.current.@input.mathSelf().cursor.show();
+			parent.doUpdateScroll(100);
+		}
+	}
 }
 
 def REPLOutput {
-
 	html {
 		<div></div>
 	}
 
 	contents {
-		[[insert-button:REPLButton 'INS']]
-		[[store-button:REPLButton 'STO']]
 		<span class='contents'><span>
 	}
 
@@ -260,20 +267,18 @@ def REPLOutput {
 		TouchInteractive
 	}
 
-	my store-button {	
-		on invoke {
-			var val = root.$contents.html().split('{').join('<').split('}').join('>');
-			var res = new Parser().parse(val).valueOf(new Frame());
-			app.data.initVariableSave('store',res);
-			app.useKeyboard('variables');
-		}
+	on hold {
+		var val = root.$contents.html().split('{').join('<').split('}').join('>');
+		var res = new Parser().parse(val).valueOf(new Frame());
+		app.data.initVariableSave('store',res);
+		app.useKeyboard('variables');
 	}
 
 	css {
 		box-sizing: border-box;
 		font-size: 14pt;
 		padding: 10px;
-		padding-left: 5px;
+		padding-left: 20px;
 		color: #333;
 		background: #CCC;
 		opacity: 0.75;
