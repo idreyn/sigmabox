@@ -15,11 +15,11 @@ def WelcomeView {
 
 	my contents-container {
 		contents {
-			<img src='res/img/logo-intro.png' class='logo' />
+			<div class='logo'></div>
 			<h1>Welcome to Sigmabox.</h1>
 			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
 			<br/>
-			[[ready-button:ToolbarButton 'Engage &rsaquo;']]
+			[[ready-button:ToolbarButton 'Engage! &rsaquo;']]
 		}
 
 		css {
@@ -36,8 +36,25 @@ def WelcomeView {
 
 		my logo {
 			css {
+				opacity: 0;
+				background: url(res/img/logo-intro.png);
+				background-size: contain;
 				height: 200px;
+				width: 200px;
+				margin-left: auto;
+				margin-right: auto;
 				margin-top: 15%;
+			}
+
+			constructor {
+				setTimeout(this.flyIn.bind(this),0);
+			}
+
+			method flyIn {
+				$this.css('opacity',0).css('translateY',-500).animate({
+					opacity: 1,
+					translateY: 0
+				},3000,'easeInOutElastic');
 			}
 		}
 
@@ -50,8 +67,13 @@ def WelcomeView {
 	}
 
 	constructor {
+		app.root.menuItemsDisabled = true;
 		this.$top-bar-container.hide();
 	}
+}
+
+def InformationView {
+
 }
 
 def HelpGuide {
@@ -111,7 +133,7 @@ def HelpGuide {
 				text: 'Hi there! This is a quick tutorial to get you acquainted with Sigmabox. Tap anywhere to continue.'
 			},
 			{
-				text: 'Just type to evaluate. There\'s no enter key.',
+				text: 'Just type to evaluate instantly.',
 				touchTip: false,
 				onEnter: function() {
 					$('.LiveEvalCard .MathInput').css('padding-top',50);
@@ -176,7 +198,7 @@ def HelpGuide {
 					type: 'up'
 				},
 				onEnter: function() {
-					app.useKeyboard('advanced');
+					app.useKeyboard('numerical');
 				},
 				onExit: function() {
 					app.useKeyboard('main');
@@ -410,6 +432,13 @@ def HelpGuide {
 				onExit: function() {
 					app.keyboard.getKeyByName('point').cancel();
 				}
+			},
+			{
+				text: 'Functions defined here are accessible anywhere with the <i>F(x)</i> key.',
+				touchTip: {
+					target: '.Key[name=functions]',
+					type: 'no-stroke'
+				}
 			}
 		]);
 		// Statistics
@@ -435,6 +464,13 @@ def HelpGuide {
 				text: 'Tap <i>Tools</i> to access a variety of statistical tools and tests.',
 				touchTip: {
 					target: '.tests-button',
+					type: 'no-stroke'
+				}
+			},
+			{
+				text: 'Lists defined here are accessible anywhere with the <i>Lists</i> key.',
+				touchTip: {
+					target: '.Key[name=lists]',
 					type: 'no-stroke'
 				}
 			}

@@ -93,6 +93,7 @@ def REPL {
 	my top-bar {
 		css {
 			height: 100%;
+			font-weight: normal;
 		}
 
 		contents {

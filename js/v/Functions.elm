@@ -16,10 +16,15 @@ def FunctionListView {
 	}
 
 	method load {
+		var functionsExist = false;
 		for(var k in app.data.customFunctions) {
+			functionsExist = true;
 			var func = app.data.customFunctions[k];
 			var field = this.addField();
 			field.load(func);
+		}
+		if(!functionsExist) {
+			this.$empty-notice.show();
 		}
 	}
 
@@ -62,6 +67,12 @@ def FunctionListView {
 	my add-button {
 		on invoke {
 			root.createField();
+		}
+	}
+
+	my empty-notice {
+		contents {
+			Tap <i>Add</i> above to define a function.
 		}
 	}
 }
@@ -174,7 +185,7 @@ def FunctionField(focusManager) {
 			self.functionName,
 			function() {
 				if(!rename) {
-					self.$.remove();
+					self.doDelete();
 				}
 			}
 		);
@@ -193,9 +204,12 @@ def FunctionField(focusManager) {
 	method doDelete {
 		app.data.unregisterFunction(self.functionName);
 		app.data.serialize();
-		var par = self.parent('ListView');
+		var parent = self.parent('ListView');
 		$this.remove();
-		par.updateScroll();
+		parent.updateScroll();
+		if(app.data.customFunctions.length == 0) {
+			parent.$empty-notice.show();
+		}
 	}
 
 	my MathInput {
@@ -225,18 +239,9 @@ def FunctionChoiceView(callback) {
 		this.populate();
 	}
 
-	contents {
-		<div class='empty-notice'>You can define custom functions in the Functions module.</div>
-	}
-
 	my empty-notice {
-		css {
-			position: absolute;
-			width: 100%;
-			text-align: center;
-			top: 50%;
-			color: #999;
-			display: none;
+		contents {
+			You can define custom functions in the Functions module.
 		}
 	}
 

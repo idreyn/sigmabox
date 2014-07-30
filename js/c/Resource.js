@@ -6,7 +6,7 @@ function Resource() {
 }
 
 Resource.prototype.init = function() {
-	this.sounds.keyPress = new SoundBank('res/sounds/KeypressStandard.mp3');
+
 }
 
 Resource.prototype.loadXML = function(path,callback) {

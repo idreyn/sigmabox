@@ -2,7 +2,6 @@ function Application() {
 	this.r = new Resource();
 	this.data = new Data();
 	this.utils = new Utils();
-	this.sound = new Sound();
 	this.parser = new Parser();
 	this.keyboards = {};
 	this.keyInput = new KeyInput(window);

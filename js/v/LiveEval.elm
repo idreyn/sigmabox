@@ -121,6 +121,9 @@ def LiveEvalCard(manager) {
 			} else {
 				res = res.valueOf(new Frame({}));
 				this._result = res;
+				if(!(res instanceof Value && res.equals(0))) {
+					app.data.variables.ans = res;
+				}
 				if(res.toString() == 'NaN') {
 					throw 'Invalid parameters';
 				}
@@ -242,7 +245,7 @@ def LiveEvalCard(manager) {
 		method setContents(s) {
 			var approxChars = this.parent().$.width() / 20 - 3;
 			if(s.length > approxChars) {
-				this.$.css('font-size','20');
+				this.$.css('font-size','28');
 			} else {
 				this.$.css('font-size','35');
 			}
@@ -277,6 +280,7 @@ def LiveEvalCard(manager) {
 			display: none;
 			background: rgba(0,0,0,0.05);
 			text-align: right;
+			font-weight: 200;
 			font-size: 30pt;
 			color: #AAA;
 			line-height: 80px;
@@ -323,14 +327,14 @@ def LiveEvalCard(manager) {
 
 		css {
 			color: #000;
+			height: 100%;
+			width: 100%;
 			position: absolute;
 			top: 67%;
 			padding-top: 5px;
 			padding-bottom: 10px;
 			text-align: right;
 			padding-right: 4%;
-			height: 100%;
-			width: 100%;
 			vertical-align: middle;
 			opacity: 0.5;
 		}

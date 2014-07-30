@@ -92,7 +92,7 @@
 	<key name='x' row='4' col='5'>
 		<primary text-label='x'>x</primary>
 	</key>
-	<key name='more' row='5' col='5' default-color='#333'>
+	<key name='lists' row='5' col='5' default-color='#333'>
 		<primary text-label='List' action='input:list'/>
 	</key>
 	

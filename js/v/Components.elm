@@ -419,6 +419,21 @@ def ListView {
 			[[items-list:List]]
 		}
 	}
+
+	contents {
+		<div class='empty-notice'></div>
+	}
+
+	my empty-notice {
+		css {
+			position: absolute;
+			width: 100%;
+			text-align: center;
+			top: 50%;
+			color: #999;
+			display: none;
+		}
+	}
 }
 
 def TabbedView {
@@ -1233,7 +1248,7 @@ def ToolbarButtonDropdown(label) {
 
 		css {
 			text-align: center;
-			padding: 10px;
+			padding: 5px;
 			min-width: 100px;
 			height: 40px;
 			line-height: 40px;

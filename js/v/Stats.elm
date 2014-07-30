@@ -159,6 +159,11 @@ def StatsListsManager {
 		setTimeout(function() {
 			self.updateScroll(true);
 		},10);
+		if(app.data.lists.length > 0) {
+			this.$empty-notice.hide();
+		} else {
+			this.$empty-notice.show();
+		}
 	}
 
 	method selectList(l) {
@@ -203,6 +208,25 @@ def StatsListsManager {
 
 		css {
 			height: 100%;
+		}
+	}
+
+	contents {
+		<div class='empty-notice'></div>
+	}
+
+	my empty-notice {
+		contents {
+			Tap <i>Add</i> above to define a list.
+		}
+
+		css {
+			position: absolute;
+			width: 100%;
+			text-align: center;
+			top: 50%;
+			color: #999;
+			display: none;
 		}
 	}
 }
@@ -474,18 +498,9 @@ def ListChoiceView(callback) {
 		Overlay
 	}
 
-	contents {
-		<div class='empty-notice'>Head over to the Statistics module to create some lists.</div>
-	}
-
 	my empty-notice {
-		css {
-			position: absolute;
-			width: 100%;
-			text-align: center;
-			top: 50%;
-			color: #999;
-			display: none;
+		contents {
+			Lists defined in the Statistics module will appear here.
 		}
 	}
 
@@ -1045,6 +1060,12 @@ def StatsTestViewSimple {
 
 def StatsTestViewSimpleTeardown {
 	my contents-container {
+		my input-item {
+			css {
+				margin: 10px;
+			}
+		}
+
 		my line-item {
 			css {
 				display: none;
@@ -1824,7 +1845,9 @@ def OnePropZTestView {
 			<h1 class='title'>One-Proportion Z-Test</h1>
 			<p class='intro'>The one-proportion z-test examines whether there is a statistically significant difference between a sample proportion and the proportion of the population it was drawn from.</p>
 			</br>
-			<div class='source-stats-container'>p0: <div class='num-inp stats-inp stats-p0'>Select...</div> Successes (x): <div class='num-inp stats-inp stats-x'>Select...</div> Size (n): <div class='num-inp stats-inp stats-n'>Select...</div></div>
+			<div class='input-item'><div class='source-stats-container'>p0: <div class='num-inp stats-inp stats-p0'>Select...</div></div></div>
+			<div class='input-item'>Successes (x): <div class='num-inp stats-inp stats-x'>Select...</div></div>
+			<div class='input-item'>Size (n): <div class='num-inp stats-inp stats-n'>Select...</div></div>
 			<p class='intro'>(The test statistic, p&#770;, is calculated as x/n.)</p>
 			<div class='choose-sel hypothesis'>
 				Hypothesis: 
@@ -1929,9 +1952,14 @@ def TwoPropZTestView {
 			<h1 class='title'>Two-Proportion Z-Test</h1>
 			<p class='intro'>The two-proportion z-test examines whether there is a statistically significant difference between two sample proportions.</p>
 			</br>
-			<div class='source-stats-container'>Successes 1 (x): <div class='num-inp stats-inp stats-x1'>Select...</div> Sample Size 1 (n): <div class='num-inp stats-inp stats-n1'>Select...</div></div>
-			</br>
-			<div class='source-stats-container'>Successes 2 (x): <div class='num-inp stats-inp stats-x2'>Select...</div> Sample Size 2 (n): <div class='num-inp stats-inp stats-n2'>Select...</div></div>
+			<div class='source-stats-container'>
+				<div class='input-item'>Successes 1 (x): <div class='num-inp stats-inp stats-x1'>Select...</div></div>
+				<div class='input-item'>Sample Size 1 (n): <div class='num-inp stats-inp stats-n1'>Select...</div></div>
+			</div>
+			<div class='source-stats-container'>
+				<div class='input-item'>Successes 2 (x): <div class='num-inp stats-inp stats-x2'>Select...</div></div>
+				<div class='input-item'>Sample Size 2 (n): <div class='num-inp stats-inp stats-n2'>Select...</div></div>
+			</div>
 			<p class='intro'>(The test statistics, p&#770;, are calculated as x/n.)</p>
 			//<div class='choose-sel hypothesis'>
 			//	Hypothesis: 
@@ -2102,7 +2130,7 @@ def ChiSquaredGOFView {
 
 	my contents-container {
 		contents {
-			<h1 class='title'>Chi-Squared Goodness-of-Fit Test</h1>
+			<h1 class='title'>Chi-Squared Goodness of Fit Test</h1>
 			<p class='intro'>The chi-squared test looks for a statistically significant deviation in the distribution of a categorical variable by comparing a list of expected values to a list of those actually observed.</p>
 			</br>
 			<div class='source-stats-container'>Observed: <div class='list-inp stats-inp observed-list'>Select...</div></div>

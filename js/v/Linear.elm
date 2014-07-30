@@ -199,8 +199,10 @@ def LinearSolveOverlay(solutions) {
 		}
 	}
 
-	contents {
-		<div class='empty-notice'>There is no unique solution to this system.</div>
+	my empty-notice {
+		contents {
+			There is no unique solution to this system.
+		}
 	}
 
 	my line-item {
@@ -210,17 +212,6 @@ def LinearSolveOverlay(solutions) {
 
 		css {
 			padding: 10px;
-		}
-	}
-
-	my empty-notice {
-		css {
-			position: absolute;
-			width: 100%;
-			text-align: center;
-			top: 50%;
-			color: #999;
-			display: none;
 		}
 	}
 }
