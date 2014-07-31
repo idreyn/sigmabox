@@ -80,7 +80,7 @@ Functions.normalize = function(v,r) {
 	var factor = r? 2*Math.PI : 360;
 	v = v % factor;
 	if(v < 0) v = v + factor;
-	return v;
+	return new Value(v);
 }
 
 Functions.round = function(num, dec) {

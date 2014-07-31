@@ -200,10 +200,6 @@ def REPLLine(focusManager,repl) {
 			var res = p.parse(text);
 			res = res.valueOf(new Frame({}));
 			app.data.variables.ans = res;
-			app.data.displayPolarVectors = false;
-			if(res instanceof Vector && app.data.displayPolarVectors) {
-				res = res.toStringPolar(app.data.trigUseRadians);
-			}
 			if(res instanceof Frac && app.data.displayDecimalizedFractions) {
 				res = res.decimalize();
 			}
