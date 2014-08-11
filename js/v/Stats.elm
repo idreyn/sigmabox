@@ -74,8 +74,8 @@ def StatsListsManager {
 	my toolbar {
 		contents {
 			[[tests-button:ToolbarButton 'Tools']]
-			[[back-button:ToolbarButton '&larr;']]
-			[[next-button:ToolbarButton '&rarr;']]
+			[[back-button:ToolbarButton '<']]
+			[[next-button:ToolbarButton '>']]
 			[[add-button:ToolbarButtonImportant 'Add']]
 		}
 	}

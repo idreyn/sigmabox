@@ -35,22 +35,22 @@
 	<key name='3x3' row='3' col='4'>
 		<primary close='close' action='input: left,left,left,left,left,left,left,left,left' style='letter-spacing:-0.2em;font-size:30px' text-label='[ ⋮⋮⋮ ]'>\matrixThreeThree{}{}{}{}{}{}{}{}{}</primary>
 	</key>
-	<key name='det' row='4' col='2'>
+	<key name='determinant' row='4' col='2'>
 		<primary close='close' action='input:left' text-label='det'>\det()</primary>
 	</key>
-	<key name='trans' row='4' col='3'>
+	<key name='transpose' row='4' col='3'>
 		<primary close='close' action='input:left' text-label='trans'>\transpose()</primary>
 	</key>
-	<key name='id' row='4' col='4'>
+	<key name='identity-matrix' row='4' col='4'>
 		<primary close='close' action='input:left' text-label='id'>\id()</primary>
 	</key>
 	<key name='inverse' row='5' col='2'>
 		<primary close='close' action='input:left' text-label='inv'>\inverse()</primary>
 	</key>
-	<key name='brackets' row='5' col='3'>
+	<key name='matrix-brackets' row='5' col='3'>
 		<primary close='close' action='input:left' text-label='[ ]'>[]</primary>
 	</key>
-	<key name='bar' row='5' col='4'>
+	<key name='matrix-bar' row='5' col='4'>
 		<primary close='close' text-label='|'>|</primary>
 	</key>
 </keyboard>

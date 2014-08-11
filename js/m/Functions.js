@@ -83,6 +83,14 @@ Functions.normalize = function(v,r) {
 	return new Value(v);
 }
 
+Functions.abs = function(n) {
+	if(n instanceof Value) {
+		return n.toComplexTrigForm().modulus;
+	} else {
+		return Math.abs(n);
+	}
+}
+
 Functions.round = function(num, dec) {
 	return Math.round(num*Math.pow(10,dec))/Math.pow(10,dec);
 };
@@ -262,10 +270,10 @@ Functions.isPrime = function(n) {
 	n = Math.abs(n);
 	for(var i = 2; i <= n/2; i++) {
 		if(n % i == 0) {
-			return false;
+			return 0;
 		};
 	};
-	return true;
+	return 1;
 };
 
 Functions.nthPrime = function(n) {
@@ -309,26 +317,90 @@ Functions.integral = function(a,b,lambda,n,noRound) {
 	return noRound ?  sum : Functions.round(sum,6);
 }
 
-// Incomplete. Fuck
-
 Functions.union = function(a,b) {
-	var res = a.copy();
-	b.map(function(item) {
-		if(res.indexOf(item) == -1) {
-			res.append(item);
+	function are_equal(a,b) {
+		if(a === undefined || b === undefined) return false;
+		if(a.equals) {
+			return a.equals(b);
+		} else {
+			return a == b;
+		}
+	}
+	function vector_index_of(v,item) {
+		for(var i=0;i<v.args.length;i++) {
+			if(are_equal(v.args[i],item)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	a.map(function(i) {
+		if(i instanceof Matrix || i instanceof Vector) {
+			throw 'Invalid data types';
 		}
 	});
-	return res;
-};
+	b.map(function(i) {
+		if(i instanceof Matrix || i instanceof Vector) {
+			throw 'Invalid list';
+		}
+	});
+	var res = [];
+	a = a.copy()
+	b = b.copy();
+	for(var i=0;i<a.args.length;i++) {
+		res.push(a.args[i]);
+		var ind = vector_index_of(b,a.args[i])
+		if(ind != -1) {
+			delete b.args[ind];
+		}
+	}
+	res = res.concat(b.args).filter(function(n) {
+		return n !== undefined;
+	});
+	return new Vector(res);
+}
 
 Functions.intersection = function(a,b) {
-	var res = new Vector();
-	a.map(function(item) {
-		if(b.indexOf(item) != -1 && a.i) {
-
+	function are_equal(a,b) {
+		if(a === undefined || b === undefined) return false;
+		if(a.equals) {
+			return a.equals(b);
+		} else {
+			return a == b;
+		}
+	}
+	function vector_index_of(v,item) {
+		for(var i=0;i<v.args.length;i++) {
+			if(are_equal(v.args[i],item)) {
+				return i;
+			}
+		}
+		return -1;
+	}
+	a.map(function(i) {
+		if(i instanceof Matrix || i instanceof Vector) {
+			throw 'Invalid data types';
 		}
 	});
-	return res;
+	b.map(function(i) {
+		if(i instanceof Matrix || i instanceof Vector) {
+			throw 'Invalid list';
+		}
+	});
+	var res = [];
+	a = a.copy()
+	b = b.copy();
+	for(var i=0;i<a.args.length;i++) {
+		var ind = vector_index_of(b,a.args[i])
+		if(ind != -1) {
+			res.push(a.args[i]);
+			delete b.args[ind];
+		}
+	}
+	res = res.filter(function(n) {
+		return n !== undefined;
+	});
+	return new Vector(res);
 }
 
 Functions.stdnormalpdf = function(x) {
@@ -511,7 +583,11 @@ Functions.numbers = function(arr) {
 
 Functions.values = function(arr) {
 	return arr.map(function(n) {
-		return new Value(n);
+		if(!isNaN(n)) {
+			return new Value(n);
+		} else {
+			return n;
+		}
 	});
 }
 

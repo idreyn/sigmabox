@@ -44,16 +44,19 @@
 	<key name='reverse' row='5' col='3'>
 		<primary close='close' name='reverse' text-label='reverse' action='input: left'>\reverse()</primary>
 	</key>
-	<key name='lambda' row='1' col='4'>
-		<primary close='close' name='lambda' text-label='->'>(x)\longrightarrow</primary>
-	</key>
-	<key name='map' row='2' col='4'>
+	<key name='map' row='1' col='4'>
 		<primary close='close' name='map' text-label='map' action='input: left,left'>\map((x)\longrightarrow,)</primary>
 	</key>
-	<key name='mode' row='3' col='4'>
+	<key name='reduce' row='2' col='4'>
 		<primary close='close' name='reduce' text-label='reduce' action='input: left,left'>\reduce((x,y)\longrightarrow,)</primary>
 	</key>
-	<key name='stdev' row='4' col='4'>
+	<key name='filter' row='3' col='4'>
 		<primary close='close' name='filter' text-label='filter' action='input: left,left'>\filter((x)\longrightarrow,)</primary>
+	</key>
+	<key name='union' row='4' col='4'>
+		<primary close='close' name='union' text-label='union' action='input: left,left'>\union(,)</primary>
+	</key>
+	<key name='intersection' row='5' col='4'>
+		<primary close='close' name='isect' text-label='isect' action='input: left,left'>\isect(,)</primary>
 	</key>
 </keyboard>

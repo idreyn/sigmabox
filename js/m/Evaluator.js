@@ -33,6 +33,9 @@ Value.prototype.equals = function(other) {
 	if(this == other) {
 		return true
 	}
+	if(other instanceof Frac) {
+		return other.equals(this);
+	}
 	if(other instanceof Value) {
 		return (this.real == other.real) && (this.complex == other.complex);
 	} else {
@@ -347,6 +350,14 @@ function Frac(top,bottom) {
 }
 
 Frac.fastMode = false;
+
+Frac.prototype.equals = function(other) {
+	if(other.decimalize) {
+		return this.decimalize().equals(other.decimalize());
+	} else {
+		return false;
+	}
+}
 
 Frac.prototype.valueOf = function(frame) {
 	if(Frac.fastMode) {
@@ -684,6 +695,7 @@ Matrix.prototype.valueOf = function(frame) {
 }
 
 Matrix.prototype.equals = function(other) {
+	if(!(other instanceof Matrix)) return false;
 	if(this == other) {
 		return true;
 	}
@@ -968,6 +980,10 @@ Matrix.prototype.deaugment = function() {
 	return new Matrix(res);
 }
 
+Matrix.prototype.eigenvalues = function() {
+	
+}
+
 Matrix.prototype.serialize = function() {
 	return this.toString(new Frame({}));
 }
@@ -989,6 +1005,7 @@ Vector.prototype.valueOf = function(frame) {
 }
 
 Vector.prototype.equals = function(other) {
+	if(!(other instanceof Vector)) return false;
 	if(this == other) {
 		return true;
 	}
@@ -1152,6 +1169,12 @@ function Integral(a,b,f,x) {
 }
 
 Integral.prototype.valueOf = function(frame,nSteps,round) {
+	if(app.data.insideDifficultExpression) {
+		app.data.insideDifficultExpression = false;
+		throw "Invalid expression";
+	} else {
+		app.data.insideDifficultExpression = true;
+	}
 	app.data.calcInCurrentExpression = true;
 	app.data.realTrigMode = app.data.trigUseRadians;
 	app.data.trigUseRadians = true;
@@ -1183,6 +1206,7 @@ Integral.prototype.valueOf = function(frame,nSteps,round) {
 	sum += heights[heights.length - 1];
 	sum *= dx * 0.5;
 	if(flip) sum *= -1;
+	app.data.insideDifficultExpression = false;
 	return new Value(sum).round(round || 1);
 }
 
@@ -1198,6 +1222,12 @@ function Sum(index,lower,upper,f) {
 }
 
 Sum.prototype.valueOf = function(frame) {
+	if(app.data.insideDifficultExpression) {
+		app.data.insideDifficultExpression = false;
+		throw "Invalid expression";
+	} else {
+		app.data.insideDifficultExpression = true;
+	}
 	var a = this.lower.valueOf(frame).toFloat(),
 		b = this.upper.valueOf(frame).toFloat(),
 		sum = new Value(0);
@@ -1212,6 +1242,7 @@ Sum.prototype.valueOf = function(frame) {
 			this.f.valueOf(fr)
 		]).valueOf(frame);
 	}
+	app.data.insideDifficultExpression = false;
 	return sum;
 }
 
@@ -1223,6 +1254,12 @@ function Product(index,lower,upper,f) {
 }
 
 Product.prototype.valueOf = function(frame) {
+	if(app.data.insideDifficultExpression) {
+		app.data.insideDifficultExpression = false;
+		throw "Invalid expression";
+	} else {
+		app.data.insideDifficultExpression = true;
+	}
 	var a = this.lower.valueOf(frame).toFloat(),
 		b = this.upper.valueOf(frame).toFloat(),
 		prod = new Value(1);
@@ -1237,6 +1274,7 @@ Product.prototype.valueOf = function(frame) {
 			this.f.valueOf(fr)
 		]).valueOf(frame);
 	}
+	app.data.insideDifficultExpression = false;
 	return prod;
 }
 

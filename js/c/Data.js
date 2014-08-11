@@ -59,7 +59,7 @@ Data.prototype.init = function() {
 	};
 	
 	this.functions = {
-		'abs': this.wrap(Math.abs),
+		'abs': this.wrap(Functions.abs),
 		'mod': this.wrap(Functions.mod),
 		'fact': this.wrap(Functions.factorial),
 		'nCr': this.wrap(Functions.nCr),
@@ -221,6 +221,16 @@ Data.prototype.init = function() {
 			Functions.expect(v,Vector);
 			return new Vector(v.args.reverse());
 		}),
+		'union': this.wrap(function(a,b) {
+			Functions.expect(a,Vector);
+			Functions.expect(b,Vector);
+			return Functions.union(a,b);
+		}),
+		'isect': this.wrap(function(a,b) {
+			Functions.expect(a,Vector);
+			Functions.expect(b,Vector);
+			return Functions.intersection(a,b);
+		}),
 		'map': this.wrap(function(lambda,v) {
 			Functions.expect(lambda,Function);
 			Functions.expect(v,Vector);
@@ -271,7 +281,7 @@ Data.prototype.init = function() {
 		'Im': this.wrap(Functions.Im,false,false),
 		'Re': this.wrap(Functions.Re),
 		'unity': this.wrap(Functions.unity),
-		'gamma': this.wrap(Functions.unity),
+		'gamma': this.wrap(Functions.gamma),
 		// Distributions shit
 		'normalpdf': this.wrap(Functions.normalpdf),
 		'normalcdf': this.wrap(Functions.normalcdf),
