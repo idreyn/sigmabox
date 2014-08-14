@@ -4,6 +4,10 @@ function Utils() {
 
 }
 
+Utils.log = function() {
+	console.log(arguments);
+}
+
 Utils.prototype.point = function(x,y) {
 	return {
 		x: x,
@@ -319,12 +323,55 @@ FocusManager.prototype.register = function(f) {
 }
 
 $.fn.extend({ 
-        disableSelection : function() { 
-                this.each(function() { 
-                        this.onselectstart = function() { return false; }; 
-                        this.unselectable = "on"; 
-                        $(this).css('-moz-user-select', 'none'); 
-                        $(this).css('-webkit-user-select', 'none'); 
-                }); 
-        } 
+    disableSelection : function() { 
+        this.each(function() { 
+            this.onselectstart = function() { return false; }; 
+            this.unselectable = "on"; 
+            $(this).css('-moz-user-select', 'none'); 
+            $(this).css('-webkit-user-select', 'none'); 
+        }); 
+    } 
 });
+
+function DocsParser(url,callback) {
+	this.url = url;
+	this.callback = callback;
+	this.load();
+}
+
+DocsParser.prototype.load = function() {
+	var self = this;
+	$.get(this.url,function(txt) {
+		if(self.callback) self.callback(self.parse(txt));
+	});
+}
+
+DocsParser.prototype.parse = function(txt) {
+	var current;
+	var res = {};
+	txt = txt.split('\n');
+	for(var i=0;i<txt.length;i++) {
+		var line = txt[i],
+			start = line.charAt(0);
+		if(!line.trim().length || line.charAt(0) == '#') continue;
+		if(start == '\t') {
+			// Property of an object
+			var split = line.split(':');
+			if(split[1].split(',').length > 1 && split[1].slice(-1) != '.') {
+				split[1] = split[1].split(',').map(function(s) { return s.trim(); });
+			} else {
+				split[1] = split[1].trim();
+			}
+			current[split[0]] = split[1];
+		} else {
+			if(line.slice(-1) == ':') {
+				line = line.slice(0,-1);
+			}
+			var split = line.split(' ');
+			res[split[0]] = res[split[0]] || {};
+			res[split[0]][split[1]] = {};
+			current = res[split[0]][split[1]];
+		}
+	}
+	return res;
+}

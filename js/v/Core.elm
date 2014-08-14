@@ -58,6 +58,7 @@ def SigmaboxSideMenu {
 	my contents-container {
 		contents {
 			<img src='res/img/logo.png' width='100%' />
+			[[SigmaboxSideMenuItem 'light-bulb','lab']]
 			[[SigmaboxSideMenuItem 'calculator','eval']]
 			[[SigmaboxSideMenuItem 'repl', 'repl']]
 			[[SigmaboxSideMenuItem 'grapher','grapher']]
@@ -247,10 +248,10 @@ def TrigSwitch(left,right,willSyncTo) {
 }
 
 def Notification(text,duration) {
-
 	html {
 		<div>$text</div>
 	}
+
 
 	css {
 		position: fixed;
@@ -279,15 +280,5 @@ def Notification(text,duration) {
 				$this.animate({top:-100},500,'easeInQuart');
 			},this.duration*1000);
 		});
-	}
-}
-
-def SigmaLabView {
-	extends {
-		StatsTestView
-	}
-
-	properties {
-		noKeyboard: true
 	}
 }

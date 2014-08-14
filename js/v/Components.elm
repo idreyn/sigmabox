@@ -154,7 +154,7 @@ def View {
 		);
 		$this.find('*').each(function() {
 			var child = this;
-			if(child.size) {
+			if(child.size instanceof Function) {
 				child.size();
 			}
 		});
@@ -209,7 +209,7 @@ def PageView(title) {
 	}
 
 	properties {
-		useScrollbars: true
+		useScrollbars: true,
 	}
 
 	contents {
@@ -318,6 +318,43 @@ def PageView(title) {
 
 	extends {
 		View
+	}
+}
+
+def ReaderView {
+	extends {
+		PageView
+	}
+
+	my contents-container {
+		css {
+			position: relative;
+			padding: 20px;
+			box-sizing: border-box;
+			max-width: 600px;
+			margin-left: auto;
+			margin-right: auto;
+			font-size: 0.8em;
+			line-height: 2em;
+		}
+	}
+
+	constructor {
+		this.$top-bar-container.hide();
+		if(this.src) {
+			this.load();
+		}
+	}
+
+	method load(src) {
+		src = src || this.src;
+		$.get(src,function(res) {
+			if(src.slice(-3) == '.md') {
+				res = marked.parse(res);
+				self.$contents-container.css('padding-top',0).css('padding-bottom',0);
+			}
+			self.$contents-container.html(res);
+		});
 	}
 }
 
@@ -494,12 +531,19 @@ def TabbedView {
 	}
 
 	method select(tab) {
+		if(!tab || tab == this.selectedTab) return;
 		this.$tab-contents-container.children().hide();
+		var newIndex = this.$tab-bar.children().index(tab);
 		if(this.selectedTab) {
-			this.selectedTab.applyStyle('not-selected');
+			var selectedIndex = this.$tab-bar.children().index(this.selectedTab);
+			this.selectedTab.deselect(newIndex < selectedIndex);
+		} else {
+			var selectedIndex = 0;
 		}
-		tab.applyStyle('selected');
-		tab.view.$.show();
+		tab.select(newIndex < selectedIndex);
+		if(tab.view && tab.view.$) {
+			tab.view.$.show();
+		}
 		this.selectedTab = tab;
 	}
 
@@ -507,7 +551,7 @@ def TabbedView {
 		css {
 			width: 100%;
 			height: 50px;
-			background: #EEE;
+			background: #222;
 		}
 	}
 
@@ -519,14 +563,16 @@ def TabbedView {
 		css {
 			width: 100%;
 			background: #FFF;
-			padding-top: 4px;
 		}
 	}
 }
 
 def TabbedViewTab(label,view,tabView) {
 	html {
-		<div>$label</div>
+		<div>
+			<div class='label'>$label</div>
+			<div class='border-bottom'></div>
+		</div>
 	}
 
 	extends {
@@ -534,36 +580,56 @@ def TabbedViewTab(label,view,tabView) {
 	}
 
 	css {
-		background: #EEE:
+		position: relative;
+		background: #222;
+		color: #FFF;
 		height: 50px;
 		line-height: 50px;
 		text-align: center;
 		display: inline-block;
 		cursor: pointer;
+		overflow: hidden;
 	}
 
 	constructor {
-		this.applyStyle('not-selected');
+
 	}
 
 	on invoke {
 		this.tabView.select(this);
 	}
 
-	style selected {
-		border-bottom: 4px solid #A33;
+	method select(left) {
+		var f = left ? 1 : -1;
+		this.$border-bottom.show().css('translateX',f * $this.width()).animate({
+			translateX: 0
+		},200,'easeOutQuart');
 	}
 
-	style active {
+	method deselect(left) {
+		var f = left ? -1 : 1;
+		this.$border-bottom.css('translateX',0).animate({
+			translateX: f * $this.width()
+		},200,'easeOutQuart');
+	}
 
+	my border-bottom {
+		css {
+			display: none;
+			position: absolute;
+			bottom: 0px;
+			width: 100%;
+			height: 4px;
+			background-color: #D55;
+		}
 	}
 
 	style default {
 
 	}
 
-	style not-selected {
-		border-bottom: 4px solid #EEE;
+	style active {
+
 	}
 }
 
@@ -1784,6 +1850,7 @@ def TextInput(defaultValue) {
 	css {
 		box-sizing: border-box;
 		margin-bottom: 15px;
+		margin-top: 0;
 		padding: 10px;
 		padding-left: 15px;
 		font-size: 16pt;
@@ -1794,15 +1861,11 @@ def TextInput(defaultValue) {
 	}
 
 	style empty {
-		color: #F00;
+		color: #DDD;
 	}
 
 	style not-empty {
 		color: #222;
-	}
-
-	constructor {
-		this.setStyle('empty');
 	}
 
 	on focus {
@@ -1836,6 +1899,7 @@ def Overlay {
 		-webkit-transition: -webkit-transform 0.1s ease-out;
 		z-index: 1001;
 		background: url(res/img/background.png);
+		background-size: cover;
 	}
 
 	on ready {

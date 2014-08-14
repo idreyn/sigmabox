@@ -670,3 +670,57 @@ def TouchTip(strokeDirection,distance) {
 		}
 	}
 }
+
+def HelpView {
+	extends {
+		TabbedView
+	}
+
+	my AboutView {
+		properties {
+			src: 'docs/about.md'
+		}
+
+		extends {
+			ReaderView
+		}
+
+		css {
+			color: #666;
+			background: url(res/img/background.png);
+			background-size: cover;
+		}
+	}
+
+	css {
+		my tab-bar {
+			opacity: 1
+		}
+	}
+
+	my ReferenceView {
+		extends {
+			PageView
+		}
+
+		constructor {
+			this.$top-bar-container.hide();
+		}
+
+		my contents-container {
+			contents {
+				[[input:TextInput 'Where the hood at']]
+			}
+		}
+	}
+
+	constructor {
+		this.addTab('About',this.create('AboutView'));
+		this.addTab('Help',this.create('ReferenceView'));
+		this.addTab('Donate');
+	}
+
+	properties {
+		noKeyboard: true
+	}
+}

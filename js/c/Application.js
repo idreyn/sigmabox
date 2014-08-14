@@ -10,6 +10,7 @@ function Application() {
 }
 
 Application.prototype.initLayout = function(wrapper) {
+	this.version = '0.95';
 
 	this.nullInput = elm.create('MathTextField');
 	this.nullInput.$.addClass('null-input');
@@ -25,6 +26,9 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.initKeyboards();
 
+	this.lab = elm.create('HelpView',this.version);
+	this.root.addChild(this.lab);
+
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
@@ -36,9 +40,6 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.functions = elm.create('FunctionListView');
 	this.root.addChild(this.functions);
-
-	this.lab = elm.create('ChiSquaredView');
-	this.root.addChild(this.lab);
 
 	this.stats = elm.create('StatsView');
 	this.root.addChild(this.stats);
