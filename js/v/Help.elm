@@ -29,6 +29,7 @@ def WelcomeView {
 
 		my ready-button {
 			on invoke {
+				app.setMode('eval');
 				app.help.playSequence('eval');
 				root.flyOut();
 			}
@@ -492,7 +493,6 @@ def HelpGuide {
 	}
 
 	method playSequence(name) {
-		return;
 		if(!this.sequences[name]) {
 			return;
 		}
