@@ -112,7 +112,7 @@ def GraphWindow {
 
 	method size {
 		this.$.width(app.root.$container.width());
-		this.$.height(app.root.$container.height());
+		this.$.height(app.root.$container.height() * (this.screenFraction || 1));
 	}
 
 	method displayUI(b) {

@@ -478,6 +478,7 @@ def HelpGuide {
 	}
 
 	method introduce(name,delay) {
+		return false;
 		if(app.data.helpSequencesPlayed.indexOf(name) != -1) {
 			return;
 		}
@@ -491,6 +492,7 @@ def HelpGuide {
 	}
 
 	method playSequence(name) {
+		return;
 		if(!this.sequences[name]) {
 			return;
 		}
