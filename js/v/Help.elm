@@ -808,6 +808,7 @@ def HelpView {
 
 		css {
 			color: #666;
+			position: fixed;
 			background: url(res/img/background.png);
 			background-size: cover;
 		}
