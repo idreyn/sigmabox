@@ -273,7 +273,7 @@ def HelpGuide {
 			{
 				text: 'Tap the Sigmabox icon for more information and help.',
 				touchTip: {
-					target: '.main-icon'
+					target: '.main-icon',
 					type: 'no-stroke'
 				},
 				onExit: function() {
