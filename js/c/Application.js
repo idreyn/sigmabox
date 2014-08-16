@@ -26,9 +26,6 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.initKeyboards();
 
-	this.lab = elm.create('HelpView',this.version);
-	this.root.addChild(this.lab);
-
 	this.eval = elm.create('LiveEvalManager');
 	this.root.addChild(this.eval);
 
@@ -50,7 +47,14 @@ Application.prototype.initLayout = function(wrapper) {
 	this.converter = elm.create('Converter');
 	this.root.addChild(this.converter);
 
-	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.lab,this.repl,this.linear,this.converter];
+	this.about = elm.create('HelpView');
+	this.root.addChild(this.about);
+
+	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.repl,this.linear,this.converter,this.about];
+
+	if(this.data.mode == 'about') {
+		this.data.mode = 'eval';
+	}
 	this.setMode(this.data.mode || 'eval');
 
 	$(window).on('resize',$.proxy(this.resize,this));
@@ -136,6 +140,7 @@ Application.prototype.setMode = function(mode) {
 		m.$.hide();
 	});
 	this.mode = mode;
+	this.modeName = mstring;
 	this.mode.$.show();
 	this.mode.$.trigger('displayed');
 	if(!this.mode.noKeyboard) {

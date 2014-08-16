@@ -333,30 +333,31 @@ $.fn.extend({
     } 
 });
 
-function DocsParser(url,callback) {
+function DocsReader(url,callback) {
 	this.url = url;
 	this.callback = callback;
 	this.load();
 }
 
-DocsParser.prototype.load = function() {
+DocsReader.prototype.load = function() {
 	var self = this;
 	$.get(this.url,function(txt) {
 		if(self.callback) self.callback(self.parse(txt));
 	});
 }
 
-DocsParser.prototype.parse = function(txt) {
+DocsReader.prototype.parse = function(txt) {
 	var current;
 	var res = {};
 	txt = txt.split('\n');
+	var count = 0;
 	for(var i=0;i<txt.length;i++) {
 		var line = txt[i],
 			start = line.charAt(0);
 		if(!line.trim().length || line.charAt(0) == '#') continue;
 		if(start == '\t') {
 			// Property of an object
-			var split = line.split(':');
+			var split = line.split(':').map(function(s) { return s.trim(); });
 			if(split[1].split(',').length > 1 && split[1].slice(-1) != '.') {
 				split[1] = split[1].split(',').map(function(s) { return s.trim(); });
 			} else {
@@ -364,13 +365,15 @@ DocsParser.prototype.parse = function(txt) {
 			}
 			current[split[0]] = split[1];
 		} else {
+			line = line.trim();
 			if(line.slice(-1) == ':') {
 				line = line.slice(0,-1);
 			}
 			var split = line.split(' ');
-			res[split[0]] = res[split[0]] || {};
-			res[split[0]][split[1]] = {};
-			current = res[split[0]][split[1]];
+			res[split[0]] = res[split[0]] || [];
+			current = {name: split[1]};
+			res[split[0]].push(current);
+			count++;
 		}
 	}
 	return res;

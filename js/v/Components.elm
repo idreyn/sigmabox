@@ -1113,6 +1113,7 @@ def SimpleListItem {
 	css {
 		width: 100%;
 		padding: 20px;
+		box-sizing: border-box;
 		font-size: 14pt;
 		border-bottom: #DDD;
 		cursor: pointer;
@@ -1855,7 +1856,6 @@ def TextInput(defaultValue) {
 		padding-left: 15px;
 		font-size: 16pt;
 		outline: none;
-		border-style: none;
 		border: none;
 		width: 100%;
 	}
@@ -1883,10 +1883,8 @@ def TextInput(defaultValue) {
 	}
 
 	focus {
+		box-sizing: border-box;
 		border: 1px solid #CCC;
-		padding-top: 9px;
-		padding-bottom: 9px;
-		padding-left: 14px;
 	}
 }
 

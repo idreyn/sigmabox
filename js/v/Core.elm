@@ -57,8 +57,7 @@ def SigmaboxSideMenu {
 
 	my contents-container {
 		contents {
-			<img src='res/img/logo.png' width='100%' />
-			[[SigmaboxSideMenuItem 'light-bulb','lab']]
+			[[SigmaboxSideMenuItem 'logo','about',true]]
 			[[SigmaboxSideMenuItem 'calculator','eval']]
 			[[SigmaboxSideMenuItem 'repl', 'repl']]
 			[[SigmaboxSideMenuItem 'grapher','grapher']]
@@ -72,14 +71,14 @@ def SigmaboxSideMenu {
 	method setMode(mode) {
 		this.$SigmaboxSideMenuItem.each(function() {
 			if(this.mode == mode) {
-				self.selected = this;
 				this.showCircle();
+				self.selected = this;
 			}
 		});
 	}
 }
 
-def SigmaboxSideMenuItem(imageID,mode) {
+def SigmaboxSideMenuItem(imageID,mode,mainIcon) {
 	extends {
 		SideMenuItem
 	}
@@ -89,8 +88,17 @@ def SigmaboxSideMenuItem(imageID,mode) {
 		<img class='image' />
 	}
 
+	constructor {
+		if(this.mainIcon) {
+			this.$.addClass('main-icon');
+			this.$.css('margin-bottom',0);
+			this.$image.css('opacity',1).css('width',75).css('height',75);
+			this.@image.doAlign();
+		}
+	}
+
 	css {
-		margin-bottom: 15px;
+		margin-bottom: 10px;
 		background: none;
 		overflow-x hidden;
 		height: 75px;
@@ -112,6 +120,10 @@ def SigmaboxSideMenuItem(imageID,mode) {
 
 		constructor {
 			this.src = app.r.image(parent.imageID);
+			this.doAlign();
+		}
+
+		method doAlign {
 			$this.css('top',
 				($parent.height() - $this.height()) / 2
 			);
@@ -146,11 +158,11 @@ def SigmaboxSideMenuItem(imageID,mode) {
 	}
 
 	method showCircle {
-		if(app.useGratuitousAnimations() && false) {
+		if(app.useGratuitousAnimations()) {
 			setTimeout(function() {
-				self.$circle.show().animate({
+				self.$circle.show().css('scale',0.01).animate({
 					scale: 1.2
-				},500,'easeOutQuart');
+				},1000,'easeOutElastic');
 			},10);
 		} else {
 			this.$circle.css('scale',1.2).show();

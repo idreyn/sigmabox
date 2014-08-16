@@ -82,7 +82,7 @@ def HelpGuide {
 		<div>
 			<div class='stage'>
 				<div class='text'>
-				Lorem ipsum dolor sid amet
+
 				</div>
 			</div>
 		</div>
@@ -195,7 +195,7 @@ def HelpGuide {
 			{	
 			text: 'Pull up on the primary keyboard to select from several advanced keyboards.',
 				touchTip: {
-					target:'.Keyboard',
+					target: '.Keyboard',
 					type: 'up'
 				},
 				onEnter: function() {
@@ -208,7 +208,7 @@ def HelpGuide {
 			{
 				text: 'Pull down on the results pane for computation history.',
 				touchTip: {
-					target:'.LiveEvalCard',
+					target: '.LiveEvalCard',
 					type: 'down'
 				},
 				onEnter: function() {
@@ -228,7 +228,7 @@ def HelpGuide {
 			{
 				text: 'The SET button lets you assign any value to a variable.',
 				touchTip: {
-					target:'.set-button',
+					target: '.set-button',
 					type: 'no-stroke'
 				},
 				onEnter: function() {
@@ -238,7 +238,7 @@ def HelpGuide {
 			{
 				text: 'The STO button lets you store the current result in a variable.',
 				touchTip: {
-					target:'.sto-button',
+					target: '.sto-button',
 					type: 'no-stroke'
 				},
 				onExit: function() {
@@ -248,7 +248,7 @@ def HelpGuide {
 			{
 				text: 'The CLR button clears the current input.',
 				touchTip: {
-					target:'.clr-button',
+					target: '.clr-button',
 					type: 'no-stroke'
 				},
 				onEnter: function() {
@@ -265,9 +265,16 @@ def HelpGuide {
 			},
 			{
 				text: utils.tabletMode() ? 'It\'s all available from the menu on the left!' : 'Just swipe from the left edge!',
-				touchTip: utils.tabletMode() ? false : {target:'.Key[name=delete]',type:'right'},
+				touchTip: utils.tabletMode() ? false : {target: '.Key[name=delete]',type:'right'},
 				onEnter: function() {
 					app.root.showMenu();
+				}
+			},
+			{
+				text: 'Tap the Sigmabox icon for more information and help.',
+				touchTip: {
+					target: '.main-icon'
+					type: 'no-stroke'
 				},
 				onExit: function() {
 					app.root.hideMenu();
@@ -479,7 +486,6 @@ def HelpGuide {
 	}
 
 	method introduce(name,delay) {
-		return false;
 		if(app.data.helpSequencesPlayed.indexOf(name) != -1) {
 			return;
 		}
@@ -689,7 +695,6 @@ def HelpView {
 
 		css {
 			color: #666;
-			background: url(res/img/background.png);
 			background-size: cover;
 		}
 	}
@@ -700,26 +705,163 @@ def HelpView {
 		}
 	}
 
+	my DonateView {
+		properties {
+			src: 'docs/donate.md'
+		}
+
+		extends {
+			ReaderView
+		}
+
+		css {
+			color: #666;
+			background-size: cover;
+		}
+	}
+
+	css {
+		my tab-bar {
+			opacity: 1
+		}
+	}
+
+
 	my ReferenceView {
 		extends {
-			PageView
+			ListView
+		}
+
+		properties {
+			autoAddField: false
+		}
+
+		contents {
+			[[input:TextInput 'Search keys']]
+		}
+
+		my input {
+			css {
+				border: 1px solid #CCC;
+				padding-top: 0;
+				padding-bottom: 0;
+				position: absolute;
+				height: 60px;
+				background: #F5F5F5;
+				color: #999;
+				box-shadow: 1px 1px 1px 1px rgba(0,0,0,0.1);
+			}
+
+			focus {
+				border: none;
+			}
+
+			on keyup {
+				parent.search(this.$.val());
+			}
+		}
+
+		my contents-container {
+			css {
+				padding-top: 60px;
+			}
 		}
 
 		constructor {
 			this.$top-bar-container.hide();
+			this.reader = new DocsReader('docs/keys.txt',this.onParsed.bind(this));
 		}
 
-		my contents-container {
+		method onParsed(library) {
+			this.library = library;
+			if(this.buildLibraryOnParsed) {
+				this.buildLibrary();
+			}
+		}
+
+		method buildLibrary {
+			if(this.libraryBuilt) {
+				return;
+			}
+			if(!this.library) {
+				this.buildLibraryOnParsed = true;
+				return;
+			}
+			app.popNotification('Loading key reference...');
+			this.libraryBuilt = true;
+			this.library.key.forEach(function(key) {
+				var topic = self.create('Topic',key);
+				self.$contents-container.append(topic);
+			});
+			setTimeout(this.updateScroll.bind(this),1000);
+		}
+
+		method search(str) {
+			this.$Topic.each(function() {
+				if(this.$.html().indexOf(str) != -1) {
+					this.$.show();
+				} else {
+					this.$.hide();
+				}
+			});
+		}
+
+		css {
+			color: #666;
+			background: url(res/img/background.png);
+			background-size: cover;
+		}
+
+		my Topic(src) {
+			extends {
+				SimpleListItem
+			}
+
 			contents {
-				[[input:TextInput 'Where the hood at']]
+				<div class='title'></div>
+				<div class='contents'></div>
+			}
+
+			css {
+				font-size: 20px;
+				border-bottom: 1px solid #CCC;
+			}
+
+			my contents {
+				css {
+					font-size: 10px;
+				}
+			}
+
+			style active {
+				background: #FFF;
+			}
+
+			constructor {
+				this.$title.html('<b>key</b> ' + this.src.label);
+				this.$contents.append('<p> <b>name: </b>' + this.src.name + '</p>');
+				['location','parameters','range'].forEach(function(k) {
+					if(self.src[k]) {
+						var line = self.src[k];
+						if(line instanceof Array) {
+							line = line.join(',');
+						}
+						self.$contents.append('<p> <b>' + k + ': </b>' + self.src[k] + '</p>');
+					}
+				});
+				this.$contents.append('<p>' + this.src.usage + '</p>');
 			}
 		}
 	}
 
 	constructor {
 		this.addTab('About',this.create('AboutView'));
-		this.addTab('Help',this.create('ReferenceView'));
-		this.addTab('Donate');
+		this.addTab('Reference',this.create('ReferenceView'));
+		// this.addTab('Donate',this.create('DonateView'));
+	}
+
+	on displayed {
+		this.$ReferenceView.get(0).buildLibrary();
 	}
 
 	properties {
