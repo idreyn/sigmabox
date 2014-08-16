@@ -1,0 +1,703 @@
+# Basic keys
+
+key dot
+	label: .
+	usage: Produces a decimal point
+
+key comma: 
+	label: ,
+	location: hold [dot]
+	usage: Separates arguments to a function, list, or matrix.
+
+key scientific-notation
+	label: E
+	usage: Shortcut meaning "... times 10 to the ..."
+
+key plus:
+	label: +
+	usage: Adds two numbers, vectors, or matrices together.
+
+key minus:
+	label: -
+	usage: Subtracts two numbers, vectors, or matrices.
+
+key times:
+	label: ×
+	usage: Multiplies two numbers or matricies. Crosses two vectors.
+	see: lists-as-vectors
+
+key dot:
+	label: •
+	location: hold [times]
+	usage: Dots two vectors. Also multiplies numbers in a pinch.
+	see: lists-as-vectors
+
+key fraction:
+	label: ÷
+	usage: Divides two numbers, in fraction form.
+
+key divide:
+	label: /
+	location: hold [fraction]
+	usage: Divides two numbers, with the operator appearing as a / rather than a fraction bar.
+
+key equals:
+	label: =
+	usage: Causes the live evaluator to solve an equation for x. Causes classic mode to evaluate the current line.
+	see: solving-expressions
+
+key pow:
+	label: ^
+	usage: Raises a number (or a matrix, if you're feeling adventurous) to a power.
+
+key square:
+	label: x^2
+	usage: Raises a number to the second power.
+
+key parenthesis:
+	label: ()
+	usage: Throws in a pair of parenthesis.
+
+key brackets:
+	label: {}
+	location: hold [parenthesis]
+	usage: Creates a list. Use [comma] to add multiple items.
+	see: lists,lists-as-vectors
+
+key i:
+	label: i
+	usage: It's i, everyone's favorite imaginary unit. (Unless you're an electrical engineer)
+	see: imaginary-numbers
+
+key x:
+	label: x
+	usage: The variable x, which is used also used in solving expressions.
+	see: solving-expressions
+
+key list:
+	label: List
+	usage: Select a list from the Statistics module.
+
+key sqrt:
+	label: √
+	parameters: x on C
+	range: C
+	usage: Takes the square root of x.
+	see: taking-roots
+
+key log: 
+	label: log
+	parameters: x on [0,inf)
+	range: R
+	usage: Takes the base-10 log of x.
+
+key ln: 
+	label: ln
+	parameters: x on [0,inf)
+	range: R
+	usage: Takes the base-e log of x.
+
+key e:
+	label: e
+	usage: Euler's constant
+	see: log, ln
+
+key functions:
+	label: F(x)
+	usage: Select a function from the custom functions module.
+
+# Sine keys
+
+key sin:
+	label: sin
+	parameters: x on R
+	range: [-1,1]
+	usage: Calculates the sine of x.
+	see: deg-rad
+
+key asin:
+	label: asin
+	location: hold [sin]
+	parameters: x on [-1,1]
+	range: [-pi/2 rad, pi/2 rad]
+	usage: Calculates the inverse sine of x.
+	see: deg-rad
+
+key csc:
+	label: csc
+	location: hold [sin]
+	parameters: x on R \ x = pi/2 + n*pi
+	range: R \ [1,-1]
+	usage: Calcualtes the cosecant (1/sin) of x.
+
+key acsc:
+	label: acsc
+	location: hold [sin]
+	parameters: x on R \ [1,-1]
+	range: [0,pi]
+	usage: Calculates the inverse cosecant of x.
+	see: deg-rad
+
+key sinh:
+	location: hold [sin]
+	label: sinh
+	parameters: x on R
+	range: R
+	usage: Calculates the hyperbolic sine of x.
+
+key asinh:
+	label: asinh
+	location: hold [sin]
+	parameters: x on R
+	range: R
+	usage: Calculates the inverse hyperbolic sine of x.
+
+key csch:
+	label: csch
+	location: hold [sin]
+	parameters: x on R \ 0
+	range: R \ 0
+	usage: Calculates the hyperbolic cosecant of x.
+
+key acsch:
+	label: acsch
+	location: hold [sin]
+	parameters: x on R
+	range: R
+	usage: Calculates the inverse hyperbolic cosecant (!) of x.
+
+# Cosine keys
+
+key cos:
+	label: cos
+	location: hold [cos]
+	parameters: x on R
+	range: [-1,1]
+	usage: Calculates the cosine of x.
+	see: deg-rad
+
+key acos:
+	label: acos
+	location: hold [cos]
+	parameters: x on [-1,1]
+	range: [0 rad,pi rad]
+	usage: Calculates the inverse cosine of x.
+	see: deg-rad
+
+key sec:
+	label: sec
+	location: hold [cos]
+	parameters: x on R \ x = n*pi
+	range: R \ [1,-1]
+	usage: Calcualtes the secant (1/cos) of x.
+
+key asec:
+	label: asec
+	location: hold [cos]
+	parameters: x on R \ [1,-1]
+	range: [0,pi]
+	usage: Calculates the inverse secant of x.
+	see: deg-rad
+
+key cosh:
+	label: cosh
+	location: hold [cos]
+	parameters: x on R
+	range: [1,inf)
+	usage: Calculates the hyperbolic cosine of x.
+
+key acosh:
+	label: acosh
+	location: hold [cos]
+	parameters: x on [1,inf)
+	range: [0,inf)
+	usage: Calculates the inverse hyperbolic cosine of x.
+
+key sech:
+	label: sech
+	location: hold [cos]
+	parameters: x on R
+	range: (0,1)
+	usage: Calculates the hyperbolic secant of x.
+
+key asech:
+	label: asech
+	location: hold [cos]
+	parameters: (0,1]
+	range: [0,inf)
+	usage: Calculates the inverse hyperbolic secant (!) of x.
+
+# Tangent keys
+
+key tan:
+	label: tan
+	location: hold [tan]
+	parameters: x on R \ x = pi/2 + n*pi
+	range: R
+	usage: Calculates the cosine of x.
+	see: deg-rad
+
+key atan:
+	label: atan
+	location: hold [tan]
+	parameters: x on R
+	range: [-1,1]
+	usage: Calculates the inverse tangent of x.
+	see: deg-rad
+
+key cot:
+	label: cot
+	location: hold [tan]
+	parameters: x on R \ x = n*pi
+	range: R \ [1,-1]
+	usage: Calcualtes the cotangent (1/tan) of x.
+
+key acot:
+	label: acot
+	location: hold [tan]
+	parameters: x on R
+	range: (0,1)
+	usage: Calculates the inverse cotangent of x.
+	see: deg-rad
+
+key tanh:
+	label: tanh
+	location: hold [tan]
+	parameters: x on R
+	range: (-1,1)
+	usage: Calculates the hyperbolic tangent of x.
+
+key atanh:
+	label: atanh
+	location: hold [tan]
+	parameters: x on (-1,1)
+	range: R
+	usage: Calculates the inverse hyperbolic tangent of x.
+
+key coth:
+	label: coth
+	location: hold [tan]
+	parameters: x on R \ 0
+	range: R \ [1,-1]
+	usage: Calculates the hyperbolic cotangent of x.
+
+key acoth:
+	label: acoth
+	location: hold [tan]
+	parameters: R \ [1,-1]
+	range: R
+	usage: Calculates the inverse hyperbolic cotangent (!) of x.
+
+# Numerical keys
+
+key mod:
+	label: mod
+	location: numerical pull keyboard
+	parameters: a on Z, b on Z
+	range: Z
+	usage: Calculates the modulo (division remainder) of a and b.
+
+key fact:
+	label: fact
+	location: numerical pull keyboard
+	parameters: x on Z, x > 0
+	usage: Calculates the factorial of x.
+	see: gamma
+
+key rand:
+	label: rand
+	location: numerical pull keyboard
+	range: [0,1]
+	usage: Produces a random number between 0 and 1.
+
+	key prime:
+	label: prime
+	location: numerical pull keyboard
+	parameters: n on N
+	range: [2,inf)
+	usage: Produces the nth prime number.
+	see: is-prime
+
+key abs:
+	label: abs
+	location: numerical pull keyboard
+	parameters: x on Z
+	range: [0,inf)
+	usage: Returns the absolute value of a number (and the magnitude of a complex number)
+	see: complex-numbers
+
+key gcd:
+	label: gcd
+	location: numerical pull keyboard
+	parameters: a on Z, b on Z
+	range: [0,inf)
+	usage: Returns the least common denominator of two numbers
+	see: lcm
+
+key round:
+	label: round
+	location: numerical pull keyboard
+	parameters: x on R
+	range: Z
+	usage: Rounds to the nearest whole number.
+
+key isprime:
+	label: isprime
+	location: numerical pull keyboard
+	parameters: x on Z
+	range: 0 or 1
+	usage: Returns 1 if x is prime, 0 otherwise.
+
+key real-part:
+	label: Re
+	location: numerical pull keyboard
+	parameters: x on C
+	range: R
+	usage: Returns the real part of x.
+	see: imaginary-part
+
+key imaginary-part:
+	label: Im
+	location: numerical pull keyboard
+	parameters: x on C
+	range: R
+	usage: Returns the imaginary part of x.
+	see: real-part
+
+key combinations:
+	label: nCr
+	location: numerical pull keyboard
+	parameters: n on N, r on N
+	range: N
+	usage: Returns the number of combinations of r objects that can be made from a set of n objects. This is equal to n!/r!(n-r)!.
+	see: permutations
+
+key permutations:
+	label: nPr
+	location: numerical pull keyboard
+	parameters: n on N, r on N
+	range: N
+	usage: Returns the number of permutations that can be made by choosing r objects in order from the set of n objects. This is equal to n!/(n-r)!
+	see: combinations
+
+key roots-of-unity:
+	label: unity
+	location: numerical pull keyboard
+	parameters: n on N
+	range: List
+	usage: Returns the nth roots of unity.
+
+key gamma:
+	label: gamma
+	location: numerical pull keyboard
+	parameters: n on (0,inf)
+	range: C
+	usage: The gamma function.
+
+key derivative:
+	label: d/dx
+	location: numerical pull keyboard
+	usage: Takes the derivative of a function at a point.
+	see: [advanced-numerical-functions]
+
+key integral:
+	label: ∫
+	location: numerical pull keyboard
+	usage: Takes the definite intergral of a function between two boundaries.
+	see: [advanced-numerical-functions]
+
+key sum:
+	label: Σ
+	location: numerical pull keyboard
+	usage: Takes a sum between two boundaries.
+	see: [advanced-numerical-functions]
+
+key sum:
+	label: Π
+	location: numerical pull keyboard
+	usage: Takes a product between two boundaries.
+	see: [advanced-numerical-functions]
+
+# Matrix keys
+	
+key ref:
+	label: ref
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Puts a matrix in row echelon form.
+
+key rref:
+	label: rref
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Puts a matrix in reduced row echelon form...useful for solving linear systems.
+
+key determinant:
+	label: det
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Takes the determinant of a matrix.
+
+key inv:
+	label: inv
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Takes the inverse of a matrix.
+
+key transpose:
+	label: trans
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Takes the transpose of a matrix.
+
+key transpose:
+	label: trans
+	location: matrix pull keyboard
+	parameters: matrix M
+	usage: Takes the transpose of a matrix.
+
+key identity:
+	label: id
+	location: matrix pull keyboard
+	parameters: n on N
+	usage: Produces the nth-order identity matrix.
+
+key matrix-brackets:
+	label: []
+	location: matrix pull keyboard
+	usage: Suare brackets create a matrix of arbitrary dimension. Use a comma to separate elements, and a | (matrix bar) to separate rows.
+	see: matrix-bar
+
+key matrix-bar:
+	label: |
+	location: matrix pull keyboard
+	usage: Use the matrix bar to separate rows when creating matrices with square brackets.
+	see: matrix-brackets
+
+# List keys
+
+key min:
+	label: min
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the lowest item in a list.
+	see: max
+
+key max:
+	label: max
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the highest item in a list.
+	see: min
+
+key range:
+	label: range
+	location: list pull keyboard
+	parameters: start on R, end on R, [step on N]
+	usage: Returns a range of numbers from start to end, optionally stepping by step.
+
+key list-sum:
+	label: lsum
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the sum of elements in a list.
+	see: list-product
+
+key list-product:
+	label: lprod
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the product of elements in a list.
+	see: list-sum
+
+key cumulative-sum:
+	label: csum
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the cumulative sum of the items in a list by adding all previous elements to obtain the next element. Essentially the inverse of dlist.
+	see: delta-list
+
+key delta-list:
+	label: dlist
+	location: list pull keyboard
+	parameters: list L
+	usage: Returns the delta list of a list by subtracting the previous two elements to obtain the next element. Essentially the opposite of csum.
+	see: culumlative-sum
+
+key sort:
+	label: sort
+	location: list pull keyboard
+	parameters: list L
+	usage: Sorts a list.
+	see: reverse
+
+key mean:
+	label: mean
+	location: list pull keyboard
+	parameters: list L
+	usage: Produces the mean of the items in a list.
+	see: median, mode, stdev
+
+key median:
+	label: median
+	location: list pull keyboard
+	parameters: list L
+	usage: Produces the median of the items in a list.
+	see: mean, mode
+
+key mode:
+	label: mode
+	location: list pull keyboard
+	parameters: list L
+	usage: Produces the mode or modes of the items in a list.
+	see: mean, median
+
+key standard-deviation:
+	label: stdev
+	location: list pull keyboard
+	parameters: list L
+	usage: Produces the standard deviation of the items in a list.
+	see: mean
+
+key reverse:
+	label: reverse
+	location: list pull keyboard
+	parameters: list L
+	usage: Reverses a list.
+	see: sort
+
+key map:
+	label: map
+	location: list pull keyboard
+	parameters: lambda A, list L
+	usage: Applies operation A to each item of list L and returns the result.
+	see: filter, reduce
+
+key filter:
+	label: filter
+	location: list pull keyboard
+	parameters: lambda A, list L
+	usage: Returns only the elements i of L for which A(i) is nonzero.
+	see: map, reduce
+
+key reduce:
+	label: reduce
+	location: list pull keyboard
+	parameters: lambda A(x,y), list L
+	usage: Plucks the leftmost two elements of L as x and y and replaces them with A(x,y) until the list is a single element.
+	see: map, filter
+
+key union:
+	label: union
+	location: list pull keyboard
+	parameters: list A, list B
+	usage: Returns the union of two sets A and B.
+	see: intersection
+
+key intersection:
+	label: intersection
+	location: list pull keyboard
+	parameters: list A, list B
+	usage: Returns the intersection of two sets A and B.
+	see: union
+
+key normalpdf:
+	label: normalpdf
+	location: distributions pull keyboard
+	parameters: , mu, sigma
+	usage: Returns the value of a normal distribution with mean mu and standard deviation sigma at x.
+	see: normalcdf
+
+key normalcdf:
+	label: normalcdf
+	location: distributions pull keyboard
+	parameters: x1,x2,mu,sigma
+	usage: Returns cumulative value (integral) of a normal distribution with mean mu and standard deviation sigma between x1 and x2.
+	see: normalpdf
+
+key znormal:
+	label: znormal
+	location: distributions pull keyboard
+	parameters: z
+	usage: Returns the left-tail probability for a given z-score.
+
+key binompdf:
+	label: binompdf
+	location: distributions pull keyboard
+	parameters: n, p, k
+	usage: Given independent trial probability p, returns the probability of k successful trials in a series of n trials.
+	see: binomcdf
+
+key binomcdf:
+	label: binomcdf
+	location: distributions pull keyboard
+	parameters: n, p, k
+	usage: Given independent trial probability p, returns the cumulative probability of k or fewer successful trials in a series of n trials.
+	see: binompdf
+
+key geompdf:
+	label: geompdf
+	location: distributions pull keyboard
+	parameters: p, n
+	usage: Given independent trial probability p, returns the probability that repeated trials will produce a success on iteration n.
+	see: geomcdf
+
+key geomcdf:
+	label: geomcdf
+	location: distributions pull keyboard
+	parameters: p, n
+	usage: Given independent trial probability p, returns the cumulative probability that repeated trials will produce a success by iteration n.
+	see: geomdpf
+
+key poissonpdf:
+	label: poissonpdf
+	location: distributions pull keyboard
+	parameters: l, k
+	usage: Returns the value of a Poisson distribution with parameter l and index k.
+	see: poissoncdf
+
+key poissoncdf:
+	label: poissoncdf
+	location: distributions pull keyboard
+	parameters: l, k
+	usage: Returns the cumulative value (integral) of a Poisson distribution with parameter l and index k.
+	see: poissondpdf
+
+key chisquaredpdf
+	label: chisquaredpdf
+	location: distributions pull keyboard
+	parameters: x, k
+	usage: Returns the value of a chi-squared distribution for input x with k degrees of freedom.
+	see: chisquaredcdf
+
+key chisquaredcdf
+	label: chisquaredcdf
+	location: distributions pull keyboard
+	parameters: x, k
+	usage: Returns the cumulative value (integral) of a chi-squared distribution for input x with k degrees of freedom.
+	see: chisquaredpdf
+
+key standardnormalpdf
+	label: stdnrmlpdf
+	location: distributions pull keyboard
+	parameters: x
+	usage: Returns the value of the standard normal distribution (mu=0,sigma=1) at x.
+	see: standardnormalcdf
+
+key standardnormalcdf
+	label: stdnrmlcdf
+	location: distributions pull keyboard
+	parameters: x
+	usage: Returns the value of the left-tail cumulative standard normal distribution (mu=0,sigma=1) at x.
+	see: standardnormalpdf
+
+key tdist:
+	label: tdist
+	location: distributions pull keyboard
+	parameters: t, n
+	usage: Returns the left-tail probability for t-score t with n degrees of freedom.
+
+
+
+
+
