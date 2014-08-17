@@ -1896,8 +1896,7 @@ def TextInput(defaultValue) {
 			$this.val('');
 			this.setStyle('not-empty');
 		}
-        window.scrollTo(0, 0);
-        document.body.scrollTop = 0;
+        this.$.removeAttr('readonly');
 	}
 
 	on blur {
@@ -1905,6 +1904,7 @@ def TextInput(defaultValue) {
 			$this.val(this.defaultValue);
 			this.setStyle('empty');
 		}
+		this.$.attr('readonly','readonly');
 	}
 
 	focus {
