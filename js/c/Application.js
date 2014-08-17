@@ -107,12 +107,15 @@ Application.prototype.showKeyboard = function() {
 Application.prototype.resize = function() {
 	var self = this;
 	this.root.size();
+	console.log('size');
 	setTimeout(function() {
 		self.root.size();
+		console.log('size');
 	},1000);
 }
 
 Application.prototype.liteResize = function() {
+	console.log('liteResize');
 	this.keyboard.size(this.keyboardHeight);
 	this.mode.size(this.modeHeight);
 }

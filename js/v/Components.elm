@@ -644,9 +644,13 @@ def SlideView {
 		</div>
 	}
 
+	properties {
+		animate: false
+	}
+
 	css {
 		postion: relative;
-		-webkit-transition: -webkit-transform 0.2s ease-in-out;
+		//-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
 
 	my container {
@@ -729,6 +733,7 @@ def SlideView {
 	}
 
 	on invalidate {
+		return;
 		if(this.horizontal) {
 			this.@container.$.css('translateX', 0 - this.horizontalOffset(this.currentIndex));
 		} else {
@@ -750,9 +755,14 @@ def SlideView {
 		offset = this.horizontal? this.horizontalOffset(index) : this.verticalOffset(index);
 		var animObject = {};
 		animObject[this.horizontal? 'translateX' : 'translateY'] = 0 - offset;
-		this.@container.$.animate(animObject,time !== undefined? time : this.transitionTime,this.transition,function() {
+		if(this.animate) {
+			this.@container.$.animate(animObject,time !== undefined? time : this.transitionTime,this.transition,function() {
+				if(callback) callback();
+			});
+		} else {
+			this.@container.$.css(animObject);
 			if(callback) callback();
-		});
+		}
 		if(this.viewByIndex(index).noKeyboard) {
 			this.noKeyboard = true;
 			app.hideKeyboard();
