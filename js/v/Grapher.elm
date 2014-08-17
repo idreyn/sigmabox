@@ -3,6 +3,10 @@ def GrapherView {
 		SlideView
 	}
 
+	properties {
+		animate: true
+	}
+
 	constructor {
 		this.colors = app.utils.colors();
 		this.transition = 'easeInOutQuart';
