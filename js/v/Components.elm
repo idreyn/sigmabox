@@ -140,6 +140,14 @@ def View {
 	}
 
 	method size(i) {
+		this._size(i);
+	}
+
+	method _size(i) {
+		if(this.ignoreSize) {
+			console.log('ignoring',this);
+			return;
+		}
 		if(this.maxWidth) $this.css('width',this.maxWidth.toString() + '%');
 		if(i === undefined) {
 			if(this.screenFraction === undefined) {
@@ -649,6 +657,7 @@ def SlideView {
 	}
 
 	css {
+		overflow: visible;
 		postion: relative;
 		//-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
@@ -746,10 +755,14 @@ def SlideView {
 	}
 
 	method slideTo(index,callback,time) {
-		var offset = 0;
+		var offset = 0,
+			target;
 		if(isNaN(index)) {
 			// Must be a child rather than an index. Find the index.
+			target = index;
 			index = $(index).index();
+		} else {
+			target = this.viewByIndex(index);
 		}
 		index = Math.max(0,Math.min(index,this.$container.children().length - 1));
 		offset = this.horizontal? this.horizontalOffset(index) : this.verticalOffset(index);
@@ -763,14 +776,14 @@ def SlideView {
 			this.@container.$.css(animObject);
 			if(callback) callback();
 		}
-		if(this.viewByIndex(index).noKeyboard) {
+		if(target.noKeyboard) {
 			this.noKeyboard = true;
 			app.hideKeyboard();
 		} else {
 			this.noKeyboard = false;
 			app.showKeyboard();
 		}
-		this.delegateFocus(this.viewByIndex(index));
+		this.delegateFocus(target);
 		this.currentIndex = index;
 	}
 
@@ -1883,6 +1896,8 @@ def TextInput(defaultValue) {
 			$this.val('');
 			this.setStyle('not-empty');
 		}
+        window.scrollTo(0, 0);
+        document.body.scrollTop = 0;
 	}
 
 	on blur {
