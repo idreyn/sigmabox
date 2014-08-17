@@ -1868,7 +1868,7 @@ def Confirm(title,theContents,callback,okayLabel,cancelLabel) {
 
 def TextInput(defaultValue) {
 	html {
-		<input type='text' value='$defaultValue' autocorrect='off' autocapitalize='off'/>
+		<input type='text' value='$defaultValue' autocorrect='off' autocapitalize='off' readonly='readonly'/>
 	}
 
 	css {
