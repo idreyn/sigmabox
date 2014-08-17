@@ -1752,6 +1752,12 @@ def Prompt(title,callback,defaultValue) {
 			[[input:TextInput '']]
 		}
 
+		my input {
+			css {
+				width: 100%;
+			}
+		}
+
 		constructor {
 			this.$input.val(root.defaultValue);
 			this.$input.focus();
@@ -1868,7 +1874,7 @@ def Confirm(title,theContents,callback,okayLabel,cancelLabel) {
 
 def TextInput(defaultValue) {
 	html {
-		<input type='text' value='$defaultValue' autocorrect='off' autocapitalize='off' readonly='readonly'/>
+		<input type='text' value='$defaultValue' autocorrect='off' autocapitalize='off'/>
 	}
 
 	css {
@@ -1880,7 +1886,6 @@ def TextInput(defaultValue) {
 		font-size: 16pt;
 		outline: none;
 		border: none;
-		width: 100%;
 	}
 
 	style empty {
@@ -1896,7 +1901,6 @@ def TextInput(defaultValue) {
 			$this.val('');
 			this.setStyle('not-empty');
 		}
-        this.$.removeAttr('readonly');
 	}
 
 	on blur {
@@ -1904,7 +1908,6 @@ def TextInput(defaultValue) {
 			$this.val(this.defaultValue);
 			this.setStyle('empty');
 		}
-		this.$.attr('readonly','readonly');
 	}
 
 	focus {

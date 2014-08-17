@@ -740,6 +740,15 @@ def HelpView {
 			[[input:TextInput 'Search keys']]
 		}
 
+		on invalidate {
+			var w = $this.width();
+			if(utils.tabletMode()) {
+				this.$input.css('width',w * 0.6);
+			} else {
+				this.$input.css('width',w);
+			}
+		}
+
 		my input {
 			css {
 				border: 1px solid #CCC;
@@ -787,7 +796,7 @@ def HelpView {
 				this.buildLibraryOnParsed = true;
 				return;
 			}
-			// app.popNotification('Loading key reference...');
+			//app.popNotification('Loading key reference...');
 			this.libraryBuilt = true;
 			this.library.key.forEach(function(key) {
 				var topic = self.create('Topic',key);
