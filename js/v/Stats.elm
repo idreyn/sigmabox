@@ -74,8 +74,8 @@ def StatsListsManager {
 	my toolbar {
 		contents {
 			[[tests-button:ToolbarButton 'Tools']]
-			[[back-button:ToolbarButton '<']]
-			[[next-button:ToolbarButton '>']]
+			[[back-button:ToolbarButton '']]
+			[[next-button:ToolbarButton '']]
 			[[add-button:ToolbarButtonImportant 'Add']]
 		}
 	}
@@ -89,6 +89,10 @@ def StatsListsManager {
 	}
 
 	my back-button {
+		contents {
+			<i class='fa fa-chevron-left'></i>
+		}
+
 		on invoke {
 			if(!root.scroll) return;
 			root.scroll.prev();
@@ -97,6 +101,10 @@ def StatsListsManager {
 	}
 
 	my next-button {
+		contents {
+			<i class='fa fa-chevron-right'></i>
+		}
+
 		on invoke {
 			if(!root.scroll) return;
 			root.scroll.next();

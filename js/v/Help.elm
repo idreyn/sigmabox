@@ -502,6 +502,7 @@ def HelpGuide {
 		if(!this.sequences[name]) {
 			return;
 		}
+		app.useKeyboard('main');
 		app.root.menuItemsDisabled = true;
 		this.index = 0;
 		this.sequenceName = name;

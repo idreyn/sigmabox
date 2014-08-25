@@ -362,6 +362,15 @@ def ReaderView {
 				self.$contents-container.css('padding-top',0).css('padding-bottom',0);
 			}
 			self.$contents-container.html(res);
+			self.$.find('a').each(function() {
+				var url = $(this).attr('href');
+				$(this).removeAttr('href');
+				$(this).css('text-decoration','underline');
+				$(this).on('touchstart click', function() {
+					event.preventDefault();
+					window.open(url,'_system');
+				});
+			});
 		});
 	}
 }
@@ -1663,6 +1672,7 @@ def Dialog(title,buttons,contents) {
 
 	method cancel {
 		if(self.cancelCallback) self.cancelCallback();
+		app.ignoreResize = false;
 		self.fadeOut();
 	}
 
@@ -1765,12 +1775,14 @@ def Prompt(title,callback,defaultValue) {
 	}
 
 	on showing {
+		app.ignoreResize = true;
 		this.$input.focus();
 	}
 
 	method okay {
 		if(self.callback) self.callback(self.$input.val(),self.fadeOut,function(s) {
 			self.$title.html(s);
+			app.ignoreResize = false;
 		});
 	}
 
@@ -1897,6 +1909,7 @@ def TextInput(defaultValue) {
 	}
 
 	on focus {
+		app.ignoreResize = true;
 		if($this.val() == this.defaultValue) {
 			$this.val('');
 			this.setStyle('not-empty');
@@ -1904,6 +1917,7 @@ def TextInput(defaultValue) {
 	}
 
 	on blur {
+		app.ignoreResize = false;
 		if($this.val() == '') {
 			$this.val(this.defaultValue);
 			this.setStyle('empty');

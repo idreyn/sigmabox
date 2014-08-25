@@ -1196,7 +1196,7 @@ var elm;
     var seeIfLoaded = function () {
         if ($('head').length > 0) {
             elm.using.apply(null, $('script').toArray().map(function (i) {
-                if ($(i).attr('type').indexOf('elemental') != -1) {
+                if (($(i).attr('type') || '').indexOf('elemental') != -1) {
                     return $(i).attr('src') || elm.parse($(i).html());
                 } else {
                     return false;

@@ -1,28 +1,5 @@
 <html>
 	<head>
-		<script type="text/javascript">
- 
-		  function logEvent(event) {
-
-		  }
-		 
-		  window.applicationCache.addEventListener('checking',logEvent,false);
-		  window.applicationCache.addEventListener('noupdate',logEvent,false);
-		  window.applicationCache.addEventListener('downloading',logEvent,false);
-		  window.applicationCache.addEventListener('cached',logEvent,false);
-		  window.applicationCache.addEventListener('updateready',logEvent,false);
-		  window.applicationCache.addEventListener('obsolete',logEvent,false);
-		  window.applicationCache.addEventListener('error',logEvent,false);
-
-		function onDeviceReady() {
-		    if (parseFloat(window.device.version) >= 7.0) {
-		         // document.body.style.marginTop = "20px";
-		    }
-		}
-  
-		document.addEventListener('deviceready', onDeviceReady, false);
-		 
-		</script>
 		<!-- Libraries -->
 		<script type='text/javascript' src='js/lib/jquery.js'> </script>
 		<script type='text/javascript' src='js/lib/jquery.easing.js'> </script>
@@ -34,6 +11,7 @@
 		<script type='text/javascript' src='js/lib/hammer.js'> </script>
 		<script type='text/javascript' src='js/lib/quantities.js'> </script>
 		<script type='text/javascript' src='js/lib/marked.js'> </script>
+		<script type='text/javascript' src="phonegap.js"></script>
 		<!-- Models -->
 		<script type='text/javascript' src='js/m/Parser.js'> </script>
 		<script type='text/javascript' src='js/m/Evaluator.js'> </script>
@@ -65,19 +43,14 @@
 		<script type='text/javascript' src='js/init.js'> </script>
 		<!-- CSS -->
 		<link rel='stylesheet' type='text/css' href='css/style.css' />
+		<link rel="stylesheet" type="text/css" href="css/font-awesome.css" />
 		<link rel="stylesheet" type="text/css" href="js/lib/mathquill/mathquill.css" />
-
 		<!-- Meta -->
 		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0" />
 		<meta name="apple-mobile-web-app-capable" content="yes" />
 		<meta name="apple-mobile-web-app-status-bar-style" content="black" />
 		<link rel="apple-touch-icon-precomposed" href="res/icons/icon.png"/>
-		<!-- Splash -->
-		<!-- iPhone 5 -->
-		<link href="apple-touch-startup-image-640x1096.png"
-		      media="(device-width: 320px) and (device-height: 568px)
-		         and (-webkit-device-pixel-ratio: 2)"
-		      rel="apple-touch-startup-image">
+		<link rel="apple-touch-startup-image" href="res/icons/splash.png" />
 		<title>Sigmabox</title>
 	</head>
 	<body>

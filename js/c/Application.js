@@ -67,6 +67,14 @@ Application.prototype.initLayout = function(wrapper) {
 		this.overlay(elm.create('WelcomeView'));
 	}
 
+	setTimeout(function() {
+		try {
+			navigator.splashscreen.hide();
+		} catch(e) {
+			// Do nothing
+		}
+	},1000);
+
 	$(window).trigger('app-ready');
 }
 
@@ -105,17 +113,16 @@ Application.prototype.showKeyboard = function() {
 }
 
 Application.prototype.resize = function() {
+	if(this.ignoreResize) return;
 	var self = this;
 	this.root.size();
-	console.log('size');
 	setTimeout(function() {
 		self.root.size();
-		console.log('size');
 	},1000);
 }
 
 Application.prototype.liteResize = function() {
-	console.log('liteResize');
+	if(this.ignoreResize) return;
 	this.keyboard.size(this.keyboardHeight);
 	this.mode.size(this.modeHeight);
 }

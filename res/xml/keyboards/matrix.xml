@@ -9,31 +9,31 @@
 		<primary close='close' action='input: left' text-label='rref'>\rref()</primary>
 	</key>
 	<key name='1x1' row='1' col='2'>
-		<primary close='close' action='input: left' text-label='1x1'>\matrixOneOne{}</primary>
+		<primary close='close' action='input: left' text-label='[ • ]'>\matrixOneOne{}</primary>
 	</key>
 	<key name='1x2' row='1' col='3'>
-		<primary close='close' action='input: left,left' text-label='1x2'>\matrixOneTwo{}{}</primary>
+		<primary close='close' action='input: left,left' text-label='[ •• ]'>\matrixOneTwo{}{}</primary>
 	</key>
 	<key name='1x3' row='1' col='4'>
-		<primary close='close' action='input: left,left,left' text-label='1x3'>\matrixOneThree{}{}{}</primary>
+		<primary close='close' action='input: left,left,left' text-label='[ ••• ]'>\matrixOneThree{}{}{}</primary>
 	</key>
 	<key name='2x1' row='2' col='2'>
-		<primary close='close' action='input: left,left' text-label='2x1'>\matrixTwoOne{}{}</primary>
+		<primary close='close' action='input: left,left' text-label='[ : ]'>\matrixTwoOne{}{}</primary>
 	</key>
 	<key name='2x2' row='2' col='3'>
-		<primary close='close' action='input: left,left,left,left' text-label='2x2'>\matrixTwoTwo{}{}{}{}</primary>
+		<primary close='close' action='input: left,left,left,left' text-label='[ :: ]'>\matrixTwoTwo{}{}{}{}</primary>
 	</key>
 	<key name='2x3' row='2' col='4'>
-		<primary close='close' action='input: left,left,left,left,left,left' text-label='2x3'>\matrixTwoThree{}{}{}{}{}{}</primary>
+		<primary close='close' action='input: left,left,left,left,left,left' text-label='[ ::: ]'>\matrixTwoThree{}{}{}{}{}{}</primary>
 	</key>
 	<key name='3x1' row='3' col='2'>
-		<primary close='close' action='input: left,left,left' text-label='3x1'>\matrixThreeOne{}{}{}</primary>
+		<primary close='close' action='input: left,left,left' style='letter-spacing:-0.15em;font-size:30px' text-label='[ ⋮ ]'>\matrixThreeOne{}{}{}</primary>
 	</key>
 	<key name='3x2' row='3' col='3'>
-		<primary close='close' action='input: left,left,left,left,left,left' text-label='3x2'>\matrixThreeTwo{}{}{}{}{}{}</primary>
+		<primary close='close' action='input: left,left,left,left,left,left' style='letter-spacing:-0.25em;font-size:30px' text-label='[ ⋮⋮ ]'>\matrixThreeTwo{}{}{}{}{}{}</primary>
 	</key>
 	<key name='3x3' row='3' col='4'>
-		<primary close='close' action='input: left,left,left,left,left,left,left,left,left' text-label='3x3'>\matrixThreeThree{}{}{}{}{}{}{}{}{}</primary>
+		<primary close='close' action='input: left,left,left,left,left,left,left,left,left' style='letter-spacing:-0.2em;font-size:30px' text-label='[ ⋮⋮⋮ ]'>\matrixThreeThree{}{}{}{}{}{}{}{}{}</primary>
 	</key>
 	<key name='determinant' row='4' col='2'>
 		<primary close='close' action='input:left' text-label='det'>\det()</primary>
