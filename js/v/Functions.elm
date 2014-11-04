@@ -158,6 +158,7 @@ def FunctionField(focusManager) {
 				name = StringUtil.trim(name);
 				if(name.match(/^[A-Za-z][A-Za-z0-9]*$/)) {
 					if(app.data.isNameAvailable(name)) {
+						self.parent('FunctionListView').$empty-notice.hide();
 						if(self.functionName) {
 							app.data.unregisterFunction(self.functionName);
 							app.data.registerFunction(name);
@@ -207,7 +208,7 @@ def FunctionField(focusManager) {
 		var parent = self.parent('ListView');
 		$this.remove();
 		parent.updateScroll();
-		if(app.data.customFunctions.length == 0) {
+		if(Object.keys(app.data.customFunctions).length == 0) {
 			parent.$empty-notice.show();
 		}
 	}

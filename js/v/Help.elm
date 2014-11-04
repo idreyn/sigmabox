@@ -486,7 +486,7 @@ def HelpGuide {
 	}
 
 	method introduce(name,delay) {
-		if(app.data.helpSequencesPlayed.indexOf(name) != -1) {
+		if(app.data.helpSequencesPlayed.indexOf(name) != -1 && window.location.hash == '#nohelp') {
 			return;
 		}
 		setTimeout(function() {

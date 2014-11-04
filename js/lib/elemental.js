@@ -303,7 +303,7 @@ var elm;
             }
             return n;
         },
-        debug: true,
+        debug: false,
         _definitions: {},
         def: function (n) {
             return elm._definitions[n];
@@ -1207,7 +1207,7 @@ var elm;
                 $.holdReady(false);
             }));
         } else {
-            setTimeout(seeIfLoaded, 10);
+            setTimeout(seeIfLoaded, 1);
         }
     }
     seeIfLoaded();
