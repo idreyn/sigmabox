@@ -63,7 +63,7 @@ Application.prototype.initLayout = function(wrapper) {
 	this.data.uiSyncReady();
 	this.mode.init();
 
-	if(this.data.helpSequencesPlayed.indexOf('eval') == -1) {
+	if(this.data.helpSequencesPlayed.indexOf('eval') == -1 && !window.location.hash == '#nohelp') {
 		this.overlay(elm.create('WelcomeView'));
 	}
 

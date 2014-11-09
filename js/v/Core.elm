@@ -273,9 +273,9 @@ def Notification(text,duration) {
 		line-height: 30px;
 		color: #999;
 		background: #EEE;
-		//box-shadow: 1px 1px 1px rgba(0,0,0,0.2);
 		padding: 10px;
 		z-index: 3000;
+		overflow: hidden;
 	}
 
 	constructor {

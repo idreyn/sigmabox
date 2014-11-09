@@ -67,11 +67,13 @@ def Keyboard(keyboardSource) {
 	}
 	
 	constructor {
+		this.visible = true;
 		this.size();
 		this.notAnimated();
 	}
 
 	method slideUp(n,e) {
+		this.visible = true;
 		this.animated();
 		$this.show();
 		setTimeout(function() {
@@ -83,6 +85,7 @@ def Keyboard(keyboardSource) {
 	}
 
 	method slideDown(n,e) {
+		this.visible = false;
 		this.animated();
 		$this.css({
 			'translateY': parseInt($this.css('height'))

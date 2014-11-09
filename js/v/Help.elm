@@ -73,10 +73,6 @@ def WelcomeView {
 	}
 }
 
-def InformationView {
-
-}
-
 def HelpGuide {
 	html {
 		<div>
@@ -502,7 +498,9 @@ def HelpGuide {
 		if(!this.sequences[name]) {
 			return;
 		}
-		app.useKeyboard('main');
+		if(app.keyboard.visible) {
+			app.useKeyboard('main');
+		}
 		app.root.menuItemsDisabled = true;
 		this.index = 0;
 		this.sequenceName = name;
