@@ -220,6 +220,11 @@ def REPLInput(focusManager,repl) {
 		padding-right: 10px;
 	}
 
+	constructor {
+		this.effect = elm.create('REPLHoldEffect',0.5);
+		this.$.append(this.effect);
+	}
+
 	my MathInput {
 		css {
 			border: none;
@@ -236,9 +241,18 @@ def REPLInput(focusManager,repl) {
 		}
 
 		on update {
-			// this.parent('REPLLine').evaluate(this.contents());
 			this.parent('REPL').doUpdateScroll();
 		}
+	}
+
+	on begin {
+		if(!this.enabled) {
+			this.effect.run();
+		}
+	}
+
+	on end {
+		this.effect.cancel();
 	}
 
 	on hold {
@@ -260,8 +274,22 @@ def REPLOutput {
 		<span class='contents'><span>
 	}
 
+	constructor {
+		this.effect = elm.create('REPLHoldEffect',0.5);
+		this.$.append(this.effect);
+
+	}
+
 	extends {
 		TouchInteractive
+	}
+
+	on begin {
+		this.effect.run();
+	}
+
+	on end {
+		this.effect.cancel();
 	}
 
 	on hold {
@@ -272,6 +300,7 @@ def REPLOutput {
 	}
 
 	css {
+		position: relative;
 		box-sizing: border-box;
 		font-size: 14pt;
 		padding: 10px;
@@ -299,3 +328,34 @@ def REPLButton(text) {
 		background: none;
 	}
 }
+
+def REPLHoldEffect(time) {
+	html {
+		<div></div>
+	}
+
+	css {
+		position: absolute
+		top: 0px
+		left: 0px
+		opacity: 0;
+		background: rgba(0,0,0,0.1);
+	}
+
+	method run {
+		this.$.css('width',this.$.parent().outerWidth());
+		this.$.css('height',this.$.parent().outerHeight());
+		this.$.css('translateX', 0 - this.$.parent().outerWidth())
+		this.$.css('opacity',1);
+		this.$.animate({translateX: 0},this.time * 1000).animate({opacity:0},100);
+	}
+
+	method cancel {
+		this.$.stop().animate({translateX: 0 - this.$.parent().outerWidth()},100);
+	}
+}
+
+
+
+
+	
