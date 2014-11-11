@@ -145,7 +145,6 @@ def View {
 
 	method _size(i) {
 		if(this.ignoreSize) {
-			console.log('ignoring',this);
 			return;
 		}
 		if(this.maxWidth) $this.css('width',this.maxWidth.toString() + '%');
@@ -2281,10 +2280,13 @@ def PullIndicatorHoriz(src,owner) {
 		}
 		var index = Math.min(this.src.length - 1,Math.round(this.src.length * (data.x - this.pullMin) / this.pullMax));
 		if(Math.abs(data.translateX) > this.pullMin && index >= 0 && index < this.src.length) {
-			this.current = this.src[index];
-			l.css('background-image', 'url(' + this.current.label + ')')
-			l.css('background-repeat','no-repeat').css('background-position','center center').css('background-size',Math.min($this.height()/2,30));
-			this.$.css('background-color',this.current.color);
+			if(index != this.lastIndex || this.lastIndex === undefined) {
+				this.lastIndex = index;
+				this.current = this.src[index];
+				l.css('background-image', 'url(' + this.current.label + ')')
+				l.css('background-repeat','no-repeat').css('background-position','center center').css('background-size',Math.min($this.height()/2,30));
+				this.$.css('background-color',this.current.color);
+			}
 		} else {
 			this.current = null;
 		}

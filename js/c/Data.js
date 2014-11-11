@@ -141,11 +141,22 @@ Data.prototype.init = function() {
 		'ln': this.wrap(function(n) {
 			if(n <= 0) throw "Domain error (ln)";
 			return Math.log(n);
-		}
-		,false),
-		'log': this.wrap(function(n) {
-			if(n <= 0) throw "Domain error (log)";
-			return Functions.round(Math.log(n) / Math.LN10,10);
+		},false),
+		'lg': this.wrap(function(n) {
+			if(n <= 0) throw "Domain error (lg)";
+			return Math.log(n) / Math.log(2);
+		},false),
+		'log': this.wrap(function(n,b) {
+			if(!b) {
+				if(n <= 0) throw "Domain error (log)";
+				return Functions.round(Math.log(n) / Math.LN10,10);
+			} else {
+				if(b == 1) {
+					throw "Base error (log)";
+				} else {
+					return Functions.round(Math.log(n) / Math.log(b),10);
+				}
+			}
 		},false),
 		// Matrix functions
 		'id': this.wrap(Functions.identityMatrix,false,true,false),

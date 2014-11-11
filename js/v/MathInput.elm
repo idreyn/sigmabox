@@ -180,7 +180,6 @@ def MathInput(owner) {
 
 	on touchmove(e) {
 		e.preventDefault();
-		return;
 		var x = e.originalEvent.touches[0].pageX;
 		var y = e.originalEvent.touches[0].pageY;
 		this.mathSelf().cursor.seek($(this),x,y);	

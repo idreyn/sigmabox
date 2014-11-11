@@ -59,6 +59,10 @@ Application.prototype.initLayout = function(wrapper) {
 
 	$(window).on('resize',$.proxy(this.resize,this));
 	this.resize();
+
+	document.ontouchstart = function(e) { e.preventDefault(); };
+	document.ontouchmove = function(e) { e.preventDefault(); };
+	
 	
 	this.data.uiSyncReady();
 	this.mode.init();
