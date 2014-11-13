@@ -1651,6 +1651,7 @@ def Dialog(title,buttons,contents) {
 
 	method fadeOut {
 		var bullshit = true;
+		app.ignoreResize = false;
 		if(bullshit) {
 			self.$overlay.css('opacity',0.8).animate({
 				'opacity': 0
@@ -1671,7 +1672,6 @@ def Dialog(title,buttons,contents) {
 
 	method cancel {
 		if(self.cancelCallback) self.cancelCallback();
-		app.ignoreResize = false;
 		self.fadeOut();
 	}
 

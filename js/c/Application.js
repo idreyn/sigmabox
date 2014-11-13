@@ -165,6 +165,7 @@ Application.prototype.setMode = function(mode) {
 	}
 	this.mode.size(this.modeHeight);
 	this.data.mode = modeName;
+	this.ignoreResize = false;
 	this.root.menu.setMode(modeName);
 	this.data.serialize();
 }
