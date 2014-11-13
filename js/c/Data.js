@@ -601,7 +601,8 @@ Data.prototype.clearHistory = function() {
 }
 
 Data.prototype.addHistoryItem = function(text) {
-	if(StringUtil.trim(text).length == 0 || /^[0-9.]+$/.test(text) || text == this.inputHistory.slice(-1).pop()) return;
+	if(StringUtil.trim(text).length == 0 || /^[0-9.]+$/.test(text) || text == this.inputHistory.slice(-1).pop()) return false;
 	this.inputHistory.push(text);
 	this.inputHistory = this.inputHistory.slice(-50);
+	return true;
 }

@@ -1,6 +1,5 @@
 <div style='text-align:center;padding-top: 10px'>
-	<img width='200px' src='res/img/logo-main.png' />
-	<h2>You're using Sigmabox 1.0.0</h2>
+	<h2>You're using Sigmabox 1.0.</h2>
 </div>
 
 Hope you're enjoying this application! Documentation on all keys can be found in the Reference tab above. To report

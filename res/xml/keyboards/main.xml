@@ -42,7 +42,7 @@
 	
 	<key name='delete' row='1' col='1' active-color='#ff5f5f'>
 		<primary image-label='delete' action='input:backspace' />
-		<alternate text-label='AC' action='input:clear' />
+		<alternate text-label='clr' action='input:clear' />
 	</key>
 	<key name='left-arrow' image-label='left' row='1' col='2' action='input:left'>
 		<primary image-label='left' action='input:left' />
