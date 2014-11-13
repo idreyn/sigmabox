@@ -385,8 +385,7 @@ def LiveEvalCard(manager) {
 			this.clearButton.$.on('invoke',function() {
 				var res = app.mode.currentInput().contents();
 				app.mode.currentInput().acceptActionInput('clear');
-				if(app.data.inputHistory[app.data.inputHistory.length - 1] != res) {
-					app.data.addHistoryItem(res);
+				if(app.data.addHistoryItem(res)) {
 					if(root.historyOverlay) {
 						root.historyOverlay.addItem(res);
 					}
@@ -442,10 +441,6 @@ def LiveEvalManager {
 		}
 	}
 
-	method init() {
-		this.size();
-	}
-
 	method setupScroll {
 		try {
 			if(this.scroll) return;
@@ -458,14 +453,13 @@ def LiveEvalManager {
 
 	method scrollEnd {
 		this.setCurrentCard(this.$LiveEvalCard.get(this.scroll.currentPage.pageY));
-	//	this.@indicator.select(this.scroll.currentPage.pageY);
 	}
 
 	on active {
 		this.setupScroll();
 	}
 
-	on syncReady {
+	constructor {
 		this.addCard(app.data.currentInput || '');
 		this.setupScroll();
 		this.size();

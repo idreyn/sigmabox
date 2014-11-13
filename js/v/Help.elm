@@ -1,4 +1,4 @@
-def WelcomeView {
+def WelcomeView(callback) {
 	extends {
 		PageView
 		Overlay
@@ -19,7 +19,7 @@ def WelcomeView {
 			<h1>Welcome to Sigmabox.</h1>
 			<p>A beautiful calculator featuring live evaluation, graphing, stats, and more.</p>
 			<br/>
-			[[ready-button:ToolbarButton 'Engage! &rsaquo;']]
+			[[ready-button:ToolbarButton 'Loading...']]
 		}
 
 		css {
@@ -29,9 +29,15 @@ def WelcomeView {
 
 		my ready-button {
 			on invoke {
-				app.setMode('eval');
+				if(!root.ready) return;
 				app.help.playSequence('eval');
 				root.flyOut();
+			}
+
+			css {
+				opacity: 0.5;
+				padding: 15px;
+				border-radius: 50px;
 			}
 		}
 
@@ -70,6 +76,17 @@ def WelcomeView {
 	constructor {
 		app.root.menuItemsDisabled = true;
 		this.$top-bar-container.hide();
+
+		setTimeout(function() {
+			self.callback();
+			self.$ready-button.html('Do the thing! &rsaquo;').animate({opacity:1},300);
+			self.ready = true;
+		},3100);
+	}
+
+	method flyIn {
+		$this.css('-webkit-transition','none');
+		$this.css('translateX',0).css('translateY',0);
 	}
 }
 
@@ -277,7 +294,7 @@ def HelpGuide {
 				}
 			},
 			{
-				text: 'That\'s it for now. Happy exploring!',
+				text: 'That\'s it for now. Happy calculating!',
 				touchTip: false
 			},
 		]);
