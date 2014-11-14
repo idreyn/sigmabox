@@ -24,38 +24,22 @@ Application.prototype.initLayout = function(wrapper) {
 
 	this.help = this.root.help;
 
-	this.initKeyboards();
+	this.modes = [];
 
-	this.eval = elm.create('LiveEvalManager');
-	this.root.addChild(this.eval);
-
-	this.repl = elm.create('REPL');
-	this.root.addChild(this.repl);
-
-	this.grapher = elm.create('GrapherView');
-	this.root.addChild(this.grapher);
-
-	this.functions = elm.create('FunctionListView');
-	this.root.addChild(this.functions);
-
-	this.stats = elm.create('StatsView');
-	this.root.addChild(this.stats);
-
-	this.linear = elm.create('LinearSolveView');
-	this.root.addChild(this.linear);
-
-	this.converter = elm.create('Converter');
-	this.root.addChild(this.converter);
-
-	this.about = elm.create('HelpView');
-	this.root.addChild(this.about);
-
-	this.modes = [this.eval,this.grapher,this.functions,this.stats,this.repl,this.linear,this.converter,this.about];
-
-	if(this.data.mode == 'about') {
-		this.data.mode = 'eval';
+	function welcomeSetupUI() {
+		self.initKeyboards();
+		self.setMode('eval');
 	}
-	this.setMode(this.data.mode || 'eval');
+
+	if(this.data.helpSequencesPlayed.indexOf('eval') == -1 && window.location.hash != '#nohelp') {
+		this.overlay(elm.create('WelcomeView',welcomeSetupUI));
+	} else {
+		self.initKeyboards();
+		if(self.data.mode == 'about') {
+			self.data.mode = 'eval';
+		}
+		self.setMode(self.data.mode || 'eval');
+	}
 
 	$(window).on('resize',$.proxy(this.resize,this));
 	this.resize();
@@ -65,11 +49,6 @@ Application.prototype.initLayout = function(wrapper) {
 	
 	
 	this.data.uiSyncReady();
-	this.mode.init();
-
-	if(this.data.helpSequencesPlayed.indexOf('eval') == -1 && !window.location.hash == '#nohelp') {
-		this.overlay(elm.create('WelcomeView'));
-	}
 
 	setTimeout(function() {
 		try {
@@ -147,14 +126,36 @@ Application.prototype.initKeyboards = function() {
 	this.keyboard = this.keyboards.main;
 }
 
+Application.prototype.getOrCreateMode = function(mode) {
+	var mapping = {
+		'eval': 'LiveEvalManager',
+		'repl': 'REPL',
+		'grapher': 'GrapherView',
+		'functions': 'FunctionListView',
+		'stats': 'StatsView',
+		'linear': 'LinearSolveView',
+		'converter': 'Converter',
+		'about': 'HelpView'
+	}
+	if(this[mode]) {
+		return this[mode];
+	} else {
+		var el = elm.create(mapping[mode]);
+		this.root.addChild(el);
+		this[mode] = el;
+		this.modes.push(el);
+		return el;
+	}
+}
+
 Application.prototype.setMode = function(mode) {
-	var mstring = mode;
-	mode = this[mode];
+	var modeName = mode;
+	mode = this.getOrCreateMode(mode);
 	this.modes.map(function(m) {
 		m.$.hide();
 	});
 	this.mode = mode;
-	this.modeName = mstring;
+	this.modeName = modeName;
 	this.mode.$.show();
 	this.mode.$.trigger('displayed');
 	if(!this.mode.noKeyboard) {
@@ -163,8 +164,9 @@ Application.prototype.setMode = function(mode) {
 		this.hideKeyboard();
 	}
 	this.mode.size(this.modeHeight);
-	this.data.mode = mstring;
-	this.root.menu.setMode(mstring);
+	this.data.mode = modeName;
+	this.ignoreResize = false;
+	this.root.menu.setMode(modeName);
 	this.data.serialize();
 }
 

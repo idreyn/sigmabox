@@ -137,12 +137,20 @@ def StatsListsManager {
 		el.setData(list);
 		setTimeout(function() {
 			self.orderLists();
-			self.updateScroll();
 			setTimeout(function() {
+				var index  = $('.StatsList').length - 2;
+				var width = $('.StatsList').width();
+				var currentPage = {
+					pageX: index,
+					pageY: 0,
+					x: -1 * index * width,
+					y: 0
+				};
 				if(app.mode == self.parent('Stats')) app.help.introduce('stats');
+				self.scroll.currentPage = currentPage;
 				self.scroll.scrollToElement(el);
 			},10);
-		},20);
+		},0);
 	}
 
 	method addList {
@@ -165,8 +173,8 @@ def StatsListsManager {
 			$(this).css('width',colWidth);
 		});
 		setTimeout(function() {
-			self.updateScroll(true);
-		},10);
+			self.actuallyUpdateScroll();
+		},0);
 		if(app.data.lists.length > 0) {
 			this.$empty-notice.hide();
 		} else {
@@ -186,13 +194,18 @@ def StatsListsManager {
 		return this.currentList.currentInput();
 	}
 
-	method updateScroll {
+	method actuallyUpdateScroll {
 		if(!self.$StatsList.length) return;
-		if(self.scroll) self.scroll.destroy();
+		if(self.scroll) { 
+			oldCurrentPage = self.scroll.currentPage;
+			offset = self.scroll.x;
+			self.scroll.destroy();
+		}
 		self.scroll = new IScroll(
 			self.@contents-container-wrapper,
-			{scrollbars: true, fadeScrollbars: true, mouseWheel: false, scrollX: true, snap: '.StatsList'}
+			{scrollbars: true, fadeScrollbars: true, mouseWheel: false, scrollX: true, startX: offset, snap: '.StatsList'}
 		);
+		if(oldCurrentPage) self.scroll.currentPage = oldCurrentPage;
 	}
 
 	method remove(element) {
@@ -247,7 +260,7 @@ def StatsList(manager) {
 
 	properties {
 		pullMaxHeight: 100,
-		pullConstant: 50
+		pullConstant: 50,
 	}
 
 	constructor {
@@ -289,12 +302,18 @@ def StatsList(manager) {
 		this.data = list;
 		this.updateDisplayedName();
 		this.$MathTextField.remove();
+		var largest = 0;
 		list.data.forEach(function(d,i) {
+			setTimeout(function() {
 			var f = self.addField(null,false);
-			f.setIndex(i);
-			f.setData(d);
+				f.setIndex(i);
+				f.setData(d);
+			},i * 10);
+			largest = i;
 		})
-		this.addField();
+		setTimeout(function() {
+			self.addField();
+		}, (largest + 1) * 10);
 	}
 
 	method setName(name) {
@@ -441,11 +460,9 @@ def StatsListField(focusManager) {
 		if(this.contents().length) {
 			var res = new Parser().parse(this.contents()).valueOf(new Frame({}));
 			if(res instanceof Value || res instanceof Frac) {
-				this.data = res;
-				this.setContents(res.toString());
+				this.setData(res);
 			} else {
-				this.data = new Value(0);
-				this.setContents('0');
+				this.setData(0);
 			}
 		}
 		this.parent('StatsList').update();
@@ -457,6 +474,7 @@ def StatsListField(focusManager) {
 	}
 
 	on add-under {
+		console.log('add-under');
 		this.parent('StatsList').addField(this);
 		app.data.serialize();
 	}
@@ -492,7 +510,7 @@ def StatsListField(focusManager) {
 	my index-label {
 		css {
 			position: absolute;
-			font-size: 12px;
+			font-size: 8px;
 			color: #CCC;
 			left: 2px;
 			top: 2px;

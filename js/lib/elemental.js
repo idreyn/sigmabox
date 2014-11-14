@@ -303,7 +303,7 @@ var elm;
             }
             return n;
         },
-        debug: false,
+        debug: true,
         _definitions: {},
         def: function (n) {
             return elm._definitions[n];

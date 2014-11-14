@@ -1222,6 +1222,7 @@ function Sum(index,lower,upper,f) {
 }
 
 Sum.prototype.valueOf = function(frame) {
+	Frac.fastMode = true;
 	if(app.data.insideDifficultExpression) {
 		app.data.insideDifficultExpression = false;
 		throw "Invalid expression";
@@ -1243,6 +1244,7 @@ Sum.prototype.valueOf = function(frame) {
 		]).valueOf(frame);
 	}
 	app.data.insideDifficultExpression = false;
+	Frac.fastMode = false;
 	return sum;
 }
 
@@ -1254,6 +1256,7 @@ function Product(index,lower,upper,f) {
 }
 
 Product.prototype.valueOf = function(frame) {
+	Frac.fastMode = true;
 	if(app.data.insideDifficultExpression) {
 		app.data.insideDifficultExpression = false;
 		throw "Invalid expression";
@@ -1275,6 +1278,7 @@ Product.prototype.valueOf = function(frame) {
 		]).valueOf(frame);
 	}
 	app.data.insideDifficultExpression = false;
+	Frac.fastMode = false;
 	return prod;
 }
 
