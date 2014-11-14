@@ -315,7 +315,9 @@ def PageView(title) {
 			});
 			self.scroll.on('scroll',self._onScroll);
 		} else {
-			self.scroll.refresh();
+			setTimeout(function() {
+				self.scroll.refresh();
+			},0);	
 		}
 	}
 
