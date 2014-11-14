@@ -10,13 +10,11 @@ function Application() {
 }
 
 Application.prototype.initLayout = function(wrapper) {
-	this.version = '0.95';
+	var self = this;
 
 	this.nullInput = elm.create('MathTextField');
 	this.nullInput.$.addClass('null-input');
 	this.data.init();
-
-	var self = this;
 	this.wrapper = wrapper;
 
 	this.root = elm.create('SigmaboxAppFrame');
@@ -42,11 +40,9 @@ Application.prototype.initLayout = function(wrapper) {
 	}
 
 	$(window).on('resize',$.proxy(this.resize,this));
-	this.resize();
 
 	document.ontouchstart = function(e) { e.preventDefault(); };
 	document.ontouchmove = function(e) { e.preventDefault(); };
-	
 	
 	this.data.uiSyncReady();
 
@@ -54,7 +50,7 @@ Application.prototype.initLayout = function(wrapper) {
 		try {
 			navigator.splashscreen.hide();
 		} catch(e) {
-			// Do nothing
+
 		}
 	},1000);
 
@@ -67,44 +63,34 @@ Application.prototype.setModeHeight = function(n) {
 }
 
 Application.prototype.hideKeyboard = function() {
-	var self = this;
 	this.modeHeight = 1;
-	if(utils.isAppleWebApp() && false) {
-		this.keyboardHeight = 0;
-	} else {
-		this.keyboard.slideDown();
-		setTimeout(function() {
-			self.keyboardHeight = 1 - self.modeHeight;
-		},500);
-	}
-	self.keyboardHeight = 1 - self.modeHeight;
-	this.liteResize();
+	this.keyboardHeight = 1 - this.modeHeight;
+	this.keyboard.slideDown();
+	this.resize();
 }
 
 Application.prototype.showKeyboard = function() {
-	var self = this;
 	this.modeHeight = 0.5;
 	this.keyboardHeight = 1 - this.modeHeight;
-	if(utils.isAppleWebApp() && false) {
-		this.keyboardHeight = 0.5;
-		this.liteResize();
+	this.keyboard.slideUp();
+	this.resize();
+}
+
+Application.prototype.useKeyboard = function(name,forceMain) {
+	if(name == 'main' && !forceMain) {
+		if(this.keyboard) {
+			this.keyboard.slideDown();
+		}
+		this.keyboards.main.slideUp();
+		this.keyboard = this.keyboards.main;
 	} else {
-		this.keyboard.slideUp();
-		self.keyboardHeight = 1 - self.modeHeight;
-		this.liteResize();
+		var k = this.keyboards[name];
+		this.keyboard = k;
+		k.slideUp();
 	}
 }
 
 Application.prototype.resize = function() {
-	if(this.ignoreResize) return;
-	var self = this;
-	this.root.size();
-	setTimeout(function() {
-		self.root.size();
-	},1000);
-}
-
-Application.prototype.liteResize = function() {
 	if(this.ignoreResize) return;
 	this.keyboard.size(this.keyboardHeight);
 	this.mode.size(this.modeHeight);
@@ -151,6 +137,7 @@ Application.prototype.getOrCreateMode = function(mode) {
 Application.prototype.setMode = function(mode) {
 	var modeName = mode;
 	mode = this.getOrCreateMode(mode);
+	this.ignoreResize = false;
 	this.modes.map(function(m) {
 		m.$.hide();
 	});
@@ -163,25 +150,9 @@ Application.prototype.setMode = function(mode) {
 	} else {
 		this.hideKeyboard();
 	}
-	this.mode.size(this.modeHeight);
 	this.data.mode = modeName;
-	this.ignoreResize = false;
 	this.root.menu.setMode(modeName);
 	this.data.serialize();
-}
-
-Application.prototype.useKeyboard = function(name,forceMain) {
-	if(name == 'main' && !forceMain) {
-		if(this.keyboard) {
-			this.keyboard.slideDown();
-		}
-		this.keyboards.main.slideUp();
-		this.keyboard = this.keyboards.main;
-	} else {
-		var k = this.keyboards[name];
-		this.keyboard = k;
-		k.slideUp();
-	}
 }
 
 Application.prototype.acceptActionInput = function(input) {

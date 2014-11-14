@@ -28,10 +28,6 @@ def GrapherView {
 		app.help.introduce('grapher-inputs');
 	}
 
-	on invalidate {
-
-	}
-
 	method updateColors {
 		var self = this;
 		this.@equations-list.fields().each(function(i,e) {

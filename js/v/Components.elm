@@ -295,7 +295,8 @@ def PageView(title) {
 		}
 	}
 
-	on invalidate {
+	method size {
+		this._size();
 		this.updateScroll();
 	}
 
@@ -510,7 +511,8 @@ def TabbedView {
 		this.$.find('.PageView .top-bar-container').hide();
 	}
 
-	on invalidate {
+	method size {
+		this._size();
 		this.renderTabs();
 	}
 
@@ -669,14 +671,12 @@ def SlideView {
 	css {
 		overflow: visible;
 		postion: relative;
-		//-webkit-transition: -webkit-transform 0.2s ease-in-out;
 	}
 
 	my container {
 		css {
 			width: 100%;
 			height: 100%;
-			-webkit-transform: translate3d(0, 0, 0); // perform an "invisible" translation
 		}
 
 		method size {
@@ -751,8 +751,8 @@ def SlideView {
 		});
 	}
 
-	on invalidate {
-		return;
+	method size {
+		this._size();
 		if(this.horizontal) {
 			this.@container.$.css('translateX', 0 - this.horizontalOffset(this.currentIndex));
 		} else {
@@ -774,6 +774,13 @@ def SlideView {
 		} else {
 			target = this.viewByIndex(index);
 		}
+		if(target.noKeyboard) {
+			this.noKeyboard = true;
+			app.hideKeyboard();
+		} else {
+			this.noKeyboard = false;
+			app.showKeyboard();
+		}
 		index = Math.max(0,Math.min(index,this.$container.children().length - 1));
 		offset = this.horizontal? this.horizontalOffset(index) : this.verticalOffset(index);
 		var animObject = {};
@@ -785,13 +792,6 @@ def SlideView {
 		} else {
 			this.@container.$.css(animObject);
 			if(callback) callback();
-		}
-		if(target.noKeyboard) {
-			this.noKeyboard = true;
-			app.hideKeyboard();
-		} else {
-			this.noKeyboard = false;
-			app.showKeyboard();
 		}
 		this.delegateFocus(target);
 		this.currentIndex = index;

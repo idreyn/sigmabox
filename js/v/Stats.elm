@@ -39,6 +39,7 @@ def StatsListsManager {
 
 	properties {
 		baseWidth: 160
+		animate: false
 	}
 
 	constructor {
@@ -195,6 +196,8 @@ def StatsListsManager {
 	}
 
 	method actuallyUpdateScroll {
+		var offset = 0,
+			oldCurrentPage;
 		if(!self.$StatsList.length) return;
 		if(self.scroll) { 
 			oldCurrentPage = self.scroll.currentPage;
@@ -218,8 +221,9 @@ def StatsListsManager {
 		self.orderLists();
 	}
 
-	on invalidate {
+	method size {
 		this.orderLists();
+		this._size()
 	}
 
 	my contents-container {
@@ -505,6 +509,7 @@ def StatsListField(focusManager) {
 
 	css {
 		position: relative;
+		min-height: 42px;
 	}
 
 	my index-label {
@@ -898,7 +903,11 @@ def OneVarStats {
 				}
 
 				on choose(e,list) {
-					root.compute(list);
+					try {
+						root.compute(list);
+					} catch(e) {
+						app.popNotification('Can\'t analyze an empty list!');
+					}
 				}
 			}
 
