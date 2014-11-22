@@ -145,10 +145,10 @@ Parser.prototype.matrix = function(s) {
 
 Parser.prototype.parentheses = function(s) {
 	var self = this;
-	if(s.charAt(0) == "(") {
+	if(s.charAt(0) == '(') {
 		// The source starts with parentheses
 		// Find the matching closing parenthesis
-		var close = ParseUtil.findEachClear(s,")")[0];
+		var close = ParseUtil.findEachClear(s,')')[0];
 		var first = s.slice(1,close);
 		var rest = s.slice(close + 1);
 		if(rest.length == 0) {

@@ -236,7 +236,6 @@ def DragKeyboard(keyboardSource) {
 
 
 	on invalidate {
-		console.log('invalidate');
 		this.$KeyboardPullIndicator.css('top',$this.height());
 	}
 }

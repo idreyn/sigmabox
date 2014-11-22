@@ -336,6 +336,10 @@ def ReaderView {
 		PageView
 	}
 
+	properties {
+		noKeyboard: true
+	}
+
 	my contents-container {
 		css {
 			position: relative;
@@ -365,14 +369,13 @@ def ReaderView {
 			}
 			self.$contents-container.html(res);
 			self.$.find('a').each(function() {
-				var url = $(this).attr('href');
-				$(this).removeAttr('href');
-				$(this).css('text-decoration','underline');
-				$(this).on('touchstart click', function() {
-					event.preventDefault();
-					window.open(url,'_system');
+				Hammer(this).on('tap',function() {
+					window.location.href = 'safari:' + $(this).attr('href');
 				});
 			});
+			setTimeout(function() {
+				self.updateScroll();
+			},0);
 		});
 	}
 }
@@ -417,7 +420,7 @@ def ListView {
 		},10);
 	}
 
-	method addField(el,update) {
+	method addField(el,doNotUpdate) {
 		var self = this;
 		var field = self.create(this.fieldType,this.focusManager);
 		field.$.on('lost-focus',$.proxy(this.onFieldBlur,this));
@@ -432,8 +435,8 @@ def ListView {
 				this.$items-list.append(field);
 			}
 		}
-		if(update) setTimeout(function() {
-			this.updateScroll();
+		if(!doNotUpdate) setTimeout(function() {
+			self.updateScroll();
 		},0);
 		this.$.trigger('update');
 		return field;
@@ -565,6 +568,8 @@ def TabbedView {
 			tab.view.$.show();
 		}
 		this.selectedTab = tab;
+		this.selectedTabIndex = selectedIndex;
+		this.$.trigger('tab-change');
 	}
 
 	my tab-bar {
@@ -751,8 +756,8 @@ def SlideView {
 		});
 	}
 
-	method size {
-		this._size();
+	method size(n) {
+		this._size(n);
 		if(this.horizontal) {
 			this.@container.$.css('translateX', 0 - this.horizontalOffset(this.currentIndex));
 		} else {
@@ -1653,7 +1658,6 @@ def Dialog(title,buttons,contents) {
 
 	method fadeOut {
 		var bullshit = true;
-		app.ignoreResize = false;
 		if(bullshit) {
 			self.$overlay.css('opacity',0.8).animate({
 				'opacity': 0
@@ -1751,6 +1755,10 @@ def Dialog(title,buttons,contents) {
 			padding-bottom: 50px;
 		}
 	}
+
+	method size {
+
+	}
 }
 
 def Prompt(title,callback,defaultValue) {
@@ -1776,14 +1784,12 @@ def Prompt(title,callback,defaultValue) {
 	}
 
 	on showing {
-		app.ignoreResize = true;
 		this.$input.focus();
 	}
 
 	method okay {
 		if(self.callback) self.callback(self.$input.val(),self.fadeOut,function(s) {
 			self.$title.html(s);
-			app.ignoreResize = false;
 		});
 	}
 
@@ -1891,14 +1897,15 @@ def TextInput(defaultValue) {
 	}
 
 	css {
-		box-sizing: border-box;
+		-webkit-appearance: none;
+		border-top: 1px solid #DDD;
+		border-bottom: 1px solid #DDD;
+		border-radius: 0;
 		margin-bottom: 15px;
 		margin-top: 0;
 		padding: 10px;
 		padding-left: 15px;
 		font-size: 16pt;
-		outline: none;
-		border: none;
 	}
 
 	style empty {
@@ -1910,7 +1917,6 @@ def TextInput(defaultValue) {
 	}
 
 	on focus {
-		app.ignoreResize = true;
 		if($this.val() == this.defaultValue) {
 			$this.val('');
 			this.setStyle('not-empty');
@@ -1918,16 +1924,10 @@ def TextInput(defaultValue) {
 	}
 
 	on blur {
-		app.ignoreResize = false;
 		if($this.val() == '') {
 			$this.val(this.defaultValue);
 			this.setStyle('empty');
 		}
-	}
-
-	focus {
-		box-sizing: border-box;
-		border: 1px solid #CCC;
 	}
 }
 
@@ -2298,6 +2298,7 @@ def PullIndicatorHoriz(src,owner) {
 		if(this.current) {
 			this.owner.$.trigger(this.current.event);
 		}
+		this.lastIndex = null;
 	}
 
 	method size {

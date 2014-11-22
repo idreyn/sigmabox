@@ -147,7 +147,9 @@ def StatsListsManager {
 					x: -1 * index * width,
 					y: 0
 				};
-				if(app.mode == self.parent('Stats')) app.help.introduce('stats');
+				setTimeout(function() {
+					if(app.mode == self.parent('StatsView')) app.help.introduce('stats');
+				},1000);
 				self.scroll.currentPage = currentPage;
 				self.scroll.scrollToElement(el);
 			},10);
@@ -155,7 +157,6 @@ def StatsListsManager {
 	}
 
 	method addList {
-		app.help.introduce('stats');
 		var l = elm.create('StatsList',this);
 		l.delegateFocus(this);
 		this.@contents-container.$.append(l);
@@ -172,6 +173,7 @@ def StatsListsManager {
 		this.$StatsList.each(function(i,e) {
 			$(this).css('left', Math.floor(i * colWidth));
 			$(this).css('width',colWidth);
+			this.updateScroll();
 		});
 		setTimeout(function() {
 			self.actuallyUpdateScroll();
@@ -221,9 +223,9 @@ def StatsListsManager {
 		self.orderLists();
 	}
 
-	method size {
+	method size(n) {
 		this.orderLists();
-		this._size()
+		this._size(n);
 	}
 
 	my contents-container {
@@ -309,7 +311,7 @@ def StatsList(manager) {
 		var largest = 0;
 		list.data.forEach(function(d,i) {
 			setTimeout(function() {
-			var f = self.addField(null,false);
+			var f = self.addField(null,true);
 				f.setIndex(i);
 				f.setData(d);
 			},i * 10);
@@ -387,7 +389,7 @@ def StatsList(manager) {
 				close();
 				self.setName(name);
 			} else {
-				tryAgain('That name is in use. Why not pick another?');
+				tryAgain('That name is unavailable. Why not pick another?');
 			}
 		},self.data.name);
 	}
@@ -431,7 +433,7 @@ def StatsListField(focusManager) {
 	}
 
 	properties {
-		pullMaxWidth: 100,
+		pullMaxWidth: 70,
 		pullConstant: 30
 	}
 
@@ -478,7 +480,6 @@ def StatsListField(focusManager) {
 	}
 
 	on add-under {
-		console.log('add-under');
 		this.parent('StatsList').addField(this);
 		app.data.serialize();
 	}
@@ -509,7 +510,12 @@ def StatsListField(focusManager) {
 
 	css {
 		position: relative;
-		min-height: 42px;
+	}
+
+	my input {
+		css {
+			min-height: 42px;
+		}
 	}
 
 	my index-label {
@@ -679,6 +685,10 @@ def StatsTestView {
 		on invoke {
 			root.parent('StatsView').removeView(root);
 		}
+	}
+
+	on invalidate {
+		this.@summary.updateScroll();
 	}
 
 	my top-bar-container {
@@ -1051,6 +1061,10 @@ def StatsTestViewSimple {
 		font-size: 0.8em;
 	}
 
+	on invalidate {
+		this.updateScroll();
+	}
+
 	method displayResults {
 		this.$line-item.show();
 		setTimeout(function() {
@@ -1060,6 +1074,9 @@ def StatsTestViewSimple {
 
 	method hideResults {
 		this.$line-item.hide();
+		setTimeout(function() {
+			self.$.trigger('invalidate');
+		},10);
 	}
 
 	my top-bar-container {

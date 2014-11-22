@@ -94,6 +94,7 @@ Application.prototype.resize = function() {
 	if(this.ignoreResize) return;
 	this.keyboard.size(this.keyboardHeight);
 	this.mode.size(this.modeHeight);
+	this.root.menu.size();
 }
 
 Application.prototype.initKeyboards = function() {
@@ -108,7 +109,6 @@ Application.prototype.initKeyboards = function() {
 		self.keyboards[k].init();
 		self.keyboards[k].$.hide();
 	});
-
 	this.keyboard = this.keyboards.main;
 }
 
@@ -153,6 +153,9 @@ Application.prototype.setMode = function(mode) {
 	this.data.mode = modeName;
 	this.root.menu.setMode(modeName);
 	this.data.serialize();
+	setTimeout(function() {
+		$(document.activeElement).blur();
+	},500);
 }
 
 Application.prototype.acceptActionInput = function(input) {

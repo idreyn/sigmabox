@@ -283,7 +283,6 @@ ParseUtil.completeStatement = function (src) {
 ParseUtil.replace = function (src, from, to) {
 	return ParseUtil.split(src, from).join(to);
 }
-
 ParseUtil.handleEscapeChars = function (s) {
 	return s.replace(/\\n/g, "\n").replace(/\\t/g, "\t");
 }
@@ -304,6 +303,10 @@ FocusManager.prototype.setFocus = function(c) {
 		this.current.mathSelf().cursor.hide();
 		this.current.$.trigger('lost-focus');
 	}
+	$('.MathInput').each(function() {
+		// Hail Mary, full of grace
+		this.mathSelf().cursor.hide();
+	});	
 	setTimeout(function() {
 		self.fields.forEach(function(field) {
 			if(field != c) {

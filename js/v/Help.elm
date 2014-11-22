@@ -695,53 +695,41 @@ def TouchTip(strokeDirection,distance) {
 	}
 }
 
+
+def AboutView {
+	properties {
+		src: 'docs/about.md',
+		noKeyboard: true
+	}
+
+	extends {
+		ReaderView
+	}
+
+	css {
+		color: #666;
+		background-size: cover;
+	}
+}
+
 def HelpView {
 	extends {
 		TabbedView
 	}
 
-	my AboutView {
-		properties {
-			src: 'docs/about.md'
-		}
-
-		extends {
-			ReaderView
-		}
-
-		css {
-			color: #666;
-			background-size: cover;
-		}
-	}
-
 	css {
 		my tab-bar {
 			opacity: 1
 		}
 	}
 
-	my DonateView {
-		properties {
-			src: 'docs/donate.md'
-		}
-
-		extends {
-			ReaderView
-		}
-
-		css {
-			color: #666;
-			background-size: cover;
+	on tab-change {
+		if(this.selectedTabIndex == 0) {
+			$(document.activeElement).blur();
+		} else {
+			// this.@AboutView.updateScroll();
 		}
 	}
-
-	css {
-		my tab-bar {
-			opacity: 1
-		}
-	}
-
 
 	my ReferenceView {
 		extends {
@@ -784,6 +772,10 @@ def HelpView {
 			on keyup {
 				parent.search(this.$.val());
 			}
+
+			on touchstart {
+				this.$.focus();
+			}
 		}
 
 		my contents-container {
@@ -812,7 +804,6 @@ def HelpView {
 				this.buildLibraryOnParsed = true;
 				return;
 			}
-			//app.popNotification('Loading key reference...');
 			this.libraryBuilt = true;
 			this.library.key.forEach(function(key) {
 				var topic = self.create('Topic',key);
@@ -883,7 +874,6 @@ def HelpView {
 	constructor {
 		this.addTab('About',this.create('AboutView'));
 		this.addTab('Reference',this.create('ReferenceView'));
-		// this.addTab('Donate',this.create('DonateView'));
 	}
 
 	on displayed {

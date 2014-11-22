@@ -160,7 +160,7 @@ def Converter {
 				};
 
 				for(t in this.types) {
-					var f = this.addField(null,false);
+					var f = this.addField(null,true);
 					f.$.html(t);
 				}
 				this.select(this.$ConverterListItem.get(0));
@@ -176,10 +176,10 @@ def Converter {
 				root.$to-list.get(0).$ConverterListItem.remove();
 				this.types[item.$.html()].forEach(function(type) {
 					typeString = type.split('temp').join('degrees ').split('-').join(' ');
-					var ff = root.$from-list.get(0).addField(null,false);
+					var ff = root.$from-list.get(0).addField(null,true);
 					ff.unit = type;
 					ff.$.html(typeString);
-					var tf = root.$to-list.get(0).addField(null,false);
+					var tf = root.$to-list.get(0).addField(null,true);
 					tf.unit = type;
 					tf.$.html(typeString);
 				})

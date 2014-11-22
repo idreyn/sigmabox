@@ -19,6 +19,16 @@ a {
     color: #333;
 }
 
+input {
+    outline-width: 0px !important;
+    box-sizing: border-box;
+    border: none;
+}
+
+input:focus {
+    outline-width: 0px !important;   
+}
+
 .shadow {
 	-webkit-box-shadow:  1px 1px 1px 1px rgba(0, 0, 0, 0.1);
     box-shadow:  1px 1px 1px 1px rgba(0, 0, 0, 0.1);
@@ -56,14 +66,4 @@ canvas {
     image-rendering: -o-crisp-edges;            
     image-rendering: optimize-contrast;         
     -ms-interpolation-mode: nearest-neighbor;   
-}
-
-.load-screen {
-    position: fixed;
-    z-index: 10000;
-    width: 100%;
-    height: 100%;
-    background: url('../splash.png');
-    background-size: 100%;
-    background-position: center;
 }

@@ -179,6 +179,7 @@ def LinearSolveOverlay(solutions) {
 		}
 		app.confirm('Are you sure?','Assign these values to ' + relevantVars + '?',function() {
 			for(var i=0;i<self.solutions.length;i++) {
+				console.log(self.solutions[i])
 				app.data.setVariable(self.variables[i],self.solutions[i]);
 			}
 		});
