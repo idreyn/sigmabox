@@ -2568,7 +2568,6 @@ def InlineMatrixPicker {
 		}
 	}
 
-
 	on invoke {
 		app.mathPrompt('Input a matrix. You may want to use [brackets] or a stored variable.',function(res,close,tryAgain) {
 			if(self.filter) {

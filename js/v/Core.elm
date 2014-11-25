@@ -246,7 +246,6 @@ def TrigSwitch(left,right,willSyncTo) {
 			this.disable();
 			this.applyStyle('disabled');
 		}
-		//this.size();
 	}
 
 	method endForceRadians() {

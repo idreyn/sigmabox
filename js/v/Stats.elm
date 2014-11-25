@@ -776,11 +776,8 @@ def OneVarStats {
 		s.displayResults();
 		setTimeout(function() {
 			self.$.trigger('invalidate');
+			if(self.summary) self.$StatsTestVisualization.get(0).render(self.summary);
 		},10);
-	}
-
-	on invalidate {
-		if(this.summary) this.$StatsTestVisualization.get(0).render(this.summary);
 	}
 
 	my StatsTestVisualization {
@@ -789,7 +786,7 @@ def OneVarStats {
 				numBars = Math.floor(Math.max(1,Math.min(Math.sqrt(2 * summary.n),6))),
 				interval = range / numBars;
 				hist = Functions.histogram(summary.numbers,numBars),
-				highest = Functions.sort(hist).concat().pop(),
+				highest = Functions.sort(hist.concat()).pop(),
 				heightFactor = Math.max(0.2,Math.min(0.8,Math.log(highest) / Math.log(5))),
 				paddingFactor = 0.1,
 				paddingOffset = paddingFactor * this.$.width(),
@@ -958,6 +955,7 @@ def LinearRegressionView {
 		s.displayResults();
 		setTimeout(function() {
 			self.$.trigger('invalidate');
+			self.$StatsTestVisualization.get(0).render();
 		},10);
 	}
 
@@ -975,7 +973,6 @@ def LinearRegressionView {
 			ymin - ypadding,
 			ymax + ypadding
 		);
-		this.$StatsTestVisualization.get(0).render();
 	}
 
 	my StatsTestVisualization {
