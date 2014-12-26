@@ -67,3 +67,10 @@ canvas {
     image-rendering: optimize-contrast;         
     -ms-interpolation-mode: nearest-neighbor;   
 }
+
+.test-text {
+    position: absolute;
+    width: 400px;
+    height: 100px;
+    z-index: 1002;
+}

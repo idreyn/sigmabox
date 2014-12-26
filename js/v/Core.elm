@@ -265,7 +265,7 @@ def Notification(text,duration) {
 
 
 	css {
-		position: fixed;
+		position: absolute;
 		width: 100%;
 		top: 0;
 		height: 30px;
@@ -273,7 +273,7 @@ def Notification(text,duration) {
 		color: #999;
 		background: #EEE;
 		padding: 10px;
-		z-index: 3000;
+		-webkit-transform: translate3d(0,0,0);
 		overflow: hidden;
 	}
 

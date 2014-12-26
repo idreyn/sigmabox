@@ -300,23 +300,12 @@ FocusManager.prototype.setFocus = function(c) {
 	var self = this;
 	if(c == this.current) return;
 	if(this.current) {
-		this.current.mathSelf().cursor.hide();
+		if(this.current.mathSelf) this.current.mathSelf().cursor.hide();
 		this.current.$.trigger('lost-focus');
 	}
-	$('.MathInput').each(function() {
-		// Hail Mary, full of grace
-		this.mathSelf().cursor.hide();
-	});	
-	setTimeout(function() {
-		self.fields.forEach(function(field) {
-			if(field != c) {
-				field.mathSelf().cursor.hide();
-			}
-		});
-	},1);
 	this.current = c;
 	if(!this.current) return;
-	this.current.mathSelf().cursor.show();
+	if(this.current.mathSelf) this.current.mathSelf().cursor.show();
 	this.current.$.trigger('gain-focus');
 }
 

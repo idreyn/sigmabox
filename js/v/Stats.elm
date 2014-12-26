@@ -307,19 +307,15 @@ def StatsList(manager) {
 	method setData(list) {
 		this.data = list;
 		this.updateDisplayedName();
-		this.$MathTextField.remove();
+		this.$StatsListField.remove();
 		var largest = 0;
 		list.data.forEach(function(d,i) {
-			setTimeout(function() {
 			var f = self.addField(null,true);
 				f.setIndex(i);
 				f.setData(d);
-			},i * 10);
 			largest = i;
-		})
-		setTimeout(function() {
-			self.addField();
-		}, (largest + 1) * 10);
+		});
+		self.addField();
 	}
 
 	method setName(name) {
@@ -335,8 +331,8 @@ def StatsList(manager) {
 	}
 
 	method remove(element) {
-		var d = element.data,
-			ind = this.data.data.indexOf(d);
+		var ind = element.$.index();
+		if(ind == -1) return;
 		this.data.data = this.data.data.slice(0,ind).concat(this.data.data.slice(ind+1));
 		element.$.remove();
 		if(this.data.data.length == 0) {
@@ -428,7 +424,7 @@ def StatsList(manager) {
 
 def StatsListField(focusManager) {
 	extends {
-		MathTextField
+		SimpleListItem
 		PullHoriz
 	}
 
@@ -439,6 +435,7 @@ def StatsListField(focusManager) {
 
 	contents {
 		<span class='index-label'></span>
+		<div class='value'></div>
 	}
 
 	constructor {
@@ -449,29 +446,64 @@ def StatsListField(focusManager) {
 		this.$.append(elm.create('PullIndicatorHoriz',options,this).named('indicator'));
 	}
 
+	css {
+		padding: 9px;
+		height: 40px;
+		font-weight: 200;
+	}
+
+	style active {
+		background: #FFF;
+	}
+
 	method setData(d) {
 		this.data = d;
-		this.setContents(d.toString());
+		if(d) this.$value.html(d.toString());
 	}
 
 	method setIndex(n) {
 		this.$index-label.html((n + 1).toString());
 	}
 
-	method remove {
-		this.parent('StatsList').remove(this);
+	method empty {
+		if(this.input) {
+			return this.input.contents().length == 0
+		} else {
+			return this.$value.html().length == 0;
+		}
 	}
 
-	on lost-focus {
-		if(this.contents().length) {
-			var res = new Parser().parse(this.contents()).valueOf(new Frame({}));
+	method remove {
+		this.parentList.remove(this);
+	}
+
+	on invoke {
+		if(this.focused) return;
+		this.focused = true;
+		this.$value.hide();
+		this.input = this.create('InternalInput');
+		if(this.data) this.input.setContents(this.data.toString());
+		this.focusManager.setFocus(this.input);
+		this.$.append(this.input);
+	}
+
+	on lost-focus(e) {
+		this.focused = false;
+		e.stopImmediatePropagation();
+		if(this.input.contents().length) {
+			var res = new Parser().parse(this.input.contents()).valueOf(new Frame({}));
 			if(res instanceof Value || res instanceof Frac) {
 				this.setData(res);
 			} else {
 				this.setData(0);
 			}
+		} else {
+			this.remove();
 		}
-		this.parent('StatsList').update();
+		this.input.$.remove();
+		this.input = null;
+		this.$value.show();
+		self.parentList.update();
 	}
 
 	on delete(e) {
@@ -480,20 +512,20 @@ def StatsListField(focusManager) {
 	}
 
 	on add-under {
-		this.parent('StatsList').addField(this);
+		this.parentList.addField(this);
 		app.data.serialize();
 	}
 
 	on cursor-right {
 		var el = self.$.next();
 		if(el.length) {
-			var cur = el.get(0).mathSelf().cursor;
-			self.focusManager.setFocus(el.get(0));
+			el.trigger('invoke');
+			var cur = el.get(0).input.mathSelf().cursor;
 			while(cur.prev) {
 				cur.moveLeft();
 			}
 			setTimeout(function() {
-				self.parent('StatsList').scroll.scrollToElement(el.get(0));
+				self.parentList.scroll.scrollToElement(el.get(0));
 			},0);
 		}
 	}
@@ -501,9 +533,9 @@ def StatsListField(focusManager) {
 	on cursor-left {
 		var el = self.$.prev();
 		if(el.length) {
-			self.focusManager.setFocus(el.get(0));
+			el.trigger('invoke');
 			setTimeout(function() {
-				self.parent('StatsList').scroll.scrollToElement(el.get(0));
+				self.parentList.scroll.scrollToElement(el.get(0));
 			},0);
 		}
 	}
@@ -525,6 +557,19 @@ def StatsListField(focusManager) {
 			color: #CCC;
 			left: 2px;
 			top: 2px;
+		}
+	}
+
+	my InternalInput {
+		extends {
+			MathInput
+		}
+
+		css {
+			font-size: 19px;
+			padding: 0px;
+			padding-top: 2px;
+			text-shadow: none;
 		}
 	}
 }

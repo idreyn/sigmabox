@@ -421,8 +421,10 @@ def ListView {
 	}
 
 	method addField(el,doNotUpdate) {
+		if(window.wat) debugger;
 		var self = this;
 		var field = self.create(this.fieldType,this.focusManager);
+		field.parentList = self;
 		field.$.on('lost-focus',$.proxy(this.onFieldBlur,this));
 		field.$.on('gain-focus',$.proxy(this.onFieldFocus,this));
 		field.$.on('update',$.proxy(this.onFieldUpdate,this));
@@ -456,6 +458,7 @@ def ListView {
 	}
 
 	method onFieldBlur(e) {
+		console.log('onFieldBlur');
 		if(e.target.empty()) {
 			e.target.$.addClass('field-removed').remove();
 			this.updateScroll();
@@ -830,8 +833,9 @@ def SideMenuAppView(menuClass='SideMenu') {
 	}
 
 	css {
+		position: fixed;
 		overflow: visible;
-		z-index: 1001;
+		z-index: 1;
 		-webkit-transition: -webkit-transform 0.2s;
 	}
 
@@ -849,6 +853,7 @@ def SideMenuAppView(menuClass='SideMenu') {
 		}
 
 		css {
+			overflow: hidden;
 			position: absolute;
 			width: 100%;
 			height: 100%;
@@ -1904,7 +1909,6 @@ def TextInput(defaultValue) {
 		margin-bottom: 15px;
 		margin-top: 0;
 		padding: 10px;
-		padding-left: 15px;
 		font-size: 16pt;
 	}
 
@@ -2147,7 +2151,7 @@ def PullIndicator(src,owner) {
 		position: absolute;
 		top: 0;
 		text-align: center;
-		-webkit-transition: background-color 0.05s;
+		-webkit-transition: background-color 0.1s;
 	}
 
 	my inner {

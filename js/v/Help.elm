@@ -108,7 +108,7 @@ def HelpGuide {
 	css {
 		cursor: pointer;
 		display: none;
-		position: absolute;
+		position: fixed;
 		z-index: 1000000;
 		background: rgba(255,255,255,0.5);
 		width: 100%;
@@ -744,17 +744,9 @@ def HelpView {
 			[[input:TextInput 'Search keys']]
 		}
 
-		on invalidate {
-			var w = $this.width();
-			if(utils.tabletMode()) {
-				this.$input.css('width',w * 0.6);
-			} else {
-				this.$input.css('width',w);
-			}
-		}
-
 		my input {
 			css {
+				width: 100%;
 				border: 1px solid #CCC;
 				padding-top: 0;
 				padding-bottom: 0;

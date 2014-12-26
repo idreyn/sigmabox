@@ -46,6 +46,8 @@ Application.prototype.initLayout = function(wrapper) {
 	
 	this.data.uiSyncReady();
 
+	this.root.size();
+
 	setTimeout(function() {
 		try {
 			navigator.splashscreen.hide();
@@ -180,8 +182,9 @@ Application.prototype.hideMenu = function() {
 	this.root.hideMenu();
 }
 
-Application.prototype.popNotification = function(text) {
-	var n = elm.create('Notification',text,1);
+Application.prototype.popNotification = function(text,time) {
+	time = time || 1
+	var n = elm.create('Notification',text,time);
 	this.root.addChild(n);
 	n.invoke();
 	n.$.on('complete',function() {

@@ -75,7 +75,7 @@ def REPL {
 			position: absolute;
 			bottom: 0px;
 			opacity: 1;
-			height: 10%;
+			height: 8%;
 			text-align: right;
 			font-weight: 200;
 			padding: 10px;
