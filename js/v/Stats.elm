@@ -453,7 +453,11 @@ def StatsListField(focusManager) {
 	}
 
 	style active {
-		background: #FFF;
+
+	}
+
+	style default {
+
 	}
 
 	method setData(d) {
@@ -462,6 +466,8 @@ def StatsListField(focusManager) {
 	}
 
 	method setIndex(n) {
+		this.index = n;
+		this.$.css('background',n % 2 == 0 ? '#FFF' : '#F5F5F5');
 		this.$index-label.html((n + 1).toString());
 	}
 
