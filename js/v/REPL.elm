@@ -134,6 +134,11 @@ def REPL {
 			self.scroll.scrollTo(0,self.scroll.maxScrollY,n);
 		},10);
 	}
+
+	on scroll {
+		this.$REPLInput.trigger('end');
+		this.$REPLOutput.trigger('end');
+	}
 }
 
 def REPLLine(focusManager,repl) {
@@ -141,10 +146,6 @@ def REPLLine(focusManager,repl) {
 		<div>
 			<img class='arrow' src='res/img/repl-arrow.png' width='15px' height='20px' />
 		</div>
-	}
-
-	extends {
-		TouchInteractive
 	}
 
 	css {
@@ -221,6 +222,7 @@ def REPLInput(focusManager,repl) {
 	}
 
 	constructor {
+		this.@input._hammer.options.hold_timeout = 200;
 		this.effect = elm.create('REPLHoldEffect',0.5);
 		this.$.append(this.effect);
 	}
@@ -245,23 +247,24 @@ def REPLInput(focusManager,repl) {
 		}
 	}
 
-	on begin {
-		if(!this.enabled) {
-			this.effect.run();
-		}
+	on hold {
+		if(self.enabled) return;
+		setTimeout(function() {
+			if(!self._holdCancel) self.effect.run();
+		},100);
+		self.effect.run();
+		setTimeout(function() {
+			var parent = self.parent('REPL');
+			parent.current.@input.setContents(self.@input.contents());
+			parent.current.@input.mathSelf().cursor.show();
+			parent.doUpdateScroll(100);
+		},500);
 	}
 
 	on end {
+		this._holdCancel = true;
+		setTimeout(function() { self._holdCancel = false; });
 		this.effect.cancel();
-	}
-
-	on hold {
-		if(!this.enabled) {
-			var parent = this.parent('REPL');
-			parent.current.@input.setContents(this.@input.contents());
-			parent.current.@input.mathSelf().cursor.show();
-			parent.doUpdateScroll(100);
-		}
 	}
 }
 
@@ -275,6 +278,7 @@ def REPLOutput {
 	}
 
 	constructor {
+		this._hammer.options.hold_timeout = 200;
 		this.effect = elm.create('REPLHoldEffect',0.5);
 		this.$.append(this.effect);
 
@@ -284,19 +288,24 @@ def REPLOutput {
 		TouchInteractive
 	}
 
-	on begin {
-		this.effect.run();
+	on hold {
+		setTimeout(function() {
+			if(!self._holdCancel) self.effect.run();
+		},100);
+		self.effect.run();
+		setTimeout(function() {
+			if(self._holdCancel) return;
+			var val = root.$contents.html().split('{').join('<').split('}').join('>');
+			var res = new Parser().parse(val).valueOf(new Frame());
+			app.data.initVariableSave('store',res);
+			app.useKeyboard('variables');
+		},500);
 	}
 
 	on end {
+		this._holdCancel = true;
+		setTimeout(function() { self._holdCancel = false; });
 		this.effect.cancel();
-	}
-
-	on hold {
-		var val = root.$contents.html().split('{').join('<').split('}').join('>');
-		var res = new Parser().parse(val).valueOf(new Frame());
-		app.data.initVariableSave('store',res);
-		app.useKeyboard('variables');
 	}
 
 	css {
@@ -351,7 +360,7 @@ def REPLHoldEffect(time) {
 	}
 
 	method cancel {
-		this.$.stop().animate({translateX: 0 - this.$.parent().outerWidth()},100);
+		this.$.stop().animate({translateX: 0 - this.$.parent().outerWidth()},0);
 	}
 }
 

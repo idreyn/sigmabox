@@ -12,7 +12,7 @@ Functions.expect = function(arg,type) {
 }
 
 Functions.gcf = function() {
-	var args = utils.argArr(arguments).filter(function(item) {
+	var args = Functions.argArr(arguments).filter(function(item) {
 		return item != 0;
 	});
 	if(args.length == 1) {
@@ -38,7 +38,7 @@ Functions.gcf = function() {
 }
 
 Functions.scaleToWhole = function() {
-	var args = utils.argArr(arguments).filter(function(item) {
+	var args = Functions.argArr(arguments).filter(function(item) {
 		return item != 0;
 	});
 	var i = 0;

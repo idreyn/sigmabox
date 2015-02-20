@@ -314,7 +314,7 @@ def PageView(title) {
 				scrollX: horiz,
 				useTransition: false
 			});
-			self.scroll.on('scroll',self._onScroll);
+			self.scroll.on('scrollStart',self._onScroll);
 		} else {
 			setTimeout(function() {
 				self.scroll.refresh();
@@ -323,7 +323,7 @@ def PageView(title) {
 	}
 
 	method _onScroll(e) {
-		this.$.trigger('scroll');
+		self.$.trigger('scroll');
 	}
 
 	extends {

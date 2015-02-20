@@ -110,6 +110,7 @@ def HelpGuide {
 		display: none;
 		position: fixed;
 		z-index: 1000000;
+		-webkit-transform: translate3d(0,0,0);
 		background: rgba(255,255,255,0.5);
 		width: 100%;
 		height: 100%;
@@ -127,6 +128,7 @@ def HelpGuide {
 	my text {
 		css {
 			position: absolute;
+			z-index: 1000001;
 			color: #FFF;
 			box-sizing: border-box;
 			background: #0a4766;

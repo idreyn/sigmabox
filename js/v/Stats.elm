@@ -560,7 +560,7 @@ def StatsListField(focusManager) {
 		css {
 			position: absolute;
 			font-size: 8px;
-			color: #CCC;
+			color: #333;
 			left: 2px;
 			top: 2px;
 		}

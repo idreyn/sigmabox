@@ -241,7 +241,7 @@ def MathTextField(focusManager) {
 		if(!this.enabled) {
 			return;
 		}
-		this.focusManager.setFocus(this);
+		this.takeFocus();
 		this.mathSelf().cursor.show();
 	}
 
@@ -270,11 +270,11 @@ def MathTextField(focusManager) {
 	}
 
 	method disable() {
-		var contents = this.contents();
-		this.enabled = false;
-		this.input.$.mathquill('revert');
-		this.input.$.html(contents);
-		this.input.$.mathquill();
+		var contents = self.contents();
+		self.enabled = false;
+		self.input.$.mathquill('revert');
+		self.input.$.html(contents);
+		self.input.$.mathquill();
 	}
 
 	method enable {
@@ -292,6 +292,9 @@ def MathTextField(focusManager) {
 	}
 
 	method takeFocus {
+		if(!this.enabled) {
+			return;
+		}
 		this.focusManager.setFocus(this);
 	}
 

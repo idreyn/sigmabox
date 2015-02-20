@@ -230,5 +230,5 @@ Application.prototype.overlay = function(view) {
 }
 
 Application.prototype.useGratuitousAnimations = function() {
-	return !utils.isAppleWebApp();
+	return true;
 }
