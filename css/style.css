@@ -2,7 +2,7 @@ html, body {
 	margin: 0;
 	min-width: 100%;
 	max-width: 100%;
-	font-family: 'Helvetica Neue' sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, sans-serif;
 	font-weight: normal !important;
 	background: url(../res/img/background.png);
 	background-size: cover;
